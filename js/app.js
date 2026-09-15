@@ -140,8 +140,9 @@ window.MIA = window.MIA || {};
             }).join('') +
           '</div>' +
           (blockers.length
-            ? '<p class="small muted" style="margin-top:12px">🔒 Falta dominar ' + blockers.map(function (b) {
-                return b.needed + '/' + b.total + ' de <strong>' + ui.escapeHtml(b.title) + '</strong>'; }).join(' e ') + '.</p>'
+            ? '<p class="small muted" style="margin-top:12px">🔒 Para liberar, domine ' + blockers.map(function (b) {
+                return b.needed + ' das ' + b.total + ' aulas de <strong>' + ui.escapeHtml(b.title) +
+                  '</strong> (você domina ' + b.mastered + ')'; }).join(' e ') + '.</p>'
             : '<div class="row" style="margin-top:12px">' +
               '<a class="btn btn--sm btn--primary" href="#/aula/' + mod.lessons[0].id + '">Abrir primeira aula</a>' +
               (st.mastered ? '<a class="btn btn--sm btn--ghost" href="#/checkpoint/' + mod.id + '">Checkpoint</a>' : '') +

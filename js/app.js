@@ -102,54 +102,68 @@ window.MIA = window.MIA || {};
       '<span class="journey__dot" aria-hidden="true">' + icon + '</span>' +
       '<a class="journey__card" href="' + href + '">' +
         '<h3>' + ui.escapeHtml(mod.title) + '</h3>' +
-        '<span class="small muted">Fase ' + mod.phase + ' · ' + st.progress + '%</span>' +
+        '<span class="small muted">' + ui.phaseLabel(mod) + ' · ' + st.progress + '%</span>' +
       '</a></li>';
+  }
+
+  function journeyCard(mod) {
+    const st = P().moduleState(mod.id);
+    const icon = { completed: '🟢', in_progress: '🟡', available: '🔵', locked: '⚪' }[st.state];
+    const blockers = P().moduleBlockers(mod.id);
+    const project = mod.project ? MIA.get.project(mod.project) : null;
+
+    return '<li class="journey__item" data-state="' + st.state + '">' +
+      '<span class="journey__dot" aria-hidden="true">' + icon + '</span>' +
+      '<div class="journey__card card">' +
+        '<div class="row row--between" style="align-items:flex-start">' +
+          '<div style="min-width:0"><p class="card__label">' + ui.phaseLabel(mod) + '</p>' +
+            '<h3>' + mod.icon + ' ' + ui.escapeHtml(mod.title) + '</h3>' +
+            '<p class="small muted" style="margin:0">' + ui.escapeHtml(mod.goal) + '</p></div>' +
+          '<div class="row">' + ui.levelBadge(mod.level) + ui.stateBadge(st.state) + '</div>' +
+        '</div>' +
+        '<div style="margin:16px 0">' + ui.bar(st.progress, ui.LEVEL_TONE[mod.level]) + '</div>' +
+        '<div class="journey__meta">' +
+          '<span class="badge">' + ui.plural(mod.lessons.length, 'aula', 'aulas') + '</span>' +
+          '<span class="badge">' + st.mastered + ' dominadas</span>' +
+          (project ? '<a class="badge badge--purple" href="#/projeto/' + project.id + '">🏗️ ' + ui.escapeHtml(project.title) + '</a>' : '') +
+          (mod.skills || []).slice(0, 3).map(function (s) {
+            const sk = MIA.get.skill(s);
+            return sk ? '<a class="badge badge--blue" href="#/skill/' + s + '">🧩 ' + ui.escapeHtml(sk.name) + '</a>' : '';
+          }).join('') +
+        '</div>' +
+        (blockers.length
+          ? '<p class="small muted" style="margin-top:12px">🔒 Para liberar, domine ' + blockers.map(function (b) {
+              return b.needed + ' das ' + b.total + ' aulas de <strong>' + ui.escapeHtml(b.title) +
+                '</strong> (você domina ' + b.mastered + ')'; }).join(' e ') + '.</p>'
+          : '<div class="row" style="margin-top:12px">' +
+            '<a class="btn btn--sm btn--primary" href="#/aula/' + mod.lessons[0].id + '">Abrir primeira aula</a>' +
+            (st.mastered ? '<a class="btn btn--sm btn--ghost" href="#/checkpoint/' + mod.id + '">Checkpoint</a>' : '') +
+            '</div>') +
+      '</div></li>';
   }
 
   function renderJourney() {
     const modules = MIA.get.modules();
+    const main = modules.filter(function (m) { return !m.pilot; });
+    const pilots = modules.filter(function (m) { return m.pilot; });
+
     let html = '<div class="page-head"><p class="eyebrow">Camadas 1 e 2</p><h1>Minha jornada</h1>' +
       '<p>Cada fase libera a seguinte quando você demonstra domínio — não quando marca “concluído”. ' +
       'É preciso dominar ' + Math.round((MIA.data.curriculum.moduleUnlockRatio || 0.7) * 100) + '% das aulas do pré-requisito, ' +
       'com nota a partir de ' + (MIA.data.curriculum.masteryThreshold || 80) + '.</p></div>';
 
-    html += '<ul class="journey">';
-    modules.forEach(function (mod) {
-      const st = P().moduleState(mod.id);
-      const icon = { completed: '🟢', in_progress: '🟡', available: '🔵', locked: '⚪' }[st.state];
-      const blockers = P().moduleBlockers(mod.id);
-      const project = mod.project ? MIA.get.project(mod.project) : null;
+    html += '<ul class="journey">' + main.map(journeyCard).join('') + '</ul>';
 
-      html += '<li class="journey__item" data-state="' + st.state + '">' +
-        '<span class="journey__dot" aria-hidden="true">' + icon + '</span>' +
-        '<div class="journey__card card">' +
-          '<div class="row row--between" style="align-items:flex-start">' +
-            '<div style="min-width:0"><p class="card__label">Fase ' + mod.phase + '</p>' +
-              '<h3>' + mod.icon + ' ' + ui.escapeHtml(mod.title) + '</h3>' +
-              '<p class="small muted" style="margin:0">' + ui.escapeHtml(mod.goal) + '</p></div>' +
-            '<div class="row">' + ui.levelBadge(mod.level) + ui.stateBadge(st.state) + '</div>' +
-          '</div>' +
-          '<div style="margin:16px 0">' + ui.bar(st.progress, ui.LEVEL_TONE[mod.level]) + '</div>' +
-          '<div class="journey__meta">' +
-            '<span class="badge">' + ui.plural(mod.lessons.length, 'aula', 'aulas') + '</span>' +
-            '<span class="badge">' + st.mastered + ' dominadas</span>' +
-            (project ? '<a class="badge badge--purple" href="#/projeto/' + project.id + '">🏗️ ' + ui.escapeHtml(project.title) + '</a>' : '') +
-            (mod.skills || []).slice(0, 3).map(function (s) {
-              const sk = MIA.get.skill(s);
-              return sk ? '<a class="badge badge--blue" href="#/skill/' + s + '">🧩 ' + ui.escapeHtml(sk.name) + '</a>' : '';
-            }).join('') +
-          '</div>' +
-          (blockers.length
-            ? '<p class="small muted" style="margin-top:12px">🔒 Para liberar, domine ' + blockers.map(function (b) {
-                return b.needed + ' das ' + b.total + ' aulas de <strong>' + ui.escapeHtml(b.title) +
-                  '</strong> (você domina ' + b.mastered + ')'; }).join(' e ') + '.</p>'
-            : '<div class="row" style="margin-top:12px">' +
-              '<a class="btn btn--sm btn--primary" href="#/aula/' + mod.lessons[0].id + '">Abrir primeira aula</a>' +
-              (st.mastered ? '<a class="btn btn--sm btn--ghost" href="#/checkpoint/' + mod.id + '">Checkpoint</a>' : '') +
-              '</div>') +
-        '</div></li>';
-    });
-    html += '</ul>';
+    if (pilots.length) {
+      const pilotMeta = MIA.data.curriculum.meta.pilotPrograms;
+      html += '<section class="card" style="margin-top:32px;border-style:dashed">' +
+        '<p class="card__label">🧪 Trilhas piloto — fora do tema IA</p>' +
+        (pilotMeta ? '<p class="small">' + ui.escapeHtml(pilotMeta.intro) + '</p>' +
+          '<p class="small muted">' + ui.escapeHtml(pilotMeta.honesty) + '</p>' : '') +
+      '</section>' +
+      '<ul class="journey" style="margin-top:16px">' + pilots.map(journeyCard).join('') + '</ul>';
+    }
+
     return html;
   }
 
@@ -177,7 +191,7 @@ window.MIA = window.MIA || {};
     html += '<div class="grid grid--2">' + items.map(function (i) {
       return '<article class="card skill-card">' +
         '<div class="skill-card__top"><div>' +
-          '<span class="skill-card__n">Fase ' + i.mod.phase + ' · ' + ui.escapeHtml(i.mod.title) + '</span>' +
+          '<span class="skill-card__n">' + ui.phaseLabel(i.mod) + ' · ' + ui.escapeHtml(i.mod.title) + '</span>' +
           '<h3>' + ui.escapeHtml(i.lesson.title) + '</h3></div>' +
           (i.locked ? '<span class="badge">🔒</span>' : i.rec ? ui.scoreBadge(i.rec.score) : '<span class="badge badge--purple">+' + i.ex.xp + ' XP</span>') +
         '</div>' +
@@ -222,7 +236,7 @@ window.MIA = window.MIA || {};
     const nextModule = MIA.get.modules().find(function (m) { return (m.prerequisites || []).indexOf(moduleId) !== -1; });
 
     let html = '<article class="stack">' +
-      '<header><p class="lesson__crumbs">Fase ' + mod.phase + '</p><h1>Checkpoint</h1>' +
+      '<header><p class="lesson__crumbs">' + ui.phaseLabel(mod) + '</p><h1>Checkpoint</h1>' +
       '<p class="muted">' + ui.escapeHtml(mod.title) + '</p></header>';
 
     html += '<section class="card"><p class="card__label">Você concluiu</p><ul class="objectives">' +
@@ -241,11 +255,18 @@ window.MIA = window.MIA || {};
     html += '<section class="card">' +
       (ready
         ? '<p class="card__label">Você está pronto para</p>' +
-          (nextModule
-            ? '<h2>Fase ' + nextModule.phase + ' — ' + ui.escapeHtml(nextModule.title) + '</h2>' +
-              '<p class="muted">' + ui.escapeHtml(nextModule.goal) + '</p>' +
-              '<a class="btn btn--primary" href="#/aula/' + nextModule.lessons[0].id + '">Avançar →</a>'
-            : '<h2>O projeto final</h2><a class="btn btn--primary" href="#/projeto/project-final">Abrir projeto final →</a>')
+          (mod.pilot
+            ? '<h2>Você concluiu esta trilha piloto</h2>' +
+              '<p class="muted">Ela é independente da trilha principal de IA: não desbloqueia nem é desbloqueada por nenhuma outra fase, e não conta para o seu nível em IA.</p>' +
+              (mod.project
+                ? '<a class="btn btn--primary" href="#/projeto/' + mod.project + '">Abrir o projeto piloto →</a>'
+                : '') +
+              '<div class="row" style="margin-top:12px"><a class="btn btn--ghost" href="#/jornada">Voltar à jornada</a></div>'
+            : nextModule
+              ? '<h2>' + ui.phaseLabel(nextModule) + ' — ' + ui.escapeHtml(nextModule.title) + '</h2>' +
+                '<p class="muted">' + ui.escapeHtml(nextModule.goal) + '</p>' +
+                '<a class="btn btn--primary" href="#/aula/' + nextModule.lessons[0].id + '">Avançar →</a>'
+              : '<h2>O projeto final</h2><a class="btn btn--primary" href="#/projeto/project-final">Abrir projeto final →</a>')
         : '<p class="card__label">Ainda não</p>' +
           '<p>Faltam ' + (needed - st.mastered) + ' aulas dominadas neste módulo. Reveja as aulas com nota abaixo de ' +
           (MIA.data.curriculum.masteryThreshold || 80) + ' e responda os exercícios de novo.</p>' +
@@ -298,6 +319,32 @@ window.MIA = window.MIA || {};
       '<div class="card stat"><p class="card__label">Projetos concluídos</p><div class="stat__value">' + projectsDone.length + '<small>/' + projects.length + '</small></div></div>' +
     '</div>';
 
+    // Competência, não conteúdo consumido: lista o que o aluno comprovou saber
+    // fazer (objetivo da aula, só quando ela foi DOMINADA com evidência),
+    // ordenado do mais recente para o mais antigo.
+    const masteredLessons = MIA.get.allLessons()
+      .map(function (l) { return { l: l, st: P().lessonState(l.id) }; })
+      .filter(function (x) { return x.st.state === 'mastered'; })
+      .sort(function (a, b) { return new Date(b.st.completedAt || 0) - new Date(a.st.completedAt || 0); });
+    const CAPACITY_LIMIT = 12;
+
+    html += '<section class="card" style="margin-top:24px"><p class="card__label">O que você já sabe fazer</p>' +
+      (masteredLessons.length
+        ? '<ul class="objectives">' + masteredLessons.slice(0, CAPACITY_LIMIT).map(function (x) {
+            return '<li>' + ui.escapeHtml(x.l.objectives[0]) + ' <span class="small muted">— ' +
+              ui.escapeHtml(MIA.get.moduleOfLesson(x.l.id).title) + '</span></li>';
+          }).join('') + '</ul>' +
+          (masteredLessons.length > CAPACITY_LIMIT
+            ? '<p class="small muted">+ ' + (masteredLessons.length - CAPACITY_LIMIT) + ' outra' +
+              (masteredLessons.length - CAPACITY_LIMIT === 1 ? '' : 's') + ' capacidade' +
+              (masteredLessons.length - CAPACITY_LIMIT === 1 ? '' : 's') + ' dominada' +
+              (masteredLessons.length - CAPACITY_LIMIT === 1 ? '' : 's') + '.</p>'
+            : '') +
+          '<p class="small muted">Esta lista reflete o que você comprovou nos exercícios — não o que só foi assistido.</p>'
+        : '<p class="muted">Ainda sem evidência de domínio registrada. Essa lista cresce quando você tira nota alta ' +
+          'nos exercícios de uma aula — não quando ela só é marcada como lida.</p>') +
+    '</section>';
+
     html += '<section class="card" style="margin-top:24px"><p class="card__label">Últimos 14 dias</p>' +
       '<div class="row" style="align-items:flex-end;gap:6px;height:90px;margin-top:12px">' +
       days.map(function (d) {
@@ -325,7 +372,7 @@ window.MIA = window.MIA || {};
       '<thead><tr><th>Fase</th><th>Módulo</th><th>Nível</th><th>Aulas</th><th>Dominadas</th><th>Média</th><th>Estado</th></tr></thead><tbody>' +
       modules.map(function (m) {
         const st = P().moduleState(m.id);
-        return '<tr><td>' + m.phase + '</td>' +
+        return '<tr><td>' + (m.pilot ? '🧪' : m.phase) + '</td>' +
           '<td>' + ui.escapeHtml(m.title) + '</td>' +
           '<td>' + ui.LEVEL_LABEL[m.level] + '</td>' +
           '<td>' + st.done + '/' + st.total + '</td>' +
@@ -464,6 +511,9 @@ window.MIA = window.MIA || {};
       (guide
         ? '<p class="small muted">Catálogo de Skills: <em>' + ui.escapeHtml(guide.title) + '</em> — ' +
           ui.escapeHtml(guide.author) + ', atualizado ' + ui.escapeHtml(guide.updated) + '.</p>'
+        : '') +
+      (MIA.data.curriculum.meta.pilotPrograms
+        ? '<p>' + ui.escapeHtml(MIA.data.curriculum.meta.pilotPrograms.honesty) + '</p>'
         : '') +
       '<p class="small muted">Dados carregados de: ' + (MIA.data.source === 'json' ? '/data/*.json' : 'bundle local (abertura via file://)') + '.</p>' +
     '</section>';

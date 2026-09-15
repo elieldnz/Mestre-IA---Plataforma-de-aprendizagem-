@@ -163,6 +163,7 @@ window.MIA = window.MIA || {};
   function findChallenge() {
     const mods = MIA.get.modules();
     for (let i = 0; i < mods.length; i++) {
+      if (mods[i].pilot) continue; // trilha piloto não entra na sugestão automática do dia
       if (P().moduleState(mods[i].id).state === 'locked') continue;
       for (let j = 0; j < mods[i].lessons.length; j++) {
         const lesson = mods[i].lessons[j];
@@ -178,6 +179,7 @@ window.MIA = window.MIA || {};
 
   function findProject() {
     return MIA.get.allProjects().find(function (p) {
+      if (p.kind === 'pilot') return false; // trilha piloto não entra na sugestão automática do dia
       const st = P().projectState(p.id);
       return st.state === 'in_progress' || st.state === 'available';
     }) || null;

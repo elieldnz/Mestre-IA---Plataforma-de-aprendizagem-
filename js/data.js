@@ -114,6 +114,8 @@ window.MIA = window.MIA || {};
       const mods = data.curriculum.modules;
       for (let i = 0; i < mods.length; i++) {
         const m = mods[i];
+        // Trilhas piloto são exploração deliberada, nunca a "missão do dia" sugerida.
+        if (m.pilot) continue;
         if (progress.moduleState(m.id).state === 'locked') continue;
         for (let j = 0; j < m.lessons.length; j++) {
           const st = progress.lessonState(m.lessons[j].id);

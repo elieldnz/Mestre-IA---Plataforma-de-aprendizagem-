@@ -4,7 +4,12 @@
     "tagline": "Sua jornada do usuário ao criador de sistemas de IA.",
     "pedagogy": "80% prática, 20% teoria.",
     "sourceNote": "A estrutura de fases, os projetos e os 10 estudos de caso de prompts vêm do material fornecido. As explicações, exemplos e exercícios de cada aula são conhecimento complementar produzido para esta plataforma.",
-    "cycle": ["APRENDER", "ENTENDER", "PRATICAR", "ERRAR", "CORRIGIR", "APLICAR", "CRIAR", "ENSINAR"]
+    "cycle": ["APRENDER", "ENTENDER", "PRATICAR", "ERRAR", "CORRIGIR", "APLICAR", "CRIAR", "ENSINAR"],
+    "pilotPrograms": {
+      "intro": "Trilhas piloto testam se o motor desta plataforma — diagnóstico, aulas curtas, exercício com feedback, domínio comprovado e projeto — funciona para qualquer assunto, não só para Inteligência Artificial.",
+      "honesty": "São conteúdo 100% autoral desta plataforma (marcado como conhecimento complementar), sem curadoria de vídeos externos e sem geração automática por IA. Uma trilha real para qualquer tema digitado pelo aluno exige um passo que ainda não existe aqui: backend, um modelo de linguagem real montando o percurso e, se envolver vídeo, integração com a API oficial do YouTube — está descrito no roadmap deste projeto.",
+      "modules": ["piloto-produtividade"]
+    }
   },
   "levels": [
     { "id": "iniciante", "label": "Iniciante", "color": "#22C55E", "goal": "Entender IA e criar primeiras soluções.", "source": "material" },
@@ -48,7 +53,8 @@
         { "label": "Uso todos os dias no trabalho", "score": 3 } ] },
       { "id": "ferramentas", "type": "multi", "question": "Quais ferramentas você já usou?", "dimension": "ia", "options": [
         { "label": "ChatGPT", "score": 1 }, { "label": "Claude", "score": 1 }, { "label": "Gemini", "score": 1 },
-        { "label": "Cursor ou editor com IA", "score": 2 }, { "label": "n8n ou automação", "score": 2 }, { "label": "Nenhuma", "score": 0 } ] },
+        { "label": "Cursor ou editor com IA", "score": 2 }, { "label": "n8n ou automação", "score": 2 }, { "label": "Nenhuma", "score": 0 } ],
+        "skipIf": { "field": "usa-ia", "maxScore": 0 }, "skipDefault": [5] },
       { "id": "prompts", "type": "choice", "question": "Já criou prompts estruturados?", "dimension": "prompt", "options": [
         { "label": "Não sei o que é isso", "score": 0 },
         { "label": "Escrevo perguntas simples", "score": 1 },
@@ -58,7 +64,8 @@
         { "label": "Não", "score": 0 },
         { "label": "Criei um GPT personalizado", "score": 1 },
         { "label": "Já criei agente com ferramentas", "score": 2 },
-        { "label": "Já criei sistema com vários agentes", "score": 3 } ] },
+        { "label": "Já criei sistema com vários agentes", "score": 3 } ],
+        "skipIf": { "field": "usa-ia", "maxScore": 0 }, "skipDefault": 0 },
       { "id": "automacao", "type": "choice", "question": "Já automatizou tarefas?", "dimension": "automacao", "options": [
         { "label": "Nunca", "score": 0 },
         { "label": "Automações simples (filtros, atalhos)", "score": 1 },
@@ -73,12 +80,14 @@
         { "label": "Nunca escrevi Python", "score": 0 },
         { "label": "Já rodei scripts prontos", "score": 1 },
         { "label": "Escrevo scripts próprios", "score": 2 },
-        { "label": "Uso Python com bibliotecas e APIs", "score": 3 } ] },
+        { "label": "Uso Python com bibliotecas e APIs", "score": 3 } ],
+        "skipIf": { "field": "programacao", "maxScore": 0 }, "skipDefault": 0 },
       { "id": "apis", "type": "choice", "question": "Já utilizou APIs?", "dimension": "codigo", "options": [
         { "label": "Não sei o que é uma API", "score": 0 },
         { "label": "Sei o conceito, nunca chamei uma", "score": 1 },
         { "label": "Já fiz requisições com chave de API", "score": 2 },
-        { "label": "Já construí integrações completas", "score": 3 } ] },
+        { "label": "Já construí integrações completas", "score": 3 } ],
+        "skipIf": { "field": "programacao", "maxScore": 0 }, "skipDefault": 0 },
       { "id": "tempo", "type": "choice", "question": "Quanto tempo você tem por semana?", "dimension": "contexto", "options": [
         { "label": "Até 2 horas", "score": 0, "mode": "rapido" },
         { "label": "De 3 a 5 horas", "score": 1, "mode": "normal" },
@@ -1530,6 +1539,67 @@
           ],
           "exercises": [
             { "id": "pf-004-e1", "type": "challenge", "xp": 100, "question": "Desafio final: escreva a página de portfólio do seu projeto com os 7 itens.", "rubric": { "keywords": ["problema", "solução", "resultado", "arquitetura", "decis", "limita", "aprendi"], "minWords": 120, "structure": ["problema", "resultado", "limita"] }, "model": "Problema: consolidar pedidos de 4 canais consumia 3h por semana. Solução: importador que normaliza, detecta duplicatas e gera o consolidado. Resultado: de 3h para 8 min, zero erro de digitação em 6 semanas. Arquitetura: upload → normalização → verificação → saída, com aba de revisão para itens inválidos. Decisões: Python puro em vez de framework, porque são 3 usuários internos. Limitações: só os 4 canais atuais; não trata devolução. Aprendi que a maior parte do trabalho era limpeza de dados, não IA." }
+          ], "skills": [], "xp": 20
+        }
+      ]
+    },
+    {
+      "id": "piloto-produtividade",
+      "pilot": true,
+      "title": "Piloto — Produtividade pessoal",
+      "subtitle": "Gestão do tempo e foco: uma trilha fora do tema IA, para testar o motor da plataforma",
+      "level": "iniciante",
+      "icon": "🧪",
+      "goal": "Provar que diagnóstico, progressão por domínio, exercícios e projeto funcionam para qualquer assunto — não só para IA.",
+      "prerequisites": [],
+      "skills": [],
+      "project": "project-piloto-blocos-de-tempo",
+      "source": "complementar",
+      "note": "Trilha piloto: conteúdo 100% autoral desta plataforma, sem vínculo com o material fornecido e sem curadoria de vídeos externos. Existe para testar se o mesmo motor (aulas → exercícios → domínio → projeto) generaliza para um tema fora de Inteligência Artificial. Está sempre disponível, não bloqueia nem é bloqueada por nenhuma outra trilha, e não conta para o seu nível em IA.",
+      "lessons": [
+        {
+          "id": "pilo-001",
+          "title": "Por que gerenciar tempo não é sobre ter mais horas",
+          "level": "iniciante",
+          "duration": 15,
+          "objectives": ["Diferenciar gestão de tempo de gestão de energia", "Explicar a Lei de Parkinson com um exemplo próprio", "Identificar uma tarefa que se expande para caber no tempo disponível"],
+          "blocks": [
+            { "type": "note", "title": "O que é esta trilha", "source": "complementar", "body": "Esta é uma **trilha piloto**: um tema fora de Inteligência Artificial, construído com o mesmo motor das trilhas de IA desta plataforma (aulas curtas, exercício com feedback, domínio comprovado, projeto real).\n\nO objetivo não é ensinar produtividade a fundo — é mostrar que a estrutura funciona para qualquer assunto. Ela não desbloqueia nem depende de nenhuma trilha de IA." },
+            { "type": "concept", "title": "Conceito", "source": "complementar", "body": "O erro mais comum em produtividade é tratar tempo como o recurso escasso. Na prática, **energia e atenção** acabam antes das 24 horas do dia.\n\nA **Lei de Parkinson** diz: uma tarefa se expande para ocupar todo o tempo disponível para ela. Dar 3 dias para uma tarefa de 2 horas quase sempre resulta em 3 dias de trabalho — não em 2 horas de trabalho e 2 dias e meio de folga." },
+            { "type": "example", "title": "Exemplo", "source": "complementar", "body": "Um relatório mensal que deveria levar 1 hora, mas como o prazo é \"até sexta\", a pessoa mexe nele por partes a semana inteira, junto com interrupções, e no fim gasta 6 horas — não porque o relatório ficou mais difícil, mas porque o prazo frouxo abriu espaço para procrastinação e retrabalho." }
+          ],
+          "exercises": [
+            { "id": "pilo-001-q1", "type": "quiz", "xp": 40, "question": "Segundo a Lei de Parkinson, o que acontece quando você dá 5 dias para uma tarefa que levaria 2 horas?", "options": ["A tarefa continua levando 2 horas, sobrando tempo livre", "A tarefa tende a se expandir e ocupar boa parte dos 5 dias", "A qualidade do resultado sempre melhora", "Não há relação entre prazo e tempo gasto"], "answer": 1, "explain": "Prazo frouxo tende a virar tempo gasto, não tempo livre — a tarefa se expande para caber no espaço dado a ela." },
+            { "id": "pilo-001-e1", "type": "open", "xp": 30, "question": "Descreva uma tarefa sua que se expandiu para caber no prazo, mesmo sendo simples. O que você faria diferente com um prazo mais curto e claro?", "rubric": { "keywords": ["prazo", "tarefa", "tempo", "diferente"], "minWords": 40 }, "model": "Uma apresentação simples de 10 slides que eu tinha 2 semanas para fazer acabou tomando quase todo esse tempo, entre pequenos ajustes e adiamentos. Com um prazo de 2 dias e um horário fixo reservado, eu teria terminado no primeiro bloco de foco." }
+          ], "skills": [], "xp": 20
+        },
+        {
+          "id": "pilo-002",
+          "title": "Priorização: nem tudo urgente é importante",
+          "level": "iniciante",
+          "duration": 20,
+          "objectives": ["Aplicar a matriz urgente/importante em uma lista real", "Diferenciar tarefa urgente de tarefa importante", "Identificar o quadrante que mais rouba o seu dia"],
+          "blocks": [
+            { "type": "concept", "title": "Conceito", "source": "complementar", "body": "A matriz de Eisenhower separa tarefas em 4 quadrantes:\n\n1. **Urgente e importante** — faça agora (crise, prazo estourando).\n2. **Importante, não urgente** — agende (planejamento, estudo, saúde). É aqui que mora o que constrói resultado de verdade.\n3. **Urgente, não importante** — delegue ou negocie (a maioria das interrupções e pedidos de terceiros).\n4. **Nem urgente nem importante** — corte (rolar rede social sem intenção, reuniões sem pauta).\n\nA maior parte dos dias ruins é dominada pelo quadrante 3: parece produtivo porque é urgente, mas não move nada importante." }
+          ],
+          "exercises": [
+            { "id": "pilo-002-e1", "type": "practice", "xp": 30, "question": "Liste 6 tarefas reais da sua semana e classifique cada uma nos 4 quadrantes (urgente/importante).", "rubric": { "keywords": ["urgente", "importante", "quadrante", "agora", "agendar"], "minWords": 50 }, "model": "1. Responder cliente irritado — urgente e importante. 2. Planejar o próximo trimestre — importante, não urgente. 3. Reunião de status sem pauta — urgente pros outros, não importante pra mim. 4. Estudar uma habilidade nova — importante, não urgente. 5. Responder mensagens no grupo do trabalho — urgente aparente, raramente importante. 6. Rolar feed sem motivo — nem urgente nem importante." },
+            { "id": "pilo-002-q1", "type": "quiz", "xp": 40, "question": "Qual quadrante da matriz costuma ser o mais negligenciado, apesar de ser o que mais constrói resultado no longo prazo?", "options": ["Urgente e importante", "Importante, não urgente", "Urgente, não importante", "Nem urgente nem importante"], "answer": 1, "explain": "O quadrante 2 (importante, não urgente) exige agenda proativa — sem prazo apertado empurrando, ele é o primeiro a ser adiado." }
+          ], "skills": [], "xp": 20
+        },
+        {
+          "id": "pilo-003",
+          "title": "Foco: uma tarefa de cada vez",
+          "level": "iniciante",
+          "duration": 20,
+          "objectives": ["Explicar o custo da troca de contexto", "Planejar um bloco de foco de verdade", "Definir o que desligar durante um bloco de foco"],
+          "blocks": [
+            { "type": "concept", "title": "Conceito", "source": "complementar", "body": "Trocar de tarefa tem um custo escondido: o cérebro leva minutos para voltar ao nível de profundidade anterior depois de uma interrupção. Fazer 5 coisas \"ao mesmo tempo\" quase sempre é fazer 5 coisas mal, uma de cada vez, com pausas caras entre elas.\n\n**Blocos de tempo** (*time blocking*) resolvem isso na prática: reservar um período fixo, com uma única tarefa, notificações desligadas e um objetivo claro de saída (\"ao final destes 90 minutos, a seção 2 do relatório está pronta\")." },
+            { "type": "warning", "title": "Cuidado", "source": "complementar", "body": "Bloco de foco sem objetivo de saída vira bloco de distração educada. Sempre defina o que \"pronto\" significa antes de começar o cronômetro." }
+          ],
+          "exercises": [
+            { "id": "pilo-003-q1", "type": "quiz", "xp": 40, "question": "Por que alternar entre várias tarefas pequenas ao longo do dia costuma ser pior do que fazer uma de cada vez?", "options": ["Porque o cérebro não sabe fazer duas coisas", "Porque cada troca tem um custo de retomada que soma tempo perdido", "Porque tarefas pequenas são sempre chatas", "Não há diferença real de produtividade"], "answer": 1, "explain": "O custo não é a tarefa em si, é o tempo de readaptação a cada troca — ele se acumula ao longo do dia." },
+            { "id": "pilo-003-e1", "type": "challenge", "xp": 100, "question": "Desafio: planeje um bloco de foco de 90 minutos para amanhã. Diga a tarefa única, o objetivo de saída (o que estará pronto ao final) e o que você vai desligar durante o bloco.", "rubric": { "keywords": ["tarefa", "pronto", "desligar", "90", "objetivo"], "minWords": 50 }, "model": "Tarefa única: escrever a proposta comercial do cliente X. Objetivo de saída: as 3 primeiras seções escritas, mesmo que precisem de revisão depois. Vou desligar: notificações do celular, e-mail e a aba do WhatsApp Web. Aviso a equipe que estarei indisponível nesse horário." }
           ], "skills": [], "xp": 20
         }
       ]

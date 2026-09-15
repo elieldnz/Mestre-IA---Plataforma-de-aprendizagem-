@@ -66,6 +66,26 @@ curriculum.modules.forEach(m => {
   (m.prerequisites || []).forEach(p => { if (!moduleIds.has(p)) fail('Módulo ' + m.id + ': pré-requisito inexistente ' + p); });
 });
 
+// Trilhas piloto: sempre acessíveis (sem pré-requisito) e nunca referenciadas
+// como pré-requisito por nenhum módulo da trilha principal — elas são
+// exploração à parte, não podem travar nem ser travadas pelo resto.
+const pilotModuleIds = new Set(curriculum.modules.filter(m => m.pilot).map(m => m.id));
+curriculum.modules.forEach(m => {
+  if (m.pilot && (m.prerequisites || []).length) fail('Módulo piloto ' + m.id + ' não deveria ter pré-requisitos');
+  (m.prerequisites || []).forEach(p => { if (pilotModuleIds.has(p)) fail('Módulo ' + m.id + ' depende de um módulo piloto (' + p + ')'); });
+});
+
+// Perguntas do diagnóstico com skipIf precisam apontar para uma pergunta
+// que já foi respondida ANTES delas na sequência (senão a regra nunca dispara).
+const diagQuestions = curriculum.diagnostic.questions;
+diagQuestions.forEach((q, i) => {
+  if (!q.skipIf) return;
+  const depIdx = diagQuestions.findIndex(x => x.id === q.skipIf.field);
+  if (depIdx === -1) fail('Pergunta ' + q.id + ': skipIf aponta para pergunta inexistente ' + q.skipIf.field);
+  else if (depIdx >= i) fail('Pergunta ' + q.id + ': skipIf depende de uma pergunta que vem depois (' + q.skipIf.field + ')');
+  if (q.skipDefault === undefined) fail('Pergunta ' + q.id + ' tem skipIf mas não tem skipDefault');
+});
+
 const projectIds = new Set();
 projects.projects.forEach(p => {
   if (projectIds.has(p.id)) fail('Projeto duplicado: ' + p.id);

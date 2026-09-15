@@ -300,7 +300,8 @@ window.MIA = window.MIA || {};
   }
 
   function levelRatio(levelId) {
-    const mods = MIA.get.modules().filter(function (m) { return m.level === levelId; });
+    // Trilhas piloto (fora do tema IA) não contam para o nível de IA do aluno.
+    const mods = MIA.get.modules().filter(function (m) { return m.level === levelId && !m.pilot; });
     let total = 0, mastered = 0;
     mods.forEach(function (m) { const st = moduleStateRaw(m.id); total += st.total; mastered += st.mastered; });
     return total ? mastered / total : 0;

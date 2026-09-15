@@ -136,34 +136,48 @@ window.MIA = window.MIA || {};
     '</li>';
   }
 
+  function moduleCard(m) {
+    const st = P().moduleState(m.id);
+    const blockers = P().moduleBlockers(m.id);
+    return '<section class="card">' +
+      '<div class="row row--between" style="align-items:flex-start">' +
+        '<div style="min-width:0">' +
+          '<p class="card__label">' + ui.phaseLabel(m) + '</p>' +
+          '<h2 style="margin-bottom:4px">' + m.icon + ' ' + ui.escapeHtml(m.title) + '</h2>' +
+          '<p class="muted small" style="margin:0">' + ui.escapeHtml(m.subtitle) + '</p>' +
+        '</div>' +
+        '<div class="row">' + ui.levelBadge(m.level) + ui.stateBadge(st.state) + '</div>' +
+      '</div>' +
+      '<div style="margin:16px 0">' + ui.bar(st.progress, ui.LEVEL_TONE[m.level]) + '</div>' +
+      (blockers.length
+        ? '<p class="small muted">🔒 Para liberar: dominar ' + blockers.map(function (b) {
+            return b.needed + ' de ' + b.total + ' aulas de <strong>' + ui.escapeHtml(b.title) + '</strong> (você tem ' + b.mastered + ')';
+          }).join(' e ') + '.</p>'
+        : '<ul class="list">' + m.lessons.map(lessonRow).join('') + '</ul>') +
+    '</section>';
+  }
+
   function renderLessonsPage() {
     const modules = MIA.get.modules();
+    const main = modules.filter(function (m) { return !m.pilot; });
+    const pilots = modules.filter(function (m) { return m.pilot; });
+
     let html = '<div class="page-head"><p class="eyebrow">Camada 1 — Aprendizado</p><h1>Aulas</h1>' +
       '<p>' + ui.escapeHtml(MIA.data.curriculum.meta.pedagogy) + ' Cada aula só é considerada dominada com evidência: ' +
       'exercício respondido e nota a partir de ' + (MIA.data.curriculum.masteryThreshold || 80) + '.</p></div>';
 
-    html += '<div class="stack">';
-    modules.forEach(function (m) {
-      const st = P().moduleState(m.id);
-      const blockers = P().moduleBlockers(m.id);
-      html += '<section class="card">' +
-        '<div class="row row--between" style="align-items:flex-start">' +
-          '<div style="min-width:0">' +
-            '<p class="card__label">Fase ' + m.phase + '</p>' +
-            '<h2 style="margin-bottom:4px">' + m.icon + ' ' + ui.escapeHtml(m.title) + '</h2>' +
-            '<p class="muted small" style="margin:0">' + ui.escapeHtml(m.subtitle) + '</p>' +
-          '</div>' +
-          '<div class="row">' + ui.levelBadge(m.level) + ui.stateBadge(st.state) + '</div>' +
-        '</div>' +
-        '<div style="margin:16px 0">' + ui.bar(st.progress, ui.LEVEL_TONE[m.level]) + '</div>' +
-        (blockers.length
-          ? '<p class="small muted">🔒 Para liberar: dominar ' + blockers.map(function (b) {
-              return b.needed + ' de ' + b.total + ' aulas de <strong>' + ui.escapeHtml(b.title) + '</strong> (você tem ' + b.mastered + ')';
-            }).join(' e ') + '.</p>'
-          : '<ul class="list">' + m.lessons.map(lessonRow).join('') + '</ul>') +
-      '</section>';
-    });
-    html += '</div>';
+    html += '<div class="stack">' + main.map(moduleCard).join('') + '</div>';
+
+    if (pilots.length) {
+      const pilotMeta = MIA.data.curriculum.meta.pilotPrograms;
+      html += '<div class="stack" style="margin-top:32px">' +
+        '<section class="card" style="border-style:dashed"><p class="card__label">🧪 Trilhas piloto — fora do tema IA</p>' +
+        (pilotMeta ? '<p class="small">' + ui.escapeHtml(pilotMeta.intro) + '</p>' : '') +
+        '</section>' +
+        pilots.map(moduleCard).join('') +
+      '</div>';
+    }
+
     return html;
   }
 
@@ -260,7 +274,7 @@ window.MIA = window.MIA || {};
     let html = '<article class="lesson stack" data-lesson="' + id + '">';
 
     html += '<header>' +
-      '<p class="lesson__crumbs">Fase ' + mod.phase + ' · ' + ui.escapeHtml(mod.title) + ' · Aula ' + String(index + 1).padStart(2, '0') + '</p>' +
+      '<p class="lesson__crumbs">' + ui.phaseLabel(mod) + ' · ' + ui.escapeHtml(mod.title) + ' · Aula ' + String(index + 1).padStart(2, '0') + '</p>' +
       '<h1>' + ui.escapeHtml(lesson.title) + '</h1>' +
       '<div class="row">' + ui.levelBadge(lesson.level) + '<span class="badge">' + lesson.duration + ' min</span>' +
         ui.stateBadge(st.state) + (st.score ? ui.scoreBadge(st.score) : '') + '</div>' +

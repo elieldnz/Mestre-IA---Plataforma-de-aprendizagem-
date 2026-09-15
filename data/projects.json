@@ -273,6 +273,17 @@
       "technologies": ["Definidas por você, com justificativa"], "skills": ["superpowers", "grill-me", "webapp-testing", "trail-of-bits-security"],
       "tasks": ["Definir e validar o problema", "Escrever requisitos e critério de sucesso", "Desenhar a arquitetura", "Construir a fatia 1 de ponta a ponta", "Construir as demais fatias", "Rodar o ciclo teste → segurança → review", "Escrever a documentação", "Montar a página de portfólio"],
       "acceptance": "O sistema resolve o problema medido pelo critério que você declarou antes de começar."
+    },
+    {
+      "id": "project-piloto-blocos-de-tempo", "n": 24, "title": "Meu primeiro dia com blocos de tempo", "level": "iniciante", "xp": 200,
+      "module": "piloto-produtividade", "kind": "pilot",
+      "summary": "Projeto da trilha piloto (fora do tema IA): planejar e executar um dia real com a matriz de priorização e blocos de foco.",
+      "objective": "Aplicar, em um dia real, a matriz urgente/importante e pelo menos um bloco de foco de 90 minutos — e registrar o que funcionou.",
+      "requirements": ["Lista real de tarefas do dia seguinte", "Cada tarefa classificada na matriz urgente/importante", "Ao menos um bloco de foco de 90 minutos com objetivo de saída definido", "O que será desligado durante o bloco", "Registro honesto do que funcionou e do que não funcionou"],
+      "architecture": "Não se aplica — este é o projeto piloto de uma trilha não técnica. As seções de código e testes deste workspace podem ficar em branco.",
+      "technologies": ["Papel e caneta, ou o app de agenda que você já usa"], "skills": [],
+      "tasks": ["Listar as tarefas reais de amanhã", "Classificar cada uma na matriz urgente/importante", "Escolher 1 tarefa do quadrante 'importante, não urgente' para um bloco de foco", "Definir o objetivo de saída do bloco e o que desligar", "Executar o dia", "Registrar o que funcionou e o que não funcionou"],
+      "acceptance": "Você executa pelo menos um bloco de foco de 90 minutos com objetivo de saída definido antes de começar, e registra o resultado real — não o planejado."
     }
   ]
 }

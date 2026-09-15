@@ -139,6 +139,12 @@ window.MIA = window.MIA || {};
   };
   const STATE_ICON = { locked: '🔒', available: '○', in_progress: '◐', completed: '●', mastered: '★' };
 
+  /** "Fase N" para módulos normais; rótulo distinto para trilhas piloto,
+   *  que não fazem parte da numeração de fases da trilha MESTRE IA. */
+  function phaseLabel(mod) {
+    return mod.pilot ? '🧪 Piloto' : 'Fase ' + mod.phase;
+  }
+
   function levelBadge(level) {
     return '<span class="badge badge--' + (LEVEL_TONE[level] || 'blue') + '">' +
       escapeHtml(LEVEL_LABEL[level] || level) + '</span>';
@@ -201,6 +207,7 @@ window.MIA = window.MIA || {};
     el: el, qs: qs, qsa: qsa, toast: toast,
     levelBadge: levelBadge, stateBadge: stateBadge, scoreBadge: scoreBadge, sourceTag: sourceTag,
     bar: bar, plural: plural, formatDate: formatDate, todayISO: todayISO, daysBetween: daysBetween, uid: uid,
+    phaseLabel: phaseLabel,
     LEVEL_LABEL: LEVEL_LABEL, LEVEL_TONE: LEVEL_TONE, CONF_TONE: CONF_TONE,
     STATE_LABEL: STATE_LABEL, STATE_ICON: STATE_ICON
   };

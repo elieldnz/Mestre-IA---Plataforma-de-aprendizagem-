@@ -5,10 +5,12 @@
   "private": true,
   "scripts": {
     "build:data": "node tools/build-data.js",
-    "test": "node tests/data.mjs && node tests/smoke.mjs && node tests/quality.mjs",
+    "test": "node tests/data.mjs && node tests/smoke.mjs && node tests/quality.mjs && node tests/diagnostic.mjs && node tests/pilot.mjs",
     "test:data": "node tests/data.mjs",
     "test:smoke": "node tests/smoke.mjs",
     "test:quality": "node tests/quality.mjs",
+    "test:diagnostic": "node tests/diagnostic.mjs",
+    "test:pilot": "node tests/pilot.mjs",
     "start": "npx --yes http-server -p 8000 ."
   },
   "keywords": ["educação", "ia", "prompt-engineering", "skills", "agentes", "localStorage"],

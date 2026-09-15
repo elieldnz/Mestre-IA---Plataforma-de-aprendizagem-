@@ -42,24 +42,40 @@ trilha personalizada. Para recomeçar do zero: **Perfil → Apagar tudo**.
 
 ## O que está implementado
 
-**Primeiro acesso e diagnóstico**
-- 12 perguntas, cálculo de nível (iniciante / intermediário / avançado), forças, lacunas,
-  ritmo de estudo sugerido e trilha personalizada por objetivo.
+**Primeiro acesso e diagnóstico adaptativo**
+- Até 12 perguntas — **algumas são puladas de verdade** conforme as respostas anteriores
+  (regra fixa e declarada na tela, não uma IA decidindo: quem nunca usou IA não vê perguntas
+  sobre ferramentas e agentes; quem não programa não vê Python nem APIs). Um total iniciante
+  responde só 8. O resultado lista quais perguntas foram puladas e por quê.
+- Cálculo de nível (iniciante / intermediário / avançado), forças, lacunas, ritmo de estudo
+  sugerido e trilha personalizada por objetivo.
 
 **Dashboard**
 - saudação, próxima missão, 4 indicadores (progresso, XP, streak, nível),
   missão do dia (15 / 45 / 90 minutos) e prévia do mapa da jornada.
 
 **Trilha e aulas**
-- 20 fases, 98 aulas, 127 exercícios.
+- 20 fases sobre IA, 98 aulas, 127 exercícios — mais uma **trilha piloto fora do tema IA**
+  (ver abaixo).
 - Página de aula: objetivo → conceito → exemplo → “tente você” → feedback → próxima etapa.
 - Tipos de exercício: quiz, resposta aberta, prática, código, desafio.
 - Checkpoint por módulo, com resultado e liberação do próximo.
 
-**Progressão por domínio (não por clique)**
+**Progressão por competência, não por clique**
 - Uma aula só é **dominada** com evidência: todos os exercícios respondidos e média ≥ 80.
 - Um módulo libera o seguinte quando 70% das suas aulas estão dominadas.
 - A página de cada módulo bloqueado diz exatamente o que falta.
+- A página **Progresso** tem uma seção **"O que você já sabe fazer"**: lista o objetivo de
+  cada aula dominada (não das assistidas) — competência comprovada, não conteúdo consumido.
+
+**Trilha piloto (fora do tema IA)**
+- Um módulo completo — *Produtividade pessoal* (3 aulas + projeto) — construído com o mesmo
+  motor da trilha de IA, para provar que diagnóstico, progressão por domínio, exercícios e
+  projeto funcionam para qualquer assunto. Aparece separado, sempre disponível, não conta
+  para o nível de IA e nunca é sugerido como "missão do dia".
+- É conteúdo autoral desta plataforma — **sem curadoria de vídeo do YouTube e sem geração
+  automática por IA**. Isso exige um passo que ainda não existe aqui (backend + modelo de
+  linguagem real + integração com a API oficial do YouTube) — ver Roadmap.
 
 **Skill Explorer**
 - As 50 Skills do material, em 6 categorias, com filtros por categoria, confiança, nível
@@ -167,15 +183,19 @@ assets/                  (vazio: os ícones são emoji e SVG inline)
 ## Testes
 
 ```bash
-node tests/data.mjs       # ids, referências cruzadas e campos obrigatórios (sem navegador)
-node tests/smoke.mjs      # fluxo completo no navegador (38 verificações)
-node tests/quality.mjs    # progressão, links, botões, acessibilidade, contraste, file:// (24)
+node tests/data.mjs        # ids, referências cruzadas e campos obrigatórios (sem navegador)
+node tests/smoke.mjs       # fluxo completo no navegador (38 verificações)
+node tests/quality.mjs     # progressão, links, botões, acessibilidade, contraste, file:// (24)
+node tests/diagnostic.mjs  # diagnóstico ramificado: pula, não pula, volta e reage a mudança (12)
+node tests/pilot.mjs       # trilha piloto isolada do nível de IA e da missão do dia (14)
 ```
+
+Ou tudo de uma vez: `npm test`.
 
 Os testes de navegador usam Playwright — instalado no projeto (`npm install --no-save playwright`)
 ou globalmente; eles sobem um servidor estático próprio em porta livre.
 
-Cobertura atual: **100% das 62 verificações passando, sem erros de console.**
+Cobertura atual: **100% das 100 verificações passando, sem erros de console.**
 
 | Verificação | Estado |
 | --- | --- |
@@ -200,10 +220,32 @@ Cobertura atual: **100% das 62 verificações passando, sem erros de console.**
 
 ## Roadmap
 
-- **V2** — banco de dados, login, sincronização, IA real como tutor.
+- **V2** — banco de dados, login, sincronização, IA real como tutor e corretor.
 - **V3** — execução de código, playground, integração com APIs.
 - **V4** — agentes reais, Skills reais, n8n, MCP.
 - **V5** — marketplace pessoal de Skills, portfólio público, certificação, métricas avançadas.
+
+### Visão de produto: GPS de aprendizagem para qualquer tema
+
+Um complemento de especificação propõe uma versão mais ambiciosa do produto: o aluno digita
+**qualquer** tema (não só IA), a plataforma monta uma trilha automaticamente, cura vídeos
+gratuitos do YouTube como recurso (sem baixar ou hospedar cópia, com o player oficial e
+crédito claro ao criador), e agentes de IA especializados (pesquisador, avaliador,
+pedagógico, de atualização, tutor, de progresso) mantêm isso vivo. O modelo de negócio
+proposto é assinatura de baixo custo pela curadoria/organização — não pelos vídeos em si —,
+com um experimento futuro de "pague o que valeu".
+
+Essa visão **não está implementada** neste MVP estático, por uma razão de arquitetura, não de
+prioridade: ela depende de peças que um site sem backend não tem — chamada a uma LLM de
+verdade (client-side exporia a chave de API, o exato erro que a Fase 8 desta trilha ensina a
+evitar), a API oficial do YouTube (com quota e servidor para não vazar credencial) e um
+processo real de curadoria/atualização de conteúdo. Simular isso com dados estáticos seria
+fingir uma capacidade que a plataforma não tem — o mesmo cuidado que guia a correção
+heurística (declarada como tal) e o catálogo de Skills (fiel ao PDF fornecido, sem inventar
+repositório). O que existe hoje, dentro do que dá para fazer sem backend, é genuíno:
+diagnóstico ramificado, progressão por competência e a trilha piloto fora do tema IA
+descritos acima. O restante — tema livre por texto, curadoria de vídeo, agentes reais,
+modelo de pagamento — é o conteúdo natural da V2 a V5 acima.
 
 O ponto de troca para a **V2** é pequeno de propósito: `MIA.lessons.grade()` (correção) e
 `MIA.tutor.respond()` (tutor) são as duas funções que uma LLM substituiria, e

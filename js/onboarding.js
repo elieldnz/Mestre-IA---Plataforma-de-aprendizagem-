@@ -9,6 +9,7 @@ window.MIA = window.MIA || {};
 
   let step = 0;           // 0 = boas-vindas; 1..n = perguntas; n+1 = resultado
   let answers = {};
+  let skipped = [];       // ids de perguntas puladas por adaptação (respondidas com o valor padrão)
   let name = '';
   let result = null;
   let root = null;
@@ -45,6 +46,55 @@ window.MIA = window.MIA || {};
       return Math.min(question.options.reduce(function (a, o) { return a + (o.score || 0); }, 0), 4);
     }
     return 0;
+  }
+
+  /* ---------------- diagnóstico adaptativo ----------------
+     Este bloco implementa o "diagnóstico ramificado" pedido pelo complemento:
+     8 a 12 perguntas, e as perguntas seguintes mudam de acordo com as
+     anteriores. É uma regra fixa e local (se-então declarado abaixo),
+     não uma IA decidindo em tempo real — deixamos isso explícito para o
+     aluno no resultado. */
+
+  /** Uma pergunta é pulada quando a pergunta da qual ela depende (já
+   *  respondida, mais cedo na sequência) tem nota igual ou abaixo do limite. */
+  function shouldSkip(q) {
+    if (!q.skipIf) return false;
+    const dep = questions().find(function (x) { return x.id === q.skipIf.field; });
+    if (!dep || !(dep.id in answers)) return false;
+    return scoreOf(dep, answers[dep.id]) <= q.skipIf.maxScore;
+  }
+
+  function applyDefault(q) {
+    answers[q.id] = q.skipDefault;
+    if (skipped.indexOf(q.id) === -1) skipped.push(q.id);
+  }
+
+  /** Primeira posição visível estritamente depois de fromIdx (pode ser -1
+   *  para "antes da primeira"), preenchendo com o valor padrão cada
+   *  pergunta pulada no caminho. Retorna qs.length quando não sobra pergunta. */
+  function forwardTo(fromIdx) {
+    const qs = questions();
+    let i = fromIdx + 1;
+    while (i < qs.length && shouldSkip(qs[i])) { applyDefault(qs[i]); i++; }
+    return i;
+  }
+
+  /** Primeira posição visível estritamente antes de fromIdx. Retorna -1
+   *  quando a posição anterior é a tela de boas-vindas. */
+  function backwardTo(fromIdx) {
+    const qs = questions();
+    let i = fromIdx - 1;
+    while (i >= 0 && shouldSkip(qs[i])) i--;
+    return i;
+  }
+
+  /** Quantas perguntas visíveis existem de 0 até idx (inclusive) — usado
+   *  só para mostrar "pergunta X de até Y" com um número honesto. */
+  function visibleCountUpTo(idx) {
+    const qs = questions();
+    let n = 0;
+    for (let i = 0; i <= idx; i++) if (!shouldSkip(qs[i])) n++;
+    return n;
   }
 
   function evaluate() {
@@ -90,6 +140,7 @@ window.MIA = window.MIA || {};
       level: level, dimensions: ranked,
       strengths: strengths, gaps: gaps,
       mode: mode, trackId: trackId, track: track,
+      skipped: skipped.slice(),
       date: new Date().toISOString()
     };
   }
@@ -107,7 +158,8 @@ window.MIA = window.MIA || {};
       '<input type="text" id="ob-name" autocomplete="given-name" placeholder="Seu nome" value="' + ui.escapeHtml(name) + '"></div>' +
       '<div class="row" style="margin-top:24px">' +
       '<button class="btn btn--primary" data-action="start">' + ui.escapeHtml(intro.cta) + ' →</button></div>' +
-      '<p class="small muted" style="margin-top:24px">São 12 perguntas rápidas. Tudo fica salvo apenas neste navegador.</p>' +
+      '<p class="small muted" style="margin-top:24px">São até ' + questions().length + ' perguntas rápidas — algumas são ' +
+      'puladas automaticamente conforme suas respostas. Tudo fica salvo apenas neste navegador.</p>' +
     '</div>';
   }
 
@@ -135,17 +187,26 @@ window.MIA = window.MIA || {};
       }).join('') + '</div>';
     }
 
+    const shown = visibleCountUpTo(index);
     return '<div class="onboarding__card card">' +
-      '<p class="onboarding__steps">Pergunta ' + (index + 1) + ' de ' + qs.length + '</p>' +
-      ui.bar(((index) / qs.length) * 100) +
+      '<p class="onboarding__steps">Pergunta ' + shown + ' de até ' + qs.length + '</p>' +
+      ui.bar((shown / qs.length) * 100) +
       '<h2 style="margin-top:24px">' + ui.escapeHtml(q.question) + '</h2>' +
       field +
       '<div class="row row--between" style="margin-top:24px">' +
         '<button class="btn btn--ghost" data-action="back">← Voltar</button>' +
-        '<button class="btn btn--primary" data-action="next">' + (index === qs.length - 1 ? 'Ver resultado' : 'Continuar') + ' →</button>' +
+        '<button class="btn btn--primary" data-action="next">' + (isLastVisible(index) ? 'Ver resultado' : 'Continuar') + ' →</button>' +
       '</div>' +
       (q.type === 'multi' ? '<p class="small muted" style="margin-top:12px">Pode marcar mais de uma.</p>' : '') +
     '</div>';
+  }
+
+  /** true quando não sobra nenhuma pergunta visível depois desta (sem
+   *  aplicar os valores padrão de verdade — só olha à frente). */
+  function isLastVisible(index) {
+    const qs = questions();
+    for (let i = index + 1; i < qs.length; i++) if (!shouldSkip(qs[i])) return false;
+    return true;
   }
 
   function resultScreen() {
@@ -184,6 +245,16 @@ window.MIA = window.MIA || {};
       }).join('') + '</ol>' +
       '<p class="small muted">Conteúdos avançados serão desbloqueados conforme você demonstrar domínio.</p>' +
 
+      (r.skipped && r.skipped.length
+        ? '<p class="small muted" style="margin-top:16px">↳ Pulamos ' + r.skipped.length +
+          ' ' + (r.skipped.length === 1 ? 'pergunta' : 'perguntas') + ' (' +
+          r.skipped.map(function (id) {
+            const q = questions().find(function (x) { return x.id === id; });
+            return ui.escapeHtml(q ? q.question.replace(/\?$/, '') : id);
+          }).join(', ') + ') porque suas respostas anteriores já indicavam o nível nelas — ' +
+          'é uma regra fixa, não uma IA decidindo sozinha.</p>'
+        : '') +
+
       '<div class="row" style="margin-top:24px">' +
         '<button class="btn btn--primary" data-action="enter">Entrar na plataforma →</button>' +
         '<button class="btn btn--ghost" data-action="restart">Refazer diagnóstico</button>' +
@@ -197,6 +268,10 @@ window.MIA = window.MIA || {};
     const qs = questions();
     const q = qs[step - 1];
     if (!q) return true;
+    // Se o aluno responde de verdade uma pergunta que tinha sido pulada
+    // (porque voltou e mudou a resposta da pergunta da qual ela dependia),
+    // ela deixa de contar como "pulada" no resultado final.
+    skipped = skipped.filter(function (id) { return id !== q.id; });
     if (q.type === 'text') {
       const field = document.getElementById('ob-input');
       answers[q.id] = field ? field.value.trim() : '';
@@ -233,19 +308,24 @@ window.MIA = window.MIA || {};
     if (action === 'start') {
       const field = document.getElementById('ob-name');
       name = field ? field.value.trim() : '';
-      step = 1; render(); return;
+      const first = forwardTo(-1);
+      step = first + 1; // forwardTo nunca chega a qs.length aqui: a 1ª pergunta não tem skipIf
+      render(); return;
     }
     if (action === 'next') {
       if (!readCurrent()) return;
-      if (step === qs.length) { result = evaluate(); step = qs.length + 1; }
-      else step++;
+      const next = forwardTo(step - 1);
+      if (next >= qs.length) { result = evaluate(); step = qs.length + 1; }
+      else step = next + 1;
       render(); return;
     }
     if (action === 'back') {
-      step = Math.max(0, step - 1); render(); return;
+      const prev = backwardTo(step - 1);
+      step = prev < 0 ? 0 : prev + 1;
+      render(); return;
     }
     if (action === 'restart') {
-      step = 0; answers = {}; result = null; render(); return;
+      step = 0; answers = {}; skipped = []; result = null; render(); return;
     }
     if (action === 'enter') {
       P().saveDiagnostic(result);
@@ -257,7 +337,7 @@ window.MIA = window.MIA || {};
     root = container;
     root.hidden = false;
     document.getElementById('app').hidden = true;
-    step = 0; answers = {}; result = null;
+    step = 0; answers = {}; skipped = []; result = null;
     const saved = P().state;
     name = saved.user.name || '';
     root.addEventListener('click', handle);

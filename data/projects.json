@@ -1,0 +1,278 @@
+{
+  "meta": {
+    "title": "Biblioteca de Projetos",
+    "sourceNote": "A lista de projetos do portfólio (iniciante, intermediário e avançado), os projetos de fase e o processo do projeto final vêm do material fornecido. Requisitos, arquitetura, tarefas e critérios de aceite de cada projeto são conhecimento complementar.",
+    "workspaceSections": [
+      { "id": "objetivo", "label": "Objetivo", "kind": "data" },
+      { "id": "requisitos", "label": "Requisitos", "kind": "data" },
+      { "id": "arquitetura", "label": "Arquitetura", "kind": "data" },
+      { "id": "tecnologias", "label": "Tecnologias", "kind": "data" },
+      { "id": "skills", "label": "Skills", "kind": "data" },
+      { "id": "tarefas", "label": "Tarefas", "kind": "tasks" },
+      { "id": "codigo", "label": "Código", "kind": "note", "hint": "Cole aqui o trecho principal, o caminho do repositório ou o link." },
+      { "id": "testes", "label": "Testes", "kind": "note", "hint": "O que você testou, com que dado e qual foi o resultado." },
+      { "id": "erros", "label": "Erros", "kind": "note", "hint": "O que quebrou e como você corrigiu. Registre também em Meus erros." },
+      { "id": "decisoes", "label": "Decisões", "kind": "note", "hint": "O que você escolheu, o que descartou e por quê." },
+      { "id": "documentacao", "label": "Documentação", "kind": "note", "hint": "README: o que é, como rodar, como usar, limitações conhecidas." },
+      { "id": "resultado", "label": "Resultado", "kind": "note", "hint": "O número que prova que funcionou (antes × depois)." },
+      { "id": "portfolio", "label": "Portfólio", "kind": "note", "hint": "Problema, solução, resultado, arquitetura, decisões, limitações e aprendizado." }
+    ]
+  },
+  "projects": [
+    {
+      "id": "project-assistente-pessoal", "n": 1, "title": "Assistente pessoal", "level": "iniciante", "xp": 500,
+      "module": "fundamentos", "kind": "portfolio",
+      "summary": "Seu primeiro assistente inteligente: papel, regras e limites bem definidos.",
+      "objective": "Construir um assistente configurado que resolva uma tarefa recorrente sua com qualidade constante.",
+      "requirements": ["Papel e escopo escritos", "3 regras fixas de comportamento", "Formato de saída definido", "Resposta padrão para pedido fora do escopo", "Testado em 5 casos reais"],
+      "architecture": "Prompt de sistema fixo + entrada variável do dia a dia. Sem ferramentas, sem memória.",
+      "technologies": ["LLM"], "skills": ["find-skills"],
+      "tasks": ["Escolher a tarefa recorrente", "Escrever papel e escopo", "Definir 3 regras e o formato", "Escrever a resposta de fora do escopo", "Testar em 5 casos reais", "Ajustar e registrar o que mudou"],
+      "acceptance": "Cinco execuções seguidas com o mesmo formato e sem invenção de dado."
+    },
+    {
+      "id": "project-professor-ia", "n": 2, "title": "Professor IA", "level": "iniciante", "xp": 500,
+      "module": "prompt-engineering", "kind": "portfolio",
+      "summary": "Um tutor que ensina um assunto que você domina — e testa quem está aprendendo.",
+      "objective": "Transformar conhecimento próprio em um tutor que explica, pergunta e corrige.",
+      "requirements": ["Objetivos de aprendizagem com verbo observável", "Explicação em 3 níveis de profundidade", "Pergunta de verificação após cada explicação", "Correção que aponta o erro específico", "Regra de não entregar a resposta antes da tentativa"],
+      "architecture": "Prompt de sistema com protocolo pedagógico + histórico da conversa como memória curta.",
+      "technologies": ["LLM"], "skills": ["grill-me"],
+      "tasks": ["Definir o assunto e o público", "Escrever os objetivos", "Criar o protocolo (explicar → perguntar → corrigir)", "Escrever as regras de correção", "Testar com alguém real", "Ajustar pelo que a pessoa não entendeu"],
+      "acceptance": "Uma pessoa que não conhece o assunto consegue explicar o conceito depois da sessão."
+    },
+    {
+      "id": "project-resumidor", "n": 3, "title": "Resumidor", "level": "iniciante", "xp": 500,
+      "module": "dez-prompts", "kind": "portfolio",
+      "summary": "Resumo que serve a uma decisão — com rastreabilidade e lista do que foi omitido.",
+      "objective": "Produzir resumos confiáveis de documentos longos do seu contexto.",
+      "requirements": ["Público e decisão declarados", "Tamanho fixo", "Lista do que nunca pode ser perdido", "Citação da origem de cada ponto", "Lista do que foi omitido"],
+      "architecture": "Template de prompt com variáveis {documento}, {publico}, {decisao}.",
+      "technologies": ["LLM"], "skills": ["pdf", "doc-coauthoring"],
+      "tasks": ["Escolher o tipo de documento", "Escrever o template com variáveis", "Definir o que não pode ser perdido", "Testar em 3 documentos reais", "Conferir as citações no original", "Corrigir o template"],
+      "acceptance": "Em 3 documentos, todas as citações conferem com o original."
+    },
+    {
+      "id": "project-planejador", "n": 4, "title": "Planejador", "level": "iniciante", "xp": 500,
+      "module": "dez-prompts", "kind": "portfolio",
+      "summary": "Planejamento com evidência de progresso e plano B para semana ruim.",
+      "objective": "Criar um planejador que produz planos executáveis, não listas de desejos.",
+      "requirements": ["Objetivo mensurável", "Tempo real disponível como restrição", "Evidência de conclusão por bloco", "Plano B para semana ruim", "Revisão semanal"],
+      "architecture": "Prompt em etapas: entrevista → plano → verificação → ajuste.",
+      "technologies": ["LLM"], "skills": ["grill-me"],
+      "tasks": ["Definir o objetivo e o prazo", "Escrever a etapa de entrevista", "Gerar o plano com evidências", "Definir o plano B", "Usar por duas semanas", "Ajustar com base no que falhou"],
+      "acceptance": "Duas semanas usando o plano, com registro do que foi cumprido."
+    },
+    {
+      "id": "project-biblioteca-prompts", "n": 5, "title": "Biblioteca de prompts", "level": "iniciante", "xp": 500,
+      "module": "prompt-engineering", "kind": "portfolio",
+      "summary": "Sua coleção pessoal de prompts reutilizáveis, versionada e testada.",
+      "objective": "Parar de reescrever o mesmo prompt: organizar, padronizar e reutilizar.",
+      "requirements": ["Mínimo de 8 prompts", "Todos com variáveis marcadas", "Cada um com 'quando usar'", "Um exemplo de entrada e saída por prompt", "Organização por dor, não por ferramenta"],
+      "architecture": "Arquivos de texto ou pasta versionada, um arquivo por prompt, com cabeçalho padrão.",
+      "technologies": ["Markdown"], "skills": ["skill-creator"],
+      "tasks": ["Listar as 8 tarefas mais repetidas", "Escrever cada prompt no padrão", "Marcar as variáveis", "Testar cada um duas vezes", "Organizar por dor", "Definir a rotina de revisão mensal"],
+      "acceptance": "Oito prompts testados, com variáveis e critério de uso."
+    },
+    {
+      "id": "project-minha-skill", "n": 20, "title": "Minha primeira Skill", "level": "iniciante", "xp": 500,
+      "module": "skills", "kind": "fase",
+      "summary": "Projeto da Fase 4: transformar um procedimento repetido em uma Skill.",
+      "objective": "Criar uma Skill personalizada com SKILL.md completo e testado.",
+      "requirements": ["SKILL.md com as 5 seções", "Seção 'quando usar' com gatilhos concretos", "Pelo menos 2 exemplos", "Restrições explícitas", "Testada em 3 casos reais"],
+      "architecture": "Pasta com SKILL.md e exemplos.",
+      "technologies": ["Markdown"], "skills": ["skill-creator", "find-skills"],
+      "tasks": ["Escolher a dor", "Escrever o SKILL.md", "Definir os gatilhos de ativação", "Escrever exemplos de entrada e saída", "Testar em 3 casos", "Corrigir o que ficou ambíguo"],
+      "acceptance": "A Skill é ativada no momento certo em 3 casos reais, sem você lembrar de pedir."
+    },
+    {
+      "id": "project-agente-pesquisador", "n": 6, "title": "Agente pesquisador", "level": "intermediario", "xp": 500,
+      "module": "gpts-agentes", "kind": "portfolio",
+      "summary": "Pesquisa com fontes verificáveis — sem afirmação sem citação.",
+      "objective": "Construir um agente que reúne e resume informação com rastreabilidade total.",
+      "requirements": ["Entrada: pergunta + recorte de data", "Saída: achados com fonte, link e trecho literal", "Recusa de afirmação sem fonte", "Marcação de informação conflitante", "Ferramentas apenas de leitura"],
+      "architecture": "Agente com ferramenta de busca e leitura; saída estruturada em JSON com citações.",
+      "technologies": ["LLM", "API de busca"], "skills": ["last30days", "firecrawl"],
+      "tasks": ["Definir o escopo da pesquisa", "Especificar a saída em JSON", "Configurar as ferramentas de leitura", "Escrever a regra de citação obrigatória", "Testar em 5 perguntas", "Conferir todos os links"],
+      "acceptance": "Em 5 perguntas, 100% dos trechos citados existem nas fontes indicadas."
+    },
+    {
+      "id": "project-agente-conteudo", "n": 7, "title": "Agente de conteúdo", "level": "intermediario", "xp": 500,
+      "module": "programar-com-ia", "kind": "portfolio",
+      "summary": "Produção de conteúdo com voz própria e revisão humana obrigatória.",
+      "objective": "Criar um agente que produz rascunhos consistentes com a sua voz.",
+      "requirements": ["Guia de tom de voz em 5 regras", "Público definido", "Estrutura fixa por formato", "Etapa de autocrítica antes da entrega", "Revisão humana obrigatória antes de publicar"],
+      "architecture": "Prompt de sistema com guia de marca + etapas: rascunho → autocrítica → versão final.",
+      "technologies": ["LLM"], "skills": ["corey-haines-marketing-skills", "brand-guidelines", "printing-press"],
+      "tasks": ["Escrever o guia de tom em 5 regras", "Definir os formatos", "Criar a etapa de autocrítica", "Produzir 5 peças", "Comparar com o que você escreveria", "Ajustar o guia"],
+      "acceptance": "Cinco peças em que você mudaria menos de 20% do texto."
+    },
+    {
+      "id": "project-analisador-curriculo", "n": 8, "title": "Analisador de currículo", "level": "intermediario", "xp": 500,
+      "module": "python", "kind": "portfolio",
+      "summary": "Análise estruturada de currículos com critérios explícitos e atenção a viés.",
+      "objective": "Extrair e avaliar informação de currículos de forma consistente.",
+      "requirements": ["Critérios de avaliação declarados antes", "Extração estruturada em JSON", "Justificativa por critério", "Marcação de dado ausente", "Decisão final sempre humana"],
+      "architecture": "Leitura do arquivo → extração estruturada → avaliação por critério → relatório.",
+      "technologies": ["Python", "LLM"], "skills": ["pdf", "data-analysis"],
+      "tasks": ["Definir os critérios", "Escrever o extrator", "Especificar o JSON de saída", "Testar com 10 currículos variados", "Verificar consistência entre execuções", "Documentar as limitações"],
+      "acceptance": "Dez currículos processados com o mesmo formato e nenhuma informação inventada.",
+      "warning": "Avaliação de pessoas exige cuidado com viés e com dados pessoais. O sistema apoia a decisão; ele não decide. Documente os critérios e mantenha revisão humana."
+    },
+    {
+      "id": "project-agente-atendimento", "n": 9, "title": "Agente de atendimento", "level": "intermediario", "xp": 500,
+      "module": "automacao", "kind": "portfolio",
+      "summary": "Atendimento automatizado com escalonamento fácil para humano.",
+      "objective": "Responder o repetitivo e encaminhar o que exige gente.",
+      "requirements": ["Lista do que responde sozinho", "Lista do que vai direto para humano", "Saída para humano sempre disponível", "Registro de toda conversa", "Mensagem clara de que é um sistema automático"],
+      "architecture": "Trigger de mensagem → classificação → resposta automática ou fila humana → log.",
+      "technologies": ["n8n", "LLM"], "skills": ["internal-comms"],
+      "tasks": ["Levantar as 20 perguntas mais frequentes", "Definir as três listas", "Montar o fluxo", "Criar o caminho de escalonamento", "Testar com casos reais antigos", "Medir a taxa de escalonamento"],
+      "acceptance": "Vinte casos reais antigos processados sem nenhuma resposta errada não escalonada."
+    },
+    {
+      "id": "project-agente-vendedor", "n": 10, "title": "Agente vendedor", "level": "intermediario", "xp": 500,
+      "module": "automacao", "kind": "portfolio",
+      "summary": "Qualificação e apoio comercial — sem prometer o que não pode.",
+      "objective": "Apoiar o processo comercial com informação correta e limites claros.",
+      "requirements": ["Critérios de qualificação explícitos", "Proibição de inventar preço, prazo ou condição", "Resumo do lead para o vendedor humano", "Transferência para humano na negociação", "Registro de tudo"],
+      "architecture": "Conversa → qualificação → resumo estruturado → handoff humano.",
+      "technologies": ["n8n", "LLM"], "skills": ["corey-haines-marketing-skills"],
+      "tasks": ["Definir os critérios de qualificação", "Listar o que nunca pode ser prometido", "Montar o resumo estruturado do lead", "Definir o ponto de transferência", "Testar com 10 conversas", "Revisar com quem vende"],
+      "acceptance": "Dez conversas simuladas sem nenhuma promessa não autorizada."
+    },
+    {
+      "id": "project-newsletter-automatizada", "n": 11, "title": "Newsletter automatizada", "level": "intermediario", "xp": 500,
+      "module": "automacao", "kind": "portfolio",
+      "summary": "Curadoria e envio recorrente com revisão humana antes do disparo.",
+      "objective": "Automatizar a coleta, a curadoria e a montagem — mantendo o dedo humano no envio.",
+      "requirements": ["Fontes definidas", "Critério de curadoria explícito", "Formato fixo", "Revisão humana antes do envio", "Tratamento de falha com aviso"],
+      "architecture": "Trigger semanal → coleta → filtro → redação → rascunho para revisão → envio manual.",
+      "technologies": ["n8n", "LLM"], "skills": ["firecrawl", "printing-press", "internal-comms"],
+      "tasks": ["Definir fontes e critério", "Montar a coleta", "Criar o filtro de relevância", "Montar o template do e-mail", "Criar a etapa de revisão", "Rodar 3 semanas seguidas"],
+      "acceptance": "Três edições produzidas com menos de 15 minutos de trabalho manual cada."
+    },
+    {
+      "id": "project-automacao-whatsapp", "n": 12, "title": "Automação WhatsApp", "level": "intermediario", "xp": 500,
+      "module": "automacao", "kind": "portfolio",
+      "summary": "Mensageria automatizada dentro das regras da plataforma e da legislação.",
+      "objective": "Automatizar comunicação em canal de mensagem com responsabilidade.",
+      "requirements": ["Consentimento registrado", "Identificação de que é sistema automático", "Saída para humano", "Limite de frequência", "Registro de opt-out funcionando"],
+      "architecture": "Webhook de mensagem → classificação → resposta ou fila humana → log e opt-out.",
+      "technologies": ["n8n", "API de mensageria", "LLM"], "skills": ["internal-comms"],
+      "tasks": ["Verificar as regras oficiais do canal", "Modelar consentimento e opt-out", "Montar o fluxo", "Definir limite de frequência", "Testar com número próprio", "Documentar a política"],
+      "acceptance": "Fluxo funcionando com opt-out testado e política escrita.",
+      "warning": "Envio de mensagens envolve regras da plataforma e legislação de dados e consentimento. Consulte as regras oficiais vigentes antes de operar — elas mudam e não devem ser presumidas."
+    },
+    {
+      "id": "project-primeira-integracao", "n": 21, "title": "Primeira integração com API de IA", "level": "intermediario", "xp": 500,
+      "module": "apis", "kind": "fase",
+      "summary": "Projeto da Fase 8: sair do chat e chamar a API pela primeira vez.",
+      "objective": "Fazer uma integração completa, com tratamento de erro e controle de custo.",
+      "requirements": ["Chave em variável de ambiente", "Timeout definido", "Tratamento de 401, 429 e 500", "Limite de gasto", "Critério de pronto declarado"],
+      "architecture": "Script → request autenticado → validação da resposta → saída estruturada.",
+      "technologies": ["Python", "API"], "skills": ["claude-api"],
+      "tasks": ["Escrever o plano dos 6 itens", "Configurar a chave fora do código", "Implementar a chamada", "Implementar os erros", "Definir o teto de gasto", "Rodar em 20 casos reais"],
+      "acceptance": "Vinte execuções reais sem falha não tratada e sem chave exposta."
+    },
+    {
+      "id": "project-assistente-proativo", "n": 22, "title": "Assistente pessoal proativo", "level": "intermediario", "xp": 500,
+      "module": "openclaw", "kind": "fase",
+      "summary": "Projeto da Fase 7: um assistente que age antes de você pedir — com freio.",
+      "objective": "Construir um assistente com rotinas recorrentes e política de confirmação.",
+      "requirements": ["As 3 listas (faz sozinho, faz e avisa, só com confirmação)", "3 rotinas recorrentes úteis", "Memória legível e editável", "Critério de 'vale interromper'", "Teste de cada item da lista de confirmação"],
+      "architecture": "Conexões de leitura → rotinas agendadas → notificações filtradas → ações com confirmação.",
+      "technologies": ["Automação", "LLM"], "skills": ["git-guardrails", "internal-comms"],
+      "tasks": ["Escolher as conexões e o que cada uma expõe", "Escrever as 3 listas", "Definir as rotinas e horários", "Modelar a memória", "Testar os freios", "Usar por uma semana e cortar o ruído"],
+      "acceptance": "Uma semana de uso em que você não desligou nenhuma notificação por irrelevância."
+    },
+    {
+      "id": "project-chat-documentos", "n": 13, "title": "Chat com meus documentos", "level": "avancado", "xp": 500,
+      "module": "rag", "kind": "portfolio",
+      "summary": "RAG completo com citação obrigatória e conjunto de avaliação.",
+      "objective": "Responder perguntas sobre os seus documentos sem inventar.",
+      "requirements": ["Pipeline completo de RAG", "Metadados de origem em cada chunk", "Citação obrigatória na resposta", "Resposta 'não encontrei' quando não houver base", "Conjunto de 20 perguntas de avaliação"],
+      "architecture": "Documentos → chunking com metadados → embeddings → banco vetorial → busca híbrida → prompt com citação → resposta.",
+      "technologies": ["Python", "Banco vetorial", "LLM"], "skills": ["pdf", "firecrawl", "data-analysis"],
+      "tasks": ["Preparar e limpar os documentos", "Definir a estratégia de chunking", "Gerar e indexar embeddings", "Implementar a busca", "Escrever o prompt com citação", "Montar e rodar a avaliação"],
+      "acceptance": "Nas 20 perguntas, zero invenção nas que não têm resposta nos documentos."
+    },
+    {
+      "id": "project-agente-ferramentas", "n": 14, "title": "Agente com ferramentas", "level": "avancado", "xp": 500,
+      "module": "mcp", "kind": "portfolio",
+      "summary": "Agente conectado a ferramentas externas com menor privilégio e log.",
+      "objective": "Dar poder de ação a um agente sem abrir a porta para o desastre.",
+      "requirements": ["Mínimo de 3 ferramentas especificadas", "Classificação de risco por ferramenta", "Confirmação obrigatória para irreversível", "Log de toda chamada", "Conteúdo externo tratado como dado"],
+      "architecture": "Servidor de ferramentas (MCP) → cliente agente → política de permissão → log.",
+      "technologies": ["Python", "MCP", "LLM"], "skills": ["mcp-builder", "trail-of-bits-security"],
+      "tasks": ["Especificar as ferramentas", "Implementar uma por vez, testada isolada", "Definir a política de permissão", "Implementar o log", "Testar injeção via conteúdo externo", "Documentar os riscos residuais"],
+      "acceptance": "Teste de injeção não consegue disparar nenhuma ação irreversível."
+    },
+    {
+      "id": "project-app-web-ia", "n": 15, "title": "Aplicação web com IA", "level": "avancado", "xp": 500,
+      "module": "streamlit", "kind": "portfolio",
+      "summary": "Interface pública para o seu agente, com limites de custo e privacidade declarada.",
+      "objective": "Transformar o agente em algo que outra pessoa consegue usar.",
+      "requirements": ["Os 5 elementos da interface mínima", "Nenhum segredo no cliente", "Limite de uso por sessão", "Validação de entrada", "Aviso sobre o tratamento dos dados"],
+      "architecture": "Interface → backend com a chave → agente → resposta; limites e validação no backend.",
+      "technologies": ["Streamlit ou HTML/JS", "Python", "LLM"], "skills": ["web-artifacts-builder", "frontend-design", "webapp-testing"],
+      "tasks": ["Desenhar a tela", "Implementar a interface", "Colocar os limites", "Validar entrada", "Escrever o aviso de privacidade", "Testar com 3 pessoas de fora"],
+      "acceptance": "Três pessoas usam sem instrução verbal e sem quebrar nada."
+    },
+    {
+      "id": "project-agente-multimodal", "n": 16, "title": "Agente multimodal", "level": "avancado", "xp": 500,
+      "module": "multimodal", "kind": "portfolio",
+      "summary": "Um agente que aceita texto, imagem e áudio — e sabe dizer quando não conseguiu ler.",
+      "objective": "Rotear diferentes tipos de entrada com tratamento de erro próprio.",
+      "requirements": ["3 rotas de entrada", "Tratamento de erro por rota", "Marcação de conteúdo ilegível ou incerto", "Saída unificada", "Testes com entrada ruim"],
+      "architecture": "Detecção do tipo → rota específica → normalização → saída unificada.",
+      "technologies": ["Python", "LLM multimodal"], "skills": ["pdf", "canvas-design"],
+      "tasks": ["Definir as rotas", "Implementar a detecção", "Implementar cada rota", "Unificar a saída", "Testar com entrada ruim", "Documentar os limites de cada rota"],
+      "acceptance": "Entradas ruins produzem ILEGÍVEL ou INCERTO, nunca conteúdo inventado."
+    },
+    {
+      "id": "project-sistema-multiagente", "n": 17, "title": "Sistema multiagente", "level": "avancado", "xp": 500,
+      "module": "multiagentes", "kind": "portfolio",
+      "summary": "Supervisor e especialistas, com contratos, limites e avaliação contra agente único.",
+      "objective": "Coordenar agentes com ganho comprovado sobre a alternativa simples.",
+      "requirements": ["Supervisor + 3 especialistas", "Contrato JSON entre agentes", "Limite de rodadas e de custo", "Validação da entrega contra o pedido original", "Comparação com baseline de agente único"],
+      "architecture": "Supervisor delega → especialistas retornam JSON → supervisor valida → entrega.",
+      "technologies": ["Python", "Framework de agentes", "LLM"], "skills": ["superpowers", "improve-codebase-architecture"],
+      "tasks": ["Definir papéis e contratos", "Implementar o supervisor", "Implementar os especialistas", "Impor limites", "Montar o baseline de agente único", "Comparar e decidir"],
+      "acceptance": "O sistema vence o agente único em pelo menos dois critérios objetivos."
+    },
+    {
+      "id": "project-analise-dados", "n": 18, "title": "Agente de análise de dados", "level": "avancado", "xp": 500,
+      "module": "modelos-locais", "kind": "portfolio",
+      "summary": "Da pergunta de negócio à recomendação, com cálculo determinístico.",
+      "objective": "Analisar dados com IA sem deixar a IA fazer as contas.",
+      "requirements": ["Pergunta de negócio declarada antes", "Cálculo feito em código, não pelo modelo", "Verificação de qualidade dos dados", "Recomendação com premissas explícitas", "Gráfico ou tabela reproduzível"],
+      "architecture": "Dados → limpeza e cálculo em código → interpretação pelo modelo → relatório.",
+      "technologies": ["Python", "LLM"], "skills": ["data-analysis", "xlsx"],
+      "tasks": ["Escrever a pergunta de negócio", "Avaliar a qualidade dos dados", "Implementar os cálculos em código", "Pedir a interpretação ao modelo", "Validar os números manualmente", "Escrever a recomendação"],
+      "acceptance": "Todos os números do relatório conferem com o cálculo em código."
+    },
+    {
+      "id": "project-automacao-completa", "n": 19, "title": "Sistema de automação completo", "level": "avancado", "xp": 500,
+      "module": "qualidade-seguranca", "kind": "portfolio",
+      "summary": "Um processo inteiro automatizado, com monitoramento e caminho de erro.",
+      "objective": "Automatizar um processo de ponta a ponta que roda sem você.",
+      "requirements": ["Processo mapeado do início ao fim", "Fluxos separados por responsabilidade", "Caminho de erro que avisa alguém", "Monitoramento dos 3 eventos críticos", "Documentação de operação"],
+      "architecture": "Vários fluxos com contratos claros entre si, orquestrados por gatilho, com log central.",
+      "technologies": ["n8n", "Python", "LLM"], "skills": ["axiom", "webapp-testing", "internal-comms"],
+      "tasks": ["Mapear o processo atual", "Separar em fluxos", "Implementar um fluxo por vez", "Implementar erro e monitoramento", "Rodar em paralelo com o manual por 2 semanas", "Desligar o manual"],
+      "acceptance": "Duas semanas rodando em paralelo com o processo manual sem divergência."
+    },
+    {
+      "id": "project-final", "n": 23, "title": "Projeto Final", "level": "avancado", "xp": 2000,
+      "module": "projeto-final", "kind": "final",
+      "summary": "Um problema real seu, resolvido do zero ao portfólio.",
+      "objective": "Provar, com um sistema funcionando, que você sabe escolher o problema, a arquitetura e as ferramentas.",
+      "requirements": ["Problema real e delimitado", "Requisitos separados em essencial e desejável", "Arquitetura desenhada, incluindo caminho de falha", "Entrega em fatias funcionais", "Ciclo de qualidade completo", "Página de portfólio com resultado numérico e limitações"],
+      "architecture": "Definida por você. O processo é: problema → pesquisa → requisitos → solução → arquitetura → tecnologias → protótipo → desenvolvimento → testes → segurança → deploy → documentação → portfólio.",
+      "technologies": ["Definidas por você, com justificativa"], "skills": ["superpowers", "grill-me", "webapp-testing", "trail-of-bits-security"],
+      "tasks": ["Definir e validar o problema", "Escrever requisitos e critério de sucesso", "Desenhar a arquitetura", "Construir a fatia 1 de ponta a ponta", "Construir as demais fatias", "Rodar o ciclo teste → segurança → review", "Escrever a documentação", "Montar a página de portfólio"],
+      "acceptance": "O sistema resolve o problema medido pelo critério que você declarou antes de começar."
+    }
+  ]
+}

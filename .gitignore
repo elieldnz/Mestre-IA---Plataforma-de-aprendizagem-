@@ -1,0 +1,6 @@
+# dependências opcionais dos testes
+node_modules/
+
+# artefatos locais
+.DS_Store
+*.log

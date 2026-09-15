@@ -1,0 +1,16 @@
+{
+  "name": "mestre-ia",
+  "version": "1.0.0",
+  "description": "MESTRE IA — plataforma de aprendizagem em HTML, CSS e JavaScript puro, do uso básico de IA à construção de sistemas de IA.",
+  "private": true,
+  "scripts": {
+    "build:data": "node tools/build-data.js",
+    "test": "node tests/data.mjs && node tests/smoke.mjs && node tests/quality.mjs",
+    "test:data": "node tests/data.mjs",
+    "test:smoke": "node tests/smoke.mjs",
+    "test:quality": "node tests/quality.mjs",
+    "start": "npx --yes http-server -p 8000 ."
+  },
+  "keywords": ["educação", "ia", "prompt-engineering", "skills", "agentes", "localStorage"],
+  "license": "UNLICENSED"
+}

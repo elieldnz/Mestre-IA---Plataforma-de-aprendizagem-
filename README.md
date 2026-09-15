@@ -109,17 +109,24 @@ LLM real (ver Roadmap).
 
 ## Origem do conteúdo
 
-A plataforma marca cada bloco de conteúdo:
+Duas fontes externas, nenhuma delas produzida por esta plataforma:
 
-- **“Baseado no material fornecido.”** — estrutura de fases, projetos do portfólio, os 10
-  estudos de caso de prompts, nomes/categorias/níveis de confiança das 50 Skills, checklist
-  de segurança, tabela de XP e escala de avaliação.
-- **“Conhecimento complementar.”** — explicações, exemplos, exercícios, rubricas e critérios
-  de aceite escritos para esta plataforma.
+- **A especificação UX/UI** (colada na conversa) — estrutura de 20 fases, projetos do
+  portfólio, os 10 estudos de caso de prompts, checklist de segurança, tabela de XP,
+  escala de avaliação e a paleta.
+- **O guia “50 Claude Skills” (Asimov Academy, Rodrigo Tadewald, atualizado ago/2026)**,
+  fornecido em PDF — nome, categoria, descrição oficial, nível de confiança (ALTO/MÉDIO/BAIXO)
+  e **link do repositório** de cada uma das 50 Skills. A página de cada Skill mostra esse link
+  em uma seção própria (“Repositório oficial, citado no guia”) e nunca sugere um comando de
+  instalação — o próprio guia manda abrir o repositório e conferir manutenção, compatibilidade
+  e permissões antes.
 
-Onde o material fornecido só dá o nome e a confiança de uma Skill, a página mostra o objetivo
-**da categoria** (do material) e deixa claro que a descrição de uso é complementar. Nenhum
-comando de instalação, URL de repositório ou recurso de biblioteca foi inventado.
+A plataforma marca cada bloco de conteúdo como **“Baseado no material fornecido”** (vem de uma
+dessas duas fontes) ou **“Conhecimento complementar”** (explicações, exemplos, exercícios,
+rubricas e critérios de aceite escritos para esta plataforma). Nenhum comando de instalação,
+URL de repositório ou recurso de biblioteca foi inventado — os 50 links são os do PDF, citados
+literalmente, inclusive quando o próprio guia repete por engano o mesmo link em duas Skills
+(o app avisa nesse caso pontual).
 
 ---
 

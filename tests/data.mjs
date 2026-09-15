@@ -17,8 +17,9 @@ const skillIds = new Set();
 skills.skills.forEach(s => {
   if (skillIds.has(s.id)) fail('Skill duplicada: ' + s.id);
   skillIds.add(s.id);
-  ['name', 'category', 'confidence', 'level', 'what', 'when', 'example', 'exercise', 'project']
+  ['name', 'category', 'confidence', 'level', 'what', 'when', 'example', 'exercise', 'project', 'repo']
     .forEach(k => { if (!s[k]) fail('Skill ' + s.id + ' sem campo ' + k); });
+  if (!/^https?:\/\//.test(s.repo)) fail('Skill ' + s.id + ': repo não é uma URL válida (' + s.repo + ')');
 });
 const categoryIds = new Set(skills.categories.map(c => c.id));
 skills.skills.forEach(s => {

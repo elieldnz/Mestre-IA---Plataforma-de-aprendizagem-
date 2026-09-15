@@ -131,7 +131,19 @@ window.MIA = window.MIA || {};
           'o objetivo específico acima é o da categoria.</p>') +
     '</section>';
 
-    html += '<section class="card"><p class="card__label">O que é</p><div class="prose">' + ui.md(skill.what) + '</div>' + ui.sourceTag('complementar') + '</section>';
+    html += '<section class="card"><p class="card__label">O que é</p><div class="prose">' + ui.md(skill.what) + '</div>' +
+      ui.sourceTag(skill.whatSource || 'complementar') + '</section>';
+
+    if (skill.repo) {
+      html += '<section class="card"><p class="card__label">Repositório oficial (citado no guia)</p>' +
+        '<p><a href="' + ui.escapeHtml(skill.repo) + '" target="_blank" rel="noopener noreferrer">' +
+        ui.escapeHtml(skill.repo) + '</a></p>' +
+        (skill.repoNote ? '<p class="small muted">⚠ ' + ui.escapeHtml(skill.repoNote) + '</p>' : '') +
+        '<p class="small muted">Este link vem do guia fornecido. Esta plataforma não instala Skills — ' +
+        'abra o repositório e percorra o checklist de segurança abaixo antes de decidir.</p>' +
+        ui.sourceTag('material') + '</section>';
+    }
+
     html += '<section class="card"><p class="card__label">Quando utilizar</p><div class="prose">' + ui.md(skill.when) + '</div>' + ui.sourceTag('complementar') + '</section>';
 
     html += '<section class="card"><p class="card__label">Pré-requisitos</p>' +

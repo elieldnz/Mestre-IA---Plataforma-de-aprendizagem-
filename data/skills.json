@@ -2,13 +2,34 @@
   "meta": {
     "title": "Catálogo de Skills",
     "total": 50,
-    "sourceNote": "Nomes, categorias, níveis de confiança e os objetivos da categoria 00 vêm do material fornecido. Descrições de uso, exemplos, exercícios e projetos são conhecimento complementar produzido para esta plataforma.",
-    "installNote": "Esta plataforma não instala Skills e não publica comandos de instalação. Antes de instalar qualquer Skill, localize o repositório oficial e percorra o checklist de segurança."
+    "sourceNote": "Nome, categoria, descrição oficial, nível de confiança e link do repositório de cada Skill vêm do guia \"50 Claude Skills\" (Asimov Academy, Rodrigo Tadewald, atualizado ago/2026), fornecido pelo usuário. \"Quando utilizar\", exemplo, exercício, projeto e pré-requisitos são conhecimento complementar produzido para esta plataforma.",
+    "installNote": "Esta plataforma não instala Skills e não executa comandos de instalação. O próprio guia original alerta: cada ecossistema muda rápido — antes de instalar, abra o repositório oficial (link acima) e confira comando, manutenção, compatibilidade e permissões.",
+    "sourceGuide": {
+      "title": "50 Claude Skills — Asimov Academy",
+      "author": "Rodrigo Tadewald",
+      "updated": "ago/2026",
+      "note": "Nome, categoria, número, descrição oficial, nível de confiança e link do repositório de cada Skill vêm deste guia, fornecido pelo usuário em PDF. \"Quando utilizar\", exemplo, exercício, projeto e pré-requisitos são conhecimento complementar produzido para esta plataforma."
+    }
   },
   "confidenceLevels": [
-    { "id": "alto", "label": "ALTO", "color": "verde", "meaning": "Classificado como confiança ALTA no material fornecido." },
-    { "id": "medio", "label": "MÉDIO", "color": "amarelo", "meaning": "Classificado como confiança MÉDIA no material fornecido." },
-    { "id": "baixo", "label": "BAIXO", "color": "vermelho", "meaning": "Classificado como confiança BAIXA no material fornecido." }
+    {
+      "id": "alto",
+      "label": "ALTO",
+      "color": "verde",
+      "meaning": "Classificado como confiança ALTA no material fornecido."
+    },
+    {
+      "id": "medio",
+      "label": "MÉDIO",
+      "color": "amarelo",
+      "meaning": "Classificado como confiança MÉDIA no material fornecido."
+    },
+    {
+      "id": "baixo",
+      "label": "BAIXO",
+      "color": "vermelho",
+      "meaning": "Classificado como confiança BAIXA no material fornecido."
+    }
   ],
   "categories": [
     {
@@ -76,466 +97,1093 @@
   ],
   "skills": [
     {
-      "id": "find-skills", "n": 1, "name": "Find Skills", "category": "comece-por-aqui", "confidence": "alto", "level": "iniciante",
-      "objective": "Encontrar Skills relevantes para uma tarefa específica.", "objectiveSource": "material",
-      "what": "Uma Skill de descoberta: em vez de você vasculhar listas, ela parte da tarefa que você precisa resolver e sugere quais Skills fazem sentido.",
+      "id": "find-skills",
+      "n": 1,
+      "name": "Find Skills",
+      "category": "comece-por-aqui",
+      "confidence": "alto",
+      "level": "iniciante",
+      "objective": "Encontrar Skills relevantes para uma tarefa específica.",
+      "objectiveSource": "material",
+      "what": "Encontra skills relevantes para uma tarefa específica. A melhor isca do pacote: resolve o garimpo antes de qualquer outra coisa.",
       "when": "Quando você tem uma dor concreta (\"preciso gerar um relatório em Excel toda segunda\") e não sabe se já existe algo pronto para isso.",
       "example": "Descreva a tarefa em uma frase, com contexto e restrição: \"Preciso revisar contratos em PDF e extrair prazos e multas. O que existe para isso?\"",
       "exercise": "Escreva 3 dores reais do seu trabalho. Para cada uma, descreva a tarefa em uma frase e liste que tipo de Skill resolveria.",
       "project": "Monte um mapa \"dor → Skill candidata → como validar\" com as 3 dores mais caras do seu dia.",
-      "prerequisites": [], "tags": ["descoberta", "produtividade", "primeiros-passos"]
+      "prerequisites": [],
+      "tags": [
+        "descoberta",
+        "produtividade",
+        "primeiros-passos"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/vercel-labs/skills/tree/main/skills/find-skills"
     },
     {
-      "id": "skill-creator", "n": 2, "name": "Skill Creator", "category": "comece-por-aqui", "confidence": "alto", "level": "iniciante",
-      "objective": "Criar Skills personalizadas com estrutura e instruções reutilizáveis.", "objectiveSource": "material",
-      "what": "Ajuda a transformar um procedimento que você repete em uma pasta com SKILL.md: nome, quando ativar, passo a passo e exemplos.",
+      "id": "skill-creator",
+      "n": 2,
+      "name": "Skill Creator",
+      "category": "comece-por-aqui",
+      "confidence": "alto",
+      "level": "iniciante",
+      "objective": "Criar Skills personalizadas com estrutura e instruções reutilizáveis.",
+      "objectiveSource": "material",
+      "what": "Ajuda a criar novas skills personalizadas, com estrutura e instruções reutilizáveis.",
       "when": "Quando você percebe que está colando o mesmo prompt longo pela terceira vez.",
       "example": "Pegue seu prompt favorito, separe o que é instrução fixa do que é variável e escreva o SKILL.md com a seção \"quando usar\".",
       "exercise": "Transforme um dos 10 prompts estudados na Fase 3 em uma Skill com SKILL.md, seção de ativação e dois exemplos.",
       "project": "Crie um conjunto de 3 Skills que cubra o seu fluxo de trabalho principal.",
-      "prerequisites": ["find-skills"], "tags": ["criação", "reuso", "fundamental"]
+      "prerequisites": [
+        "find-skills"
+      ],
+      "tags": [
+        "criação",
+        "reuso",
+        "fundamental"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/anthropics/skills/tree/main/skills/skill-creator"
     },
     {
-      "id": "superpowers", "n": 3, "name": "Superpowers", "category": "comece-por-aqui", "confidence": "alto", "level": "intermediario",
-      "objective": "Estruturar fluxo de engenharia: brainstorm → spec → plano → TDD → subagentes → review → debug.", "objectiveSource": "material",
-      "what": "Um fluxo de engenharia completo, do brainstorm ao debug, em vez de pedir código solto.",
+      "id": "superpowers",
+      "n": 3,
+      "name": "Superpowers",
+      "category": "comece-por-aqui",
+      "confidence": "alto",
+      "level": "intermediario",
+      "objective": "Estruturar fluxo de engenharia: brainstorm → spec → plano → TDD → subagentes → review → debug.",
+      "objectiveSource": "material",
+      "what": "Transforma o agente em um fluxo de engenharia: brainstorm, spec, plano, TDD, subagentes, review e debug.",
       "when": "Quando a tarefa é maior do que um arquivo e você quer evitar retrabalho.",
       "example": "Em vez de \"faz um app de tarefas\", conduza: brainstorm → spec → plano → testes → implementação → review.",
       "exercise": "Escolha um mini-projeto e escreva apenas as duas primeiras etapas (brainstorm e spec) sem gerar uma linha de código.",
       "project": "Conduza um projeto pequeno do começo ao fim seguindo as sete etapas e registre onde você teria errado sem elas.",
-      "prerequisites": ["skill-creator"], "tags": ["engenharia", "processo", "tdd"]
+      "prerequisites": [
+        "skill-creator"
+      ],
+      "tags": [
+        "engenharia",
+        "processo",
+        "tdd"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/obra/superpowers"
     },
     {
-      "id": "grill-me", "n": 4, "name": "Grill Me", "category": "comece-por-aqui", "confidence": "alto", "level": "iniciante",
-      "objective": "Fazer entrevistas antes da implementação para melhorar briefing e reduzir retrabalho.", "objectiveSource": "material",
-      "what": "Inverte o jogo: o agente entrevista você antes de executar, até o briefing ficar bom.",
+      "id": "grill-me",
+      "n": 4,
+      "name": "Grill Me",
+      "category": "comece-por-aqui",
+      "confidence": "alto",
+      "level": "iniciante",
+      "objective": "Fazer entrevistas antes da implementação para melhorar briefing e reduzir retrabalho.",
+      "objectiveSource": "material",
+      "what": "Faz o agente te entrevistar antes de implementar, reduzindo briefing ruim e retrabalho.",
       "when": "Sempre que o pedido está vago e você sabe que vai receber algo genérico.",
       "example": "\"Antes de implementar, me faça 10 perguntas que reduzam ambiguidade sobre este pedido.\"",
       "exercise": "Peça 10 perguntas sobre um pedido seu e responda todas. Compare o resultado com e sem a entrevista.",
       "project": "Crie um roteiro de entrevista padrão para os pedidos que você mais repete.",
-      "prerequisites": [], "tags": ["briefing", "requisitos", "antirretrabalho"]
+      "prerequisites": [],
+      "tags": [
+        "briefing",
+        "requisitos",
+        "antirretrabalho"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/mattpocock/skills/tree/main/skills/productivity/grill-me"
     },
     {
-      "id": "git-guardrails", "n": 5, "name": "Git Guardrails", "category": "comece-por-aqui", "confidence": "alto", "level": "intermediario",
-      "objective": "Evitar ações perigosas no Git.", "objectiveSource": "material",
-      "what": "Um conjunto de travas para comandos destrutivos de Git.",
+      "id": "git-guardrails",
+      "n": 5,
+      "name": "Git Guardrails",
+      "category": "comece-por-aqui",
+      "confidence": "alto",
+      "level": "intermediario",
+      "objective": "Evitar ações perigosas no Git.",
+      "objectiveSource": "material",
+      "what": "Evita ações perigosas no Git: push indevido, reset hard, clean, branch delete e outras aventuras radioativas.",
       "when": "Assim que o agente ganhar permissão de escrita em um repositório real.",
       "example": "Regras do tipo: nunca reescrever histórico de branch alheia, confirmar antes de force-push, nunca apagar branch remota sem confirmação.",
       "exercise": "Liste 5 comandos de Git que você não quer que nenhum agente rode sozinho e escreva a regra para cada um.",
       "project": "Escreva as guardrails do seu repositório em um arquivo e teste se o agente as respeita.",
-      "prerequisites": [], "tags": ["segurança", "git", "guardrails"]
+      "prerequisites": [],
+      "tags": [
+        "segurança",
+        "git",
+        "guardrails"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/mattpocock/skills/tree/main/skills/misc/git-guardrails-claude-code"
     },
     {
-      "id": "caveman", "n": 6, "name": "Caveman", "category": "comece-por-aqui", "confidence": "medio", "level": "iniciante",
-      "objective": "Reduzir verbosidade e gerar respostas técnicas e diretas.", "objectiveSource": "material",
-      "what": "Corta enrolação: respostas curtas, técnicas e diretas.",
+      "id": "caveman",
+      "n": 6,
+      "name": "Caveman",
+      "category": "comece-por-aqui",
+      "confidence": "medio",
+      "level": "iniciante",
+      "objective": "Reduzir verbosidade e gerar respostas técnicas e diretas.",
+      "objectiveSource": "material",
+      "what": "Corta a verbosidade do agente e força respostas técnicas, curtas e diretas.",
       "when": "Quando você já domina o assunto e quer o resultado, não a explicação.",
       "example": "Use em revisões rápidas de código ou checagens objetivas; evite quando estiver aprendendo o tema.",
       "exercise": "Peça a mesma resposta duas vezes, uma verbosa e uma direta, e compare qual você realmente usou.",
       "project": "Defina em que situações do seu dia a resposta curta ajuda e em quais ela atrapalha.",
-      "prerequisites": [], "tags": ["estilo", "produtividade"]
+      "prerequisites": [],
+      "tags": [
+        "estilo",
+        "produtividade"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/JuliusBrussee/caveman"
     },
     {
-      "id": "last30days", "n": 7, "name": "Last30Days", "category": "comece-por-aqui", "confidence": "medio", "level": "intermediario",
-      "objective": "Pesquisar discussões recentes em X, Reddit, Hacker News, YouTube e web.", "objectiveSource": "material",
-      "what": "Busca o que foi discutido recentemente sobre um tema, em vez de depender só do conhecimento do modelo.",
+      "id": "last30days",
+      "n": 7,
+      "name": "Last30Days",
+      "category": "comece-por-aqui",
+      "confidence": "medio",
+      "level": "intermediario",
+      "objective": "Pesquisar discussões recentes em X, Reddit, Hacker News, YouTube e web.",
+      "objectiveSource": "material",
+      "what": "Pesquisa discussões recentes em X, Reddit, HN, YouTube e web sobre um tema.",
       "when": "Em temas que mudam rápido — modelos, ferramentas, preços, bibliotecas.",
       "example": "\"O que mudou nas ferramentas de agentes nos últimos 30 dias? Cite as fontes.\"",
       "exercise": "Pesquise um tema recente e separe: fato com fonte, opinião, e boato sem confirmação.",
       "project": "Monte um resumo semanal do seu nicho com fontes citadas.",
-      "prerequisites": [], "tags": ["pesquisa", "atualidade"]
+      "prerequisites": [],
+      "tags": [
+        "pesquisa",
+        "atualidade"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/mvanhorn/last30days-skill/tree/main/skills/last30days"
     },
-
     {
-      "id": "gsd", "n": 8, "name": "GSD / Get Shit Done", "category": "programar-melhor", "confidence": "medio", "level": "intermediario",
-      "what": "Foco em execução: quebrar o trabalho em passos e concluir, em vez de planejar infinitamente.",
+      "id": "gsd",
+      "n": 8,
+      "name": "GSD / Get Shit Done",
+      "category": "programar-melhor",
+      "confidence": "medio",
+      "level": "intermediario",
+      "what": "Stack pesada de produtividade e engenharia, com comandos para planejar, revisar, debater requisitos e executar tarefas grandes.",
       "when": "Quando o projeto já tem direção e o problema é destravar a entrega.",
       "example": "Peça um plano de 5 passos executáveis hoje, com critério de \"pronto\" em cada um.",
       "exercise": "Pegue uma tarefa parada há uma semana e quebre em 5 passos de no máximo 30 minutos.",
       "project": "Conclua uma tarefa antiga usando apenas passos com critério de pronto.",
-      "prerequisites": ["superpowers"], "tags": ["execução", "produtividade"]
+      "prerequisites": [
+        "superpowers"
+      ],
+      "tags": [
+        "execução",
+        "produtividade"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/gsd-build/get-shit-done"
     },
     {
-      "id": "planning-with-files", "n": 9, "name": "Planning With Files", "category": "programar-melhor", "confidence": "medio", "level": "intermediario",
-      "what": "Usa arquivos do repositório como memória do plano, em vez de deixar o plano no chat.",
+      "id": "planning-with-files",
+      "n": 9,
+      "name": "Planning With Files",
+      "category": "programar-melhor",
+      "confidence": "medio",
+      "level": "intermediario",
+      "what": "Cria planos persistentes em arquivos para tarefas longas, evitando perda de contexto entre sessões.",
       "when": "Em trabalhos longos, que atravessam várias sessões.",
       "example": "Manter PLAN.md e TODO.md versionados e atualizados a cada etapa.",
       "exercise": "Crie um PLAN.md para um projeto seu e atualize-o ao fim de cada sessão.",
       "project": "Conduza um projeto de 3 sessões usando somente arquivos como memória.",
-      "prerequisites": ["gsd"], "tags": ["planejamento", "memória"]
+      "prerequisites": [
+        "gsd"
+      ],
+      "tags": [
+        "planejamento",
+        "memória"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/OthmanAdi/planning-with-files"
     },
     {
-      "id": "openspec", "n": 10, "name": "OpenSpec", "category": "programar-melhor", "confidence": "medio", "level": "intermediario",
-      "what": "Trabalho guiado por especificação escrita antes do código.",
+      "id": "openspec",
+      "n": 10,
+      "name": "OpenSpec",
+      "category": "programar-melhor",
+      "confidence": "medio",
+      "level": "intermediario",
+      "what": "Workflow de spec-driven development: proposta, aplicação e arquivamento de mudanças.",
       "when": "Quando errar a interpretação do pedido é caro.",
       "example": "Escrever a spec com escopo, fora de escopo e critérios de aceite, e só então implementar.",
       "exercise": "Escreva a spec de uma funcionalidade em 1 página, incluindo o que NÃO será feito.",
       "project": "Implemente uma funcionalidade a partir de uma spec revisada por você mesmo.",
-      "prerequisites": ["superpowers"], "tags": ["spec", "requisitos"]
+      "prerequisites": [
+        "superpowers"
+      ],
+      "tags": [
+        "spec",
+        "requisitos"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/Fission-AI/OpenSpec"
     },
     {
-      "id": "spec-driven-development", "n": 11, "name": "Spec-Driven Development", "category": "programar-melhor", "confidence": "medio", "level": "intermediario",
-      "what": "Ciclo em que a especificação é a fonte da verdade e o código a segue.",
+      "id": "spec-driven-development",
+      "n": 11,
+      "name": "Spec-Driven Development",
+      "category": "programar-melhor",
+      "confidence": "medio",
+      "level": "intermediario",
+      "what": "Gera requirements.md, design.md, tasks.md e arquivos de configuração para agentes.",
       "when": "Em times, ou quando o mesmo sistema é tocado por várias pessoas e agentes.",
       "example": "Spec → testes derivados da spec → implementação → verificação contra a spec.",
       "exercise": "Derive 5 testes diretamente dos critérios de aceite da sua spec.",
       "project": "Entregue uma funcionalidade em que cada teste aponta para um item da spec.",
-      "prerequisites": ["openspec"], "tags": ["spec", "testes", "processo"]
+      "prerequisites": [
+        "openspec"
+      ],
+      "tags": [
+        "spec",
+        "testes",
+        "processo"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/FredAntB/Spec-Driven-Development"
     },
     {
-      "id": "allium", "n": 12, "name": "Allium", "category": "programar-melhor", "confidence": "medio", "level": "intermediario",
-      "what": "Skill de apoio ao fluxo de desenvolvimento assistido por IA.",
+      "id": "allium",
+      "n": 12,
+      "name": "Allium",
+      "category": "programar-melhor",
+      "confidence": "medio",
+      "level": "intermediario",
+      "what": "Mantém especificações comportamentais junto do código. Bom para times que querem specs vivas.",
       "when": "Avalie no seu contexto: confiança MÉDIO pede teste em um projeto pequeno antes de adotar.",
       "example": "Rode em um repositório de treino e compare o resultado com o seu fluxo atual.",
       "exercise": "Aplique o checklist de segurança de Skills antes de sequer instalar.",
       "project": "Escreva uma avaliação honesta: resolveu uma dor real ou só adicionou complexidade?",
-      "prerequisites": ["superpowers"], "tags": ["fluxo", "avaliar-antes"]
+      "prerequisites": [
+        "superpowers"
+      ],
+      "tags": [
+        "fluxo",
+        "avaliar-antes"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/juxt/allium"
     },
     {
-      "id": "paul", "n": 13, "name": "PAUL", "category": "programar-melhor", "confidence": "medio", "level": "intermediario",
-      "what": "Skill de apoio ao processo de engenharia com agentes.",
+      "id": "paul",
+      "n": 13,
+      "name": "PAUL",
+      "category": "programar-melhor",
+      "confidence": "medio",
+      "level": "intermediario",
+      "what": "Plan-Apply-Unify Loop: fluxo mais leve de planejamento e execução sem framework gigante.",
       "when": "Avalie no seu contexto: confiança MÉDIO pede validação antes de virar padrão do time.",
       "example": "Compare uma tarefa feita com e sem a Skill e meça retrabalho.",
       "exercise": "Defina, antes de testar, qual métrica diria que valeu a pena.",
       "project": "Documente a decisão de adotar ou descartar, com evidência.",
-      "prerequisites": ["superpowers"], "tags": ["processo", "avaliar-antes"]
+      "prerequisites": [
+        "superpowers"
+      ],
+      "tags": [
+        "processo",
+        "avaliar-antes"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/ChristopherKahler/paul"
     },
     {
-      "id": "bmad-skills", "n": 14, "name": "BMAD Skills", "category": "programar-melhor", "confidence": "medio", "level": "intermediario",
-      "what": "Conjunto de Skills voltado a método de desenvolvimento com agentes.",
+      "id": "bmad-skills",
+      "n": 14,
+      "name": "BMAD Skills",
+      "category": "programar-melhor",
+      "confidence": "medio",
+      "level": "intermediario",
+      "what": "Adapta o método BMAD para Claude Code: histórias, épicos, planejamento e execução com agentes.",
       "when": "Quando você já tem um fluxo próprio e quer comparar com um método pronto.",
       "example": "Adote uma etapa por vez, não o pacote inteiro de uma vez.",
       "exercise": "Escolha uma única etapa do método e aplique por uma semana.",
       "project": "Monte a versão enxuta do método que sobrevive ao seu dia real.",
-      "prerequisites": ["gsd"], "tags": ["método", "conjunto"]
+      "prerequisites": [
+        "gsd"
+      ],
+      "tags": [
+        "método",
+        "conjunto"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/aj-geddes/claude-code-bmad-skills"
     },
     {
-      "id": "claude-code-kit", "n": 15, "name": "Claude Code Kit", "category": "programar-melhor", "confidence": "medio", "level": "intermediario",
-      "what": "Kit de utilidades para trabalho de desenvolvimento assistido.",
+      "id": "claude-code-kit",
+      "n": 15,
+      "name": "Claude Code Kit",
+      "category": "programar-melhor",
+      "confidence": "medio",
+      "level": "intermediario",
+      "what": "Coleções de skills para stacks como Next.js, React, Tailwind, Prisma e Express.",
       "when": "Depois de ter um fluxo básico funcionando, para reduzir fricção repetitiva.",
       "example": "Instale, use por uma semana e liste o que você realmente usou.",
       "exercise": "Liste as 3 fricções que você mais sente hoje e verifique se o kit ataca alguma.",
       "project": "Substitua o que não usa por Skills próprias criadas com Skill Creator.",
-      "prerequisites": ["skill-creator"], "tags": ["ferramentas", "produtividade"]
+      "prerequisites": [
+        "skill-creator"
+      ],
+      "tags": [
+        "ferramentas",
+        "produtividade"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/blencorp/claude-code-kit"
     },
     {
-      "id": "jeff-allan-claude-skills", "n": 16, "name": "Jeff Allan Claude Skills", "category": "programar-melhor", "confidence": "medio", "level": "intermediario",
-      "what": "Coleção de Skills de terceiros para desenvolvimento.",
+      "id": "jeff-allan-claude-skills",
+      "n": 16,
+      "name": "Jeff Allan Claude Skills",
+      "category": "programar-melhor",
+      "confidence": "medio",
+      "level": "intermediario",
+      "what": "Pacote de skills e comandos para full-stack development e workflows de engenharia com IA.",
       "when": "Como fonte de referência e inspiração para escrever as suas.",
       "example": "Leia os SKILL.md como estudo de caso de escrita de instruções.",
       "exercise": "Escolha uma Skill da coleção e reescreva o SKILL.md com suas palavras.",
       "project": "Extraia 5 padrões de escrita de Skills que você vai reutilizar.",
-      "prerequisites": ["skill-creator"], "tags": ["coleção", "referência"]
+      "prerequisites": [
+        "skill-creator"
+      ],
+      "tags": [
+        "coleção",
+        "referência"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/jeffallan/claude-skills"
     },
     {
-      "id": "improve-codebase-architecture", "n": 17, "name": "Improve Codebase Architecture", "category": "programar-melhor", "confidence": "medio", "level": "avancado",
-      "what": "Análise e melhoria da arquitetura de um código existente.",
+      "id": "improve-codebase-architecture",
+      "n": 17,
+      "name": "Improve Codebase Architecture",
+      "category": "programar-melhor",
+      "confidence": "medio",
+      "level": "avancado",
+      "what": "Ajuda a pensar e executar refatorações arquiteturais com menos chute.",
       "when": "Quando o projeto começa a doer: mudanças simples exigem tocar em muitos arquivos.",
       "example": "Peça um mapa de dependências e os 3 acoplamentos mais caros antes de refatorar.",
       "exercise": "Aponte, no seu código, uma responsabilidade que está em dois lugares.",
       "project": "Refatore um módulo e comprove com testes que o comportamento não mudou.",
-      "prerequisites": ["spec-driven-development"], "tags": ["arquitetura", "refactoring"]
+      "prerequisites": [
+        "spec-driven-development"
+      ],
+      "tags": [
+        "arquitetura",
+        "refactoring"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/mattpocock/skills/tree/main/skills/engineering/improve-codebase-architecture"
     },
-
     {
-      "id": "frontend-design", "n": 18, "name": "Frontend Design", "category": "frontend-ui-design", "confidence": "alto", "level": "intermediario",
-      "what": "Apoio a decisões de design de interface: hierarquia, espaçamento, tipografia e componentes.",
+      "id": "frontend-design",
+      "n": 18,
+      "name": "Frontend Design",
+      "category": "frontend-ui-design",
+      "confidence": "alto",
+      "level": "intermediario",
+      "what": "Skill oficial da Anthropic para criar interfaces melhores e fugir do visual genérico de IA.",
       "when": "Sempre que a tela ficou \"funcionando, mas feia\".",
       "example": "Peça crítica de hierarquia visual antes de pedir mais cor ou mais sombra.",
       "exercise": "Reduza uma tela sua a 3 níveis de hierarquia e remova tudo que compete por atenção.",
       "project": "Redesenhe uma tela do seu projeto e justifique cada decisão.",
-      "prerequisites": [], "tags": ["ui", "design", "hierarquia"]
+      "prerequisites": [],
+      "tags": [
+        "ui",
+        "design",
+        "hierarquia"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/anthropics/skills/tree/main/skills/frontend-design"
     },
     {
-      "id": "vercel-web-design-guidelines", "n": 19, "name": "Vercel Web Design Guidelines", "category": "frontend-ui-design", "confidence": "medio", "level": "intermediario",
-      "what": "Diretrizes de design web aplicadas à geração de interfaces.",
+      "id": "vercel-web-design-guidelines",
+      "n": 19,
+      "name": "Vercel Web Design Guidelines",
+      "category": "frontend-ui-design",
+      "confidence": "medio",
+      "level": "intermediario",
+      "what": "Audita UI contra boas práticas de acessibilidade, UX e design.",
       "when": "Quando você quer consistência entre várias telas.",
       "example": "Use como régua de revisão, não como gerador de estilo.",
       "exercise": "Revise uma tela sua contra 5 diretrizes e liste o que falhou.",
       "project": "Escreva o seu próprio guia de 10 regras visuais.",
-      "prerequisites": ["frontend-design"], "tags": ["design", "guidelines"]
+      "prerequisites": [
+        "frontend-design"
+      ],
+      "tags": [
+        "design",
+        "guidelines"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/vercel-labs/agent-skills/tree/main/skills/web-design-guidelines"
     },
     {
-      "id": "vercel-react-best-practices", "n": 20, "name": "Vercel React Best Practices", "category": "frontend-ui-design", "confidence": "medio", "level": "avancado",
-      "what": "Boas práticas de React aplicadas ao código gerado.",
+      "id": "vercel-react-best-practices",
+      "n": 20,
+      "name": "Vercel React Best Practices",
+      "category": "frontend-ui-design",
+      "confidence": "medio",
+      "level": "avancado",
+      "what": "Aplica boas práticas de React/Next.js, performance e organização de componentes.",
       "when": "Depois que você já entende componentes e estado.",
       "example": "Use na revisão de componentes, verificando estado desnecessário e re-renderizações.",
       "exercise": "Encontre em um componente seu um estado que poderia ser derivado.",
       "project": "Refatore um componente grande em três menores com responsabilidades claras.",
-      "prerequisites": ["frontend-design"], "tags": ["react", "boas-práticas"]
+      "prerequisites": [
+        "frontend-design"
+      ],
+      "tags": [
+        "react",
+        "boas-práticas"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/vercel-labs/agent-skills/tree/main/skills/react-best-practices"
     },
     {
-      "id": "vercel-composition-patterns", "n": 21, "name": "Vercel Composition Patterns", "category": "frontend-ui-design", "confidence": "medio", "level": "avancado",
-      "what": "Padrões de composição de componentes.",
+      "id": "vercel-composition-patterns",
+      "n": 21,
+      "name": "Vercel Composition Patterns",
+      "category": "frontend-ui-design",
+      "confidence": "medio",
+      "level": "avancado",
+      "what": "Ajuda a fugir do “boolean prop hell” e usar padrões melhores de composição.",
       "when": "Quando os componentes começam a receber dez props booleanas.",
       "example": "Troque props de configuração por composição de filhos.",
       "exercise": "Encontre um componente seu com excesso de props e proponha a composição.",
       "project": "Construa um componente composto reutilizável em duas telas diferentes.",
-      "prerequisites": ["vercel-react-best-practices"], "tags": ["composição", "react"]
+      "prerequisites": [
+        "vercel-react-best-practices"
+      ],
+      "tags": [
+        "composição",
+        "react"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/vercel-labs/agent-skills/tree/main/skills/composition-patterns"
     },
     {
-      "id": "ui-ux-pro-max", "n": 22, "name": "UI UX Pro Max", "category": "frontend-ui-design", "confidence": "medio", "level": "intermediario",
-      "what": "Apoio amplo a decisões de UI e UX.",
+      "id": "ui-ux-pro-max",
+      "n": 22,
+      "name": "UI UX Pro Max",
+      "category": "frontend-ui-design",
+      "confidence": "medio",
+      "level": "intermediario",
+      "what": "Skill de design intelligence para layout, cores, tipografia e guidelines visuais.",
       "when": "Em revisões de fluxo, não apenas de tela isolada.",
       "example": "Descreva a jornada do usuário e peça os pontos de fricção.",
       "exercise": "Mapeie os 5 passos que o usuário faz até o valor do seu produto.",
       "project": "Remova um passo inteiro dessa jornada.",
-      "prerequisites": ["frontend-design"], "tags": ["ux", "fluxo"]
+      "prerequisites": [
+        "frontend-design"
+      ],
+      "tags": [
+        "ux",
+        "fluxo"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/nextlevelbuilder/ui-ux-pro-max-skill"
     },
     {
-      "id": "impeccable", "n": 23, "name": "Impeccable", "category": "frontend-ui-design", "confidence": "baixo", "level": "intermediario",
-      "what": "Skill de acabamento visual.",
+      "id": "impeccable",
+      "n": 23,
+      "name": "Impeccable",
+      "category": "frontend-ui-design",
+      "confidence": "baixo",
+      "level": "intermediario",
+      "what": "Polimento e auditoria visual de interfaces e dashboards.",
       "when": "Confiança BAIXO no material: trate como experimento, teste em projeto descartável e não use em produção sem validação.",
       "example": "Rode em uma cópia do projeto e compare o antes e o depois.",
       "exercise": "Aplique o checklist de segurança e escreva por que instalaria — ou não.",
       "project": "Documente a avaliação e a decisão.",
-      "prerequisites": ["frontend-design"], "tags": ["experimental", "cuidado"]
+      "prerequisites": [
+        "frontend-design"
+      ],
+      "tags": [
+        "experimental",
+        "cuidado"
+      ],
+      "whatSource": "material",
+      "repo": "https://impeccable.style"
     },
     {
-      "id": "theme-factory", "n": 24, "name": "Theme Factory", "category": "frontend-ui-design", "confidence": "alto", "level": "intermediario",
-      "what": "Criação de temas consistentes: cores, tipografia e tokens.",
+      "id": "theme-factory",
+      "n": 24,
+      "name": "Theme Factory",
+      "category": "frontend-ui-design",
+      "confidence": "alto",
+      "level": "intermediario",
+      "what": "Cria temas visuais consistentes para projetos.",
       "when": "No começo do projeto, para não decidir cor a cada tela.",
       "example": "Gere tokens semânticos (superfície, texto, sucesso, alerta) em vez de cores soltas.",
       "exercise": "Converta as cores do seu projeto em tokens semânticos.",
       "project": "Crie um tema claro e um escuro que compartilhem os mesmos tokens.",
-      "prerequisites": ["frontend-design"], "tags": ["tema", "tokens", "cores"]
+      "prerequisites": [
+        "frontend-design"
+      ],
+      "tags": [
+        "tema",
+        "tokens",
+        "cores"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/anthropics/skills/tree/main/skills/theme-factory"
     },
     {
-      "id": "canvas-design", "n": 25, "name": "Canvas Design", "category": "frontend-ui-design", "confidence": "alto", "level": "intermediario",
-      "what": "Design em canvas para composições visuais.",
+      "id": "canvas-design",
+      "n": 25,
+      "name": "Canvas Design",
+      "category": "frontend-ui-design",
+      "confidence": "alto",
+      "level": "intermediario",
+      "what": "Ajuda em design visual/canvas e composições gráficas.",
       "when": "Quando você precisa de peça visual, não de tela de aplicação.",
       "example": "Capas, diagramas e materiais de apresentação.",
       "exercise": "Crie uma peça visual que explique um conceito da Fase 1.",
       "project": "Produza o material visual do seu portfólio.",
-      "prerequisites": [], "tags": ["visual", "composição"]
+      "prerequisites": [],
+      "tags": [
+        "visual",
+        "composição"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/anthropics/skills/tree/main/skills/canvas-design"
     },
     {
-      "id": "web-artifacts-builder", "n": 26, "name": "Web Artifacts Builder", "category": "frontend-ui-design", "confidence": "alto", "level": "intermediario",
-      "what": "Construção de artefatos web autocontidos.",
+      "id": "web-artifacts-builder",
+      "n": 26,
+      "name": "Web Artifacts Builder",
+      "category": "frontend-ui-design",
+      "confidence": "alto",
+      "level": "intermediario",
+      "what": "Cria web artifacts e apps interativos.",
       "when": "Para protótipos rápidos e demonstrações sem backend.",
       "example": "Um protótipo funcional em HTML para validar ideia antes de escrever a aplicação real.",
       "exercise": "Prototipe em HTML uma tela do seu projeto final.",
       "project": "Publique um protótipo navegável do seu projeto.",
-      "prerequisites": ["frontend-design"], "tags": ["protótipo", "html"]
+      "prerequisites": [
+        "frontend-design"
+      ],
+      "tags": [
+        "protótipo",
+        "html"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/anthropics/skills/tree/main/skills/web-artifacts-builder"
     },
-
     {
-      "id": "webapp-testing", "n": 27, "name": "Webapp Testing", "category": "testes-seguranca", "confidence": "alto", "level": "intermediario",
-      "what": "Testes de aplicações web, do fluxo do usuário ao caso de borda.",
+      "id": "webapp-testing",
+      "n": 27,
+      "name": "Webapp Testing",
+      "category": "testes-seguranca",
+      "confidence": "alto",
+      "level": "intermediario",
+      "what": "Skill oficial para testar apps web com navegador/Playwright.",
       "when": "Antes de dizer \"está pronto\".",
       "example": "Liste os 5 caminhos críticos e teste cada um, incluindo o caminho de erro.",
       "exercise": "Escreva os casos de teste do fluxo principal do seu projeto.",
       "project": "Cubra os caminhos críticos do seu projeto com testes.",
-      "prerequisites": [], "tags": ["testes", "qualidade"]
+      "prerequisites": [],
+      "tags": [
+        "testes",
+        "qualidade"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/anthropics/skills/tree/main/skills/webapp-testing"
     },
     {
-      "id": "playwright-skill", "n": 28, "name": "Playwright Skill", "category": "testes-seguranca", "confidence": "medio", "level": "avancado",
-      "what": "Automação de navegador para testes de ponta a ponta.",
+      "id": "playwright-skill",
+      "n": 28,
+      "name": "Playwright Skill",
+      "category": "testes-seguranca",
+      "confidence": "medio",
+      "level": "avancado",
+      "what": "Exploração e teste de apps usando Playwright de forma mais leve que MCPs grandes.",
       "when": "Quando o teste manual da mesma tela já cansou.",
       "example": "Automatize o fluxo de cadastro e rode a cada mudança.",
       "exercise": "Escreva um teste que abre a página e confirma o texto principal.",
       "project": "Automatize o caminho crítico do seu projeto.",
-      "prerequisites": ["webapp-testing"], "tags": ["e2e", "automação"]
+      "prerequisites": [
+        "webapp-testing"
+      ],
+      "tags": [
+        "e2e",
+        "automação"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/lackeyjb/playwright-skill"
     },
     {
-      "id": "trail-of-bits-security", "n": 29, "name": "Trail of Bits Security", "category": "testes-seguranca", "confidence": "medio", "level": "avancado",
-      "what": "Análise de segurança e vulnerabilidades no código.",
+      "id": "trail-of-bits-security",
+      "n": 29,
+      "name": "Trail of Bits Security",
+      "category": "testes-seguranca",
+      "confidence": "medio",
+      "level": "avancado",
+      "what": "Skills de segurança com CodeQL, Semgrep e análise de vulnerabilidades.",
       "when": "Antes de expor qualquer coisa à internet.",
       "example": "Revisão de entrada de usuário, segredos e permissões.",
       "exercise": "Procure no seu código: chave exposta, entrada não validada, permissão ampla demais.",
       "project": "Escreva o relatório de segurança do seu projeto final.",
-      "prerequisites": ["webapp-testing"], "tags": ["segurança", "review"]
+      "prerequisites": [
+        "webapp-testing"
+      ],
+      "tags": [
+        "segurança",
+        "review"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/trailofbits/skills"
     },
     {
-      "id": "mcp-builder", "n": 30, "name": "MCP Builder", "category": "testes-seguranca", "confidence": "alto", "level": "avancado",
-      "what": "Construção de servidores MCP que expõem ferramentas a agentes.",
+      "id": "mcp-builder",
+      "n": 30,
+      "name": "MCP Builder",
+      "category": "testes-seguranca",
+      "confidence": "alto",
+      "level": "avancado",
+      "what": "Ajuda a criar servidores MCP para conectar agentes a ferramentas externas.",
       "when": "Quando seu agente precisa agir em um sistema externo de forma controlada.",
       "example": "Um servidor com duas ferramentas: buscar e criar, cada uma com permissão explícita.",
       "exercise": "Desenhe as ferramentas que seu agente precisaria e o risco de cada uma.",
       "project": "Construa um servidor MCP mínimo e conecte um agente a ele.",
-      "prerequisites": ["webapp-testing"], "tags": ["mcp", "ferramentas", "integração"]
+      "prerequisites": [
+        "webapp-testing"
+      ],
+      "tags": [
+        "mcp",
+        "ferramentas",
+        "integração"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/anthropics/skills/tree/main/skills/mcp-builder"
     },
     {
-      "id": "claude-api", "n": 31, "name": "Claude API", "category": "testes-seguranca", "confidence": "alto", "level": "intermediario",
-      "what": "Uso da API para integrar modelos em aplicações próprias.",
+      "id": "claude-api",
+      "n": 31,
+      "name": "Claude API",
+      "category": "testes-seguranca",
+      "confidence": "alto",
+      "level": "intermediario",
+      "what": "Ajuda a trabalhar com API da Claude em integrações e produtos.",
       "when": "Quando você sai do chat e passa a construir software.",
       "example": "Primeira chamada: mensagem, resposta, tratamento de erro e custo por token.",
       "exercise": "Descreva request e response da sua primeira integração antes de codar.",
       "project": "Integre um modelo à sua aplicação com tratamento de erro e limite de custo.",
-      "prerequisites": [], "tags": ["api", "integração"]
+      "prerequisites": [],
+      "tags": [
+        "api",
+        "integração"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/anthropics/skills/tree/main/skills/claude-api"
     },
     {
-      "id": "axiom", "n": 32, "name": "Axiom", "category": "testes-seguranca", "confidence": "medio", "level": "avancado",
-      "what": "Skill de apoio a qualidade e observabilidade.",
-      "when": "Quando você precisa enxergar o que o sistema faz em produção.",
-      "example": "Defina o que precisa ser registrado antes de instrumentar tudo.",
-      "exercise": "Liste os 3 eventos que você precisaria ver para depurar seu projeto às 3h da manhã.",
-      "project": "Instrumente esses três eventos.",
-      "prerequisites": ["webapp-testing"], "tags": ["observabilidade", "qualidade"]
+      "id": "axiom",
+      "n": 32,
+      "name": "Axiom",
+      "category": "testes-seguranca",
+      "confidence": "medio",
+      "level": "avancado",
+      "what": "Workflow para desenvolvimento Apple/iOS/macOS com Swift, SwiftUI, Xcode e debugging.",
+      "when": "Quando você desenvolve para iOS, macOS ou outra plataforma Apple com Swift e SwiftUI, e quer um fluxo de trabalho e depuração mais guiado dentro do Xcode.",
+      "example": "Um projeto SwiftUI com um bug de layout intermitente: a Skill ajuda a estruturar a investigação em vez de você tentar sozinho ajuste por ajuste.",
+      "exercise": "Se você programa para Apple: descreva um bug real de SwiftUI/Xcode e liste os passos que você seguiria para isolar a causa antes de mexer no código.",
+      "project": "Aplique o fluxo desta Skill em uma tela real do seu app e registre o que ela mudou no seu processo de depuração.",
+      "prerequisites": [
+        "webapp-testing"
+      ],
+      "tags": [
+        "apple",
+        "ios",
+        "swift",
+        "swiftui",
+        "xcode"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/CharlesWiltgen/Axiom"
     },
     {
-      "id": "karpathy-guidelines", "n": 33, "name": "Karpathy Guidelines", "category": "testes-seguranca", "confidence": "medio", "level": "intermediario",
-      "what": "Diretrizes de desenvolvimento responsável com IA.",
+      "id": "karpathy-guidelines",
+      "n": 33,
+      "name": "Karpathy Guidelines",
+      "category": "testes-seguranca",
+      "confidence": "medio",
+      "level": "intermediario",
+      "what": "Força simplicidade, mudanças cirúrgicas, checagem e raciocínio antes de sair codando.",
       "when": "Como régua de revisão de código gerado por IA.",
       "example": "Nunca aceitar código que você não consegue explicar.",
       "exercise": "Pegue um trecho gerado hoje e explique linha a linha. O que você não souber, estude.",
       "project": "Adote a regra \"não entro em produção com código que não sei explicar\" por um projeto inteiro.",
-      "prerequisites": [], "tags": ["responsabilidade", "review"]
+      "prerequisites": [],
+      "tags": [
+        "responsabilidade",
+        "review"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/multica-ai/andrej-karpathy-skills/tree/main/skills/karpathy-guidelines"
     },
-
     {
-      "id": "docx", "n": 34, "name": "DOCX", "category": "documentos-escritorio", "confidence": "alto", "level": "iniciante",
-      "what": "Criação, leitura e edição de documentos Word.",
+      "id": "docx",
+      "n": 34,
+      "name": "DOCX",
+      "category": "documentos-escritorio",
+      "confidence": "alto",
+      "level": "iniciante",
+      "what": "Cria, edita e analisa documentos Word.",
       "when": "Relatórios, contratos, propostas e qualquer entrega em .docx.",
       "example": "Gerar um relatório com sumário, cabeçalho e numeração a partir de dados.",
       "exercise": "Transforme um texto seu em documento estruturado com títulos e sumário.",
       "project": "Automatize um relatório que você faz manualmente todo mês.",
-      "prerequisites": [], "tags": ["documentos", "trabalho", "word"]
+      "prerequisites": [],
+      "tags": [
+        "documentos",
+        "trabalho",
+        "word"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/anthropics/skills/tree/main/skills/docx"
     },
     {
-      "id": "pdf", "n": 35, "name": "PDF", "category": "documentos-escritorio", "confidence": "alto", "level": "iniciante",
-      "what": "Leitura, extração, junção e criação de PDFs.",
+      "id": "pdf",
+      "n": 35,
+      "name": "PDF",
+      "category": "documentos-escritorio",
+      "confidence": "alto",
+      "level": "iniciante",
+      "what": "Extrai, analisa e trabalha com PDFs.",
       "when": "Quando a informação está presa em PDF.",
       "example": "Extrair tabelas de um PDF e transformar em planilha.",
       "exercise": "Extraia os dados de um PDF real do seu trabalho.",
       "project": "Monte um extrator para o tipo de PDF que você mais recebe.",
-      "prerequisites": [], "tags": ["documentos", "extração", "pdf"]
+      "prerequisites": [],
+      "tags": [
+        "documentos",
+        "extração",
+        "pdf"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/anthropics/skills/tree/main/skills/pdf"
     },
     {
-      "id": "pptx", "n": 36, "name": "PPTX", "category": "documentos-escritorio", "confidence": "alto", "level": "iniciante",
-      "what": "Criação e edição de apresentações.",
+      "id": "pptx",
+      "n": 36,
+      "name": "PPTX",
+      "category": "documentos-escritorio",
+      "confidence": "alto",
+      "level": "iniciante",
+      "what": "Cria e edita apresentações.",
       "when": "Quando a entrega é um deck.",
       "example": "Gerar o deck a partir de um roteiro, não o roteiro a partir do deck.",
       "exercise": "Escreva o roteiro de 8 slides antes de gerar qualquer slide.",
       "project": "Produza o deck de apresentação do seu projeto final.",
-      "prerequisites": [], "tags": ["apresentação", "documentos", "powerpoint", "slides"]
+      "prerequisites": [],
+      "tags": [
+        "apresentação",
+        "documentos",
+        "powerpoint",
+        "slides"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/anthropics/skills/tree/main/skills/pptx"
     },
     {
-      "id": "xlsx", "n": 37, "name": "XLSX", "category": "documentos-escritorio", "confidence": "alto", "level": "iniciante",
-      "what": "Criação, leitura e edição de planilhas.",
+      "id": "xlsx",
+      "n": 37,
+      "name": "XLSX",
+      "category": "documentos-escritorio",
+      "confidence": "alto",
+      "level": "iniciante",
+      "what": "Trabalha com planilhas Excel.",
       "when": "Cálculo, consolidação e limpeza de dados tabulares.",
       "example": "Consolidar várias abas em um resumo com fórmulas.",
       "exercise": "Limpe uma planilha bagunçada real e documente o que mudou.",
       "project": "Automatize a planilha que você refaz toda semana.",
-      "prerequisites": [], "tags": ["planilha", "dados", "excel"]
+      "prerequisites": [],
+      "tags": [
+        "planilha",
+        "dados",
+        "excel"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/anthropics/skills/tree/main/skills/xlsx"
     },
     {
-      "id": "doc-coauthoring", "n": 38, "name": "Doc Coauthoring", "category": "documentos-escritorio", "confidence": "alto", "level": "intermediario",
-      "what": "Escrita colaborativa de documentos com IA.",
+      "id": "doc-coauthoring",
+      "n": 38,
+      "name": "Doc Coauthoring",
+      "category": "documentos-escritorio",
+      "confidence": "alto",
+      "level": "intermediario",
+      "what": "Coautoria, revisão e edição colaborativa de documentos.",
       "when": "Textos longos que passam por revisões sucessivas.",
       "example": "Trabalhar por seções, com critérios de revisão declarados.",
       "exercise": "Escreva uma seção, peça revisão crítica e reescreva.",
       "project": "Produza um documento longo em três rodadas de revisão.",
-      "prerequisites": ["docx"], "tags": ["escrita", "colaboração"]
+      "prerequisites": [
+        "docx"
+      ],
+      "tags": [
+        "escrita",
+        "colaboração"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/anthropics/skills/tree/main/skills/doc-coauthoring"
     },
     {
-      "id": "brand-guidelines", "n": 39, "name": "Brand Guidelines", "category": "documentos-escritorio", "confidence": "alto", "level": "intermediario",
-      "what": "Aplicação consistente de identidade de marca.",
+      "id": "brand-guidelines",
+      "n": 39,
+      "name": "Brand Guidelines",
+      "category": "documentos-escritorio",
+      "confidence": "alto",
+      "level": "intermediario",
+      "what": "Aplica diretrizes de marca em documentos e materiais.",
       "when": "Quando várias pessoas ou agentes produzem material da mesma marca.",
       "example": "Tom de voz, cores e regras do que não fazer.",
       "exercise": "Escreva o tom de voz do seu projeto em 5 regras.",
       "project": "Crie o guia de marca do seu projeto final.",
-      "prerequisites": [], "tags": ["marca", "consistência"]
+      "prerequisites": [],
+      "tags": [
+        "marca",
+        "consistência"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/anthropics/skills/tree/main/skills/brand-guidelines"
     },
     {
-      "id": "internal-comms", "n": 40, "name": "Internal Comms", "category": "documentos-escritorio", "confidence": "alto", "level": "intermediario",
-      "what": "Comunicação interna: avisos, atualizações e resumos.",
+      "id": "internal-comms",
+      "n": 40,
+      "name": "Internal Comms",
+      "category": "documentos-escritorio",
+      "confidence": "alto",
+      "level": "intermediario",
+      "what": "Ajuda a criar anúncios internos, updates e comunicações de time.",
       "when": "Quando a informação precisa chegar clara a muita gente.",
       "example": "Um comunicado com contexto, decisão, impacto e próximo passo.",
       "exercise": "Reescreva um e-mail confuso nessa estrutura de 4 partes.",
       "project": "Automatize o resumo semanal do seu time.",
-      "prerequisites": [], "tags": ["comunicação", "trabalho"]
+      "prerequisites": [],
+      "tags": [
+        "comunicação",
+        "trabalho"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/anthropics/skills/tree/main/skills/internal-comms"
     },
-
     {
-      "id": "firecrawl", "n": 41, "name": "Firecrawl", "category": "pesquisa-conteudo-automacao", "confidence": "alto", "level": "intermediario",
-      "what": "Coleta de conteúdo da web para uso por agentes.",
+      "id": "firecrawl",
+      "n": 41,
+      "name": "Firecrawl",
+      "category": "pesquisa-conteudo-automacao",
+      "confidence": "alto",
+      "level": "intermediario",
+      "what": "Scraping, pesquisa e browser automation com Firecrawl.",
       "when": "Quando o agente precisa de dados que não estão no modelo.",
       "example": "Coletar páginas de documentação e transformar em base de conhecimento.",
       "exercise": "Defina o que coletar, com que frequência e o que NÃO coletar.",
       "project": "Alimente um RAG com conteúdo coletado por você.",
-      "prerequisites": [], "tags": ["scraping", "pesquisa", "rag"]
+      "prerequisites": [],
+      "tags": [
+        "scraping",
+        "pesquisa",
+        "rag"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/firecrawl/cli/tree/main/skills/firecrawl-agent"
     },
     {
-      "id": "printing-press", "n": 42, "name": "Printing Press", "category": "pesquisa-conteudo-automacao", "confidence": "medio", "level": "intermediario",
-      "what": "Produção de conteúdo em escala.",
+      "id": "printing-press",
+      "n": 42,
+      "name": "Printing Press",
+      "category": "pesquisa-conteudo-automacao",
+      "confidence": "medio",
+      "level": "intermediario",
+      "what": "Transforma sites/APIs em interfaces ou CLIs mais fáceis para agentes.",
       "when": "Quando o volume é o gargalo — com revisão humana obrigatória.",
       "example": "Gerar variações e escolher, em vez de publicar o primeiro resultado.",
       "exercise": "Gere 5 variações de um texto e justifique a escolhida.",
       "project": "Monte uma esteira de conteúdo com etapa de revisão humana.",
-      "prerequisites": [], "tags": ["conteúdo", "escala"]
+      "prerequisites": [],
+      "tags": [
+        "conteúdo",
+        "escala"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/mvanhorn/cli-printing-press/tree/main/skills/printing-press"
     },
     {
-      "id": "corey-haines-marketing-skills", "n": 43, "name": "Corey Haines Marketing Skills", "category": "pesquisa-conteudo-automacao", "confidence": "alto", "level": "intermediario",
-      "what": "Conjunto de Skills de marketing.",
+      "id": "corey-haines-marketing-skills",
+      "n": 43,
+      "name": "Corey Haines Marketing Skills",
+      "category": "pesquisa-conteudo-automacao",
+      "confidence": "alto",
+      "level": "intermediario",
+      "what": "Stack de marketing: CRO, SEO, copywriting, lifecycle, analytics, growth e RevOps.",
       "when": "Posicionamento, copy e campanhas.",
       "example": "Comece pelo público e pela dor, não pelo canal.",
       "exercise": "Escreva a dor do seu público em uma frase que ele mesmo usaria.",
       "project": "Monte a página de apresentação de um projeto seu.",
-      "prerequisites": [], "tags": ["marketing", "copy"]
+      "prerequisites": [],
+      "tags": [
+        "marketing",
+        "copy"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/coreyhaines31/marketingskills"
     },
     {
-      "id": "remotion-best-practices", "n": 44, "name": "Remotion Best Practices", "category": "pesquisa-conteudo-automacao", "confidence": "alto", "level": "avancado",
-      "what": "Boas práticas para vídeo programático.",
+      "id": "remotion-best-practices",
+      "n": 44,
+      "name": "Remotion Best Practices",
+      "category": "pesquisa-conteudo-automacao",
+      "confidence": "alto",
+      "level": "avancado",
+      "what": "Ajuda a criar vídeos programáticos com React/Remotion.",
       "when": "Quando o vídeo precisa ser gerado a partir de dados.",
       "example": "Um vídeo de relatório que se atualiza sozinho a cada mês.",
       "exercise": "Descreva um vídeo que mudaria só pelos dados de entrada.",
       "project": "Gere um vídeo curto a partir de dados reais.",
-      "prerequisites": ["vercel-react-best-practices"], "tags": ["vídeo", "programático"]
+      "prerequisites": [
+        "vercel-react-best-practices"
+      ],
+      "tags": [
+        "vídeo",
+        "programático"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/remotion-dev/skills/tree/main/skills/remotion-best-practices"
     },
     {
-      "id": "algorithmic-art", "n": 45, "name": "Algorithmic Art", "category": "pesquisa-conteudo-automacao", "confidence": "alto", "level": "intermediario",
-      "what": "Arte generativa por código.",
+      "id": "algorithmic-art",
+      "n": 45,
+      "name": "Algorithmic Art",
+      "category": "pesquisa-conteudo-automacao",
+      "confidence": "alto",
+      "level": "intermediario",
+      "what": "Cria arte algorítmica e experimentos visuais.",
       "when": "Identidade visual própria, sem banco de imagens.",
       "example": "Gerar padrões a partir de parâmetros controlados.",
       "exercise": "Crie um padrão e mude um único parâmetro por vez.",
       "project": "Produza a identidade visual generativa do seu projeto.",
-      "prerequisites": [], "tags": ["arte", "criatividade"]
+      "prerequisites": [],
+      "tags": [
+        "arte",
+        "criatividade"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/anthropics/skills/tree/main/skills/algorithmic-art"
     },
     {
-      "id": "music-creation", "n": 46, "name": "Music Creation", "category": "pesquisa-conteudo-automacao", "confidence": "medio", "level": "intermediario",
-      "what": "Criação musical assistida.",
+      "id": "music-creation",
+      "n": 46,
+      "name": "Music Creation",
+      "category": "pesquisa-conteudo-automacao",
+      "confidence": "medio",
+      "level": "intermediario",
+      "what": "Criação musical/áudio em workflows criativos.",
       "when": "Trilhas e peças sonoras de apoio.",
       "example": "Descrever intenção, ritmo e uso antes de gerar.",
       "exercise": "Escreva o briefing sonoro de um vídeo seu.",
       "project": "Produza a trilha de uma peça sua.",
-      "prerequisites": [], "tags": ["áudio", "criatividade"]
+      "prerequisites": [],
+      "tags": [
+        "áudio",
+        "criatividade"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/bitwize-music-studio/claude-ai-music-skills"
     },
     {
-      "id": "claude-art-skill", "n": 47, "name": "Claude Art Skill", "category": "pesquisa-conteudo-automacao", "confidence": "medio", "level": "intermediario",
-      "what": "Skill de criação visual.",
+      "id": "claude-art-skill",
+      "n": 47,
+      "name": "Claude Art Skill",
+      "category": "pesquisa-conteudo-automacao",
+      "confidence": "medio",
+      "level": "intermediario",
+      "what": "Criação e direção visual com estética, marca e workflows de imagem.",
       "when": "Peças ilustrativas e exploração visual.",
       "example": "Iterar por descrições cada vez mais específicas.",
       "exercise": "Refine a mesma imagem em 3 rodadas de descrição.",
       "project": "Crie o conjunto visual de um projeto.",
-      "prerequisites": [], "tags": ["visual", "criatividade"]
+      "prerequisites": [],
+      "tags": [
+        "visual",
+        "criatividade"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/aplaceforallmystuff/claude-art-skill/tree/main/skills/art"
     },
     {
-      "id": "deckset-presentation-expert", "n": 48, "name": "Deckset Presentation Expert", "category": "pesquisa-conteudo-automacao", "confidence": "medio", "level": "intermediario",
-      "what": "Apresentações escritas em texto simples.",
+      "id": "deckset-presentation-expert",
+      "n": 48,
+      "name": "Deckset Presentation Expert",
+      "category": "pesquisa-conteudo-automacao",
+      "confidence": "medio",
+      "level": "intermediario",
+      "what": "Ajuda a transformar conteúdo em apresentações estruturadas com markdown/Deckset.",
       "when": "Quando você quer versionar o deck junto com o código.",
       "example": "Deck em Markdown, revisado por diff.",
       "exercise": "Escreva 5 slides em Markdown.",
       "project": "Versione a apresentação do seu projeto no repositório.",
-      "prerequisites": [], "tags": ["apresentação", "markdown"]
+      "prerequisites": [],
+      "tags": [
+        "apresentação",
+        "markdown"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/doudou1337/deckset-claude-skill/tree/main/skills/deckset-presentation-expert"
     },
     {
-      "id": "data-analysis", "n": 49, "name": "Data Analysis", "category": "pesquisa-conteudo-automacao", "confidence": "alto", "level": "intermediario",
-      "what": "Análise de dados: limpeza, exploração e conclusão.",
+      "id": "data-analysis",
+      "n": 49,
+      "name": "Data Analysis",
+      "category": "pesquisa-conteudo-automacao",
+      "confidence": "alto",
+      "level": "intermediario",
+      "what": "Fluxos para análise de dados, tabelas e exploração orientada.",
       "when": "Quando existe dado e falta decisão.",
       "example": "Pergunta de negócio → dado necessário → análise → recomendação.",
       "exercise": "Escreva a pergunta antes de olhar a planilha.",
       "project": "Construa o agente de análise de dados do portfólio.",
-      "prerequisites": ["xlsx"], "tags": ["dados", "análise"]
+      "prerequisites": [
+        "xlsx"
+      ],
+      "tags": [
+        "dados",
+        "análise"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/anthropics/skills/tree/main/skills/xlsx",
+      "repoNote": "O guia original repete aqui o link do repositório da Skill XLSX (nº 37). Verifique o repositório oficial antes de instalar."
     },
     {
-      "id": "document-skills", "n": 50, "name": "Document Skills", "category": "pesquisa-conteudo-automacao", "confidence": "alto", "level": "intermediario",
-      "what": "Conjunto de Skills de documentos, combinando formatos.",
+      "id": "document-skills",
+      "n": 50,
+      "name": "Document Skills",
+      "category": "pesquisa-conteudo-automacao",
+      "confidence": "alto",
+      "level": "intermediario",
+      "what": "Pacote amplo para criar e manipular PDF, DOCX, XLSX e PPTX.",
       "when": "Fluxos que atravessam PDF, Word, Excel e apresentação.",
       "example": "PDF → dados → planilha → relatório → deck.",
       "exercise": "Desenhe esse fluxo para um processo do seu trabalho.",
       "project": "Automatize o fluxo inteiro, de ponta a ponta.",
-      "prerequisites": ["pdf", "docx", "xlsx"], "tags": ["documentos", "fluxo"]
+      "prerequisites": [
+        "pdf",
+        "docx",
+        "xlsx"
+      ],
+      "tags": [
+        "documentos",
+        "fluxo"
+      ],
+      "whatSource": "material",
+      "repo": "https://github.com/anthropics/skills"
     }
   ]
 }

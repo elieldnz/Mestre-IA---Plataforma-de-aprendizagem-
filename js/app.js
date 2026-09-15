@@ -457,9 +457,14 @@ window.MIA = window.MIA || {};
         return '<li><a href="#/aula/' + l.id + '">' + ui.escapeHtml(l.title.replace(/^Caso \d+ — /, '')) + '</a></li>';
       }).join('')) + '</ol>' + ui.sourceTag('material') + '</section>';
 
+    const guide = MIA.data.skills.meta.sourceGuide;
     html += '<section class="card" style="margin-top:24px"><p class="card__label">Origem do conteúdo</p>' +
       '<p>' + ui.escapeHtml(MIA.data.curriculum.meta.sourceNote) + '</p>' +
       '<p>' + ui.escapeHtml(MIA.data.skills.meta.sourceNote) + '</p>' +
+      (guide
+        ? '<p class="small muted">Catálogo de Skills: <em>' + ui.escapeHtml(guide.title) + '</em> — ' +
+          ui.escapeHtml(guide.author) + ', atualizado ' + ui.escapeHtml(guide.updated) + '.</p>'
+        : '') +
       '<p class="small muted">Dados carregados de: ' + (MIA.data.source === 'json' ? '/data/*.json' : 'bundle local (abertura via file://)') + '.</p>' +
     '</section>';
 

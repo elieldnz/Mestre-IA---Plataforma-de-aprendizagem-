@@ -470,6 +470,13 @@ window.MIA = window.MIA || {};
       '</div>' +
       '<input type="file" id="import-file" accept="application/json" hidden>' +
       (P().storageAvailable ? '' : '<p class="small" style="color:var(--amber);margin-top:12px">⚠ Este navegador bloqueou o armazenamento local: o progresso não está sendo salvo.</p>') +
+      (P().recovery
+        ? '<p class="small" style="color:var(--amber);margin-top:12px">⚠ O progresso salvo neste navegador estava ilegível e não pôde ser lido. ' +
+          'A plataforma recomeçou com um estado novo, que está sendo salvo normalmente.' +
+          (P().recovery.quarantined
+            ? ' Uma cópia do dado original foi preservada em <code>' + ui.escapeHtml(P().QUARANTINE_KEY) + '</code>.'
+            : '') + '</p>'
+        : '') +
     '</section>';
 
     return html;

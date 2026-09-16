@@ -24,26 +24,120 @@ window.MIA = window.MIA || {};
     prefs: { mode: 'normal' }
   };
 
+  /* Onde o blob ilegível vai parar antes de ser substituído. Chave separada:
+     o formato do estado principal não muda. */
+  const QUARANTINE_KEY = KEY + ':corrompido';
+
   let state = clone(EMPTY);
-  let available = true;
+  let available = true;   // conseguimos ESCREVER? (bloqueio do navegador, cota)
+  let recovery = null;    // { reason, quarantined, at } quando houve recuperação
   const listeners = [];
 
   function clone(o) { return JSON.parse(JSON.stringify(o)); }
 
-  function load() {
+  function isPlainObject(v) { return !!v && typeof v === 'object' && !Array.isArray(v); }
+
+  function num(v, fallback) {
+    return typeof v === 'number' && isFinite(v) && v >= 0 ? v : fallback;
+  }
+
+  /** Mantém as entradas válidas de uma coleção e descarta só as podres.
+   *  Uma aula corrompida não pode levar junto as outras 105. */
+  function pickEntries(source) {
+    const out = {};
+    if (!isPlainObject(source)) return out;
+    Object.keys(source).forEach(function (k) {
+      if (isPlainObject(source[k])) out[k] = source[k];
+    });
+    return out;
+  }
+
+  /** Única definição de "estado válido" da aplicação — usada no load E no
+   *  import, para não existirem duas noções divergentes. Recupera o máximo
+   *  possível: campo com tipo errado vira o default, o resto é preservado. */
+  function sanitize(raw) {
+    const base = isPlainObject(raw) ? raw : {};
+    const safe = clone(EMPTY);
+
+    safe.version = num(base.version, EMPTY.version);
+    safe.xp = num(base.xp, 0);
+    safe.minutes = num(base.minutes, 0);
+    safe.user = isPlainObject(base.user) ? Object.assign(clone(EMPTY.user), base.user) : clone(EMPTY.user);
+    safe.prefs = isPlainObject(base.prefs) ? Object.assign(clone(EMPTY.prefs), base.prefs) : clone(EMPTY.prefs);
+    safe.diagnostic = isPlainObject(base.diagnostic) ? base.diagnostic : null;
+
+    safe.streak = isPlainObject(base.streak) ? Object.assign(clone(EMPTY.streak), base.streak) : clone(EMPTY.streak);
+    safe.streak.current = num(safe.streak.current, 0);
+    safe.streak.best = num(safe.streak.best, 0);
+    if (typeof safe.streak.lastDay !== 'string') safe.streak.lastDay = null;
+
+    ['lessons', 'skills', 'projects', 'reviews', 'activity'].forEach(function (k) {
+      safe[k] = pickEntries(base[k]);
+    });
+    // os dois campos em que o resto do código indexa direto
+    Object.keys(safe.lessons).forEach(function (id) {
+      const entry = safe.lessons[id];
+      if (!isPlainObject(entry.exercises)) entry.exercises = {};
+      if (entry.paid !== undefined && !isPlainObject(entry.paid)) delete entry.paid;
+    });
+
+    safe.errors = Array.isArray(base.errors) ? base.errors.filter(isPlainObject) : [];
+
+    return safe;
+  }
+
+  /** Guarda o blob ilegível numa chave separada ANTES de qualquer escrita.
+   *  Não destrutivo: se já existe uma cópia de corrupção anterior, ela é
+   *  preservada — a primeira evidência costuma ser a mais próxima do dado bom. */
+  function quarantine(raw) {
     try {
-      const raw = localStorage.getItem(KEY);
-      if (raw) state = Object.assign(clone(EMPTY), JSON.parse(raw));
+      if (localStorage.getItem(QUARANTINE_KEY) === null) {
+        localStorage.setItem(QUARANTINE_KEY, raw);
+      }
+      return true;
+    } catch (err) {
+      return false; // sem espaço ou bloqueado: recuperar ainda é mais importante
+    }
+  }
+
+  function recoverFrom(raw, reason) {
+    const quarantined = quarantine(raw);
+    state = clone(EMPTY);
+    recovery = { reason: reason, quarantined: quarantined, at: new Date().toISOString() };
+    console.warn('Progresso ilegível no localStorage (' + reason + '). ' +
+      (quarantined ? 'Uma cópia foi guardada em ' + QUARANTINE_KEY + '. ' : '') +
+      'A aplicação seguiu com um estado novo; o blob antigo só será substituído no próximo save.');
+    return state;
+  }
+
+  /** Os cinco cenários são distintos e não podem cair no mesmo catch:
+   *  storage bloqueado ≠ chave ausente ≠ JSON ok ≠ JSON ilegível ≠ shape inválido. */
+  function load() {
+    let raw = null;
+    try {
+      raw = localStorage.getItem(KEY);
     } catch (err) {
       available = false;
       console.warn('localStorage indisponível: o progresso não será salvo.', err);
+      state = clone(EMPTY);
+      return state;
     }
-    // normaliza campos que podem faltar em dados antigos
-    ['lessons', 'skills', 'projects', 'reviews', 'activity'].forEach(function (k) {
-      if (!state[k] || typeof state[k] !== 'object') state[k] = {};
-    });
-    if (!Array.isArray(state.errors)) state.errors = [];
-    if (!state.prefs) state.prefs = { mode: 'normal' };
+
+    if (raw === null || raw === '') {   // primeira visita: nada a recuperar
+      state = clone(EMPTY);
+      return state;
+    }
+
+    let parsed = null;
+    try {
+      parsed = JSON.parse(raw);
+    } catch (err) {
+      return recoverFrom(raw, 'ilegivel');
+    }
+
+    if (!isPlainObject(parsed)) return recoverFrom(raw, 'shape');
+
+    state = sanitize(parsed);
     return state;
   }
 
@@ -543,16 +637,42 @@ window.MIA = window.MIA || {};
 
   function exportJSON() { return JSON.stringify(state, null, 2); }
 
+  const PROGRESS_KEYS = ['lessons', 'skills', 'projects', 'reviews', 'activity',
+    'errors', 'xp', 'minutes', 'diagnostic', 'user', 'streak', 'prefs'];
+
+  /** Importa um backup. Tudo é validado ANTES de tocar no estado atual: se o
+   *  arquivo não serve, o progresso de quem está importando fica intacto.
+   *  A validação é deliberadamente frouxa quanto a campos ausentes (sanitize
+   *  preenche defaults) e rígida só quanto ao que indica arquivo errado —
+   *  validação rígida demais seria outra forma de perder dados. */
   function importJSON(text) {
-    const parsed = JSON.parse(text);
-    if (!parsed || typeof parsed !== 'object') throw new Error('Arquivo inválido.');
-    state = Object.assign(clone(EMPTY), parsed);
+    const parsed = JSON.parse(text);  // lança em JSON inválido, antes de qualquer mutação
+
+    if (!isPlainObject(parsed)) {
+      throw new Error('esperava um objeto de progresso.');
+    }
+    const hasAnyKey = PROGRESS_KEYS.some(function (k) {
+      return Object.prototype.hasOwnProperty.call(parsed, k);
+    });
+    if (!hasAnyKey) {
+      throw new Error('não parece um backup do MESTRE IA.');
+    }
+    const version = num(parsed.version, EMPTY.version);
+    if (version > EMPTY.version) {
+      throw new Error('este backup é de uma versão mais nova (v' + version + ').');
+    }
+
+    // só aqui o estado atual é substituído. Versões antigas ou sem `version`
+    // são compatíveis: sanitize aplica os defaults que faltarem.
+    state = sanitize(parsed);
     commit();
   }
 
   MIA.progress = {
     load: load, save: save, onChange: onChange, get state() { return state; },
     get storageAvailable() { return available; },
+    get recovery() { return recovery; },
+    QUARANTINE_KEY: QUARANTINE_KEY,
     touch: touch, addXP: addXP, currentStreak: currentStreak,
     lessonState: lessonState, markRead: markRead, recordExercise: recordExercise, resetExercise: resetExercise,
     moduleState: moduleState, moduleBlockers: moduleBlockers,

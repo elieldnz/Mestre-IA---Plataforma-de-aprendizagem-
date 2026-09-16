@@ -7,6 +7,17 @@ const check = (n, c, e = '') => results.push({ n, ok: !!c, e });
 
 const browser = await chromium.launch();
 
+// --- Onboarding explica as duas camadas do produto antes das perguntas ---
+{
+  const page = await browser.newPage();
+  page.on('pageerror', e => errors.push('pageerror(welcome): ' + e.message));
+  await page.goto(BASE, { waitUntil: 'networkidle' });
+  const welcomeText = await page.locator('.welcome').textContent();
+  check('welcome explica "Camada 1 — Aprendizado"', welcomeText.includes('Camada 1') && welcomeText.includes('Aprendizado'));
+  check('welcome explica "Camada 2 — Construção"', welcomeText.includes('Camada 2') && welcomeText.includes('Construção'));
+  await page.close();
+}
+
 // --- Caso 1: iniciante total -> deve pular ferramentas, agentes, python, apis (12 -> 8) ---
 {
   const page = await browser.newPage();
@@ -91,6 +102,29 @@ const browser = await chromium.launch();
   await page.click('[data-action="next"]');
   h2 = await page.locator('.onboarding__card h2').textContent();
   check('mudou a resposta -> "ferramentas" reaparece', h2.includes('ferramentas você já usou'), h2);
+}
+
+// --- Acessibilidade: grupos de múltipla seleção (checkbox) precisam ter
+// role="group" + nome acessível, igual aos de escolha única (radiogroup) ---
+{
+  const page = await browser.newPage();
+  page.on('pageerror', e => errors.push('pageerror(a11y): ' + e.message));
+  await page.goto(BASE, { waitUntil: 'networkidle' });
+  await page.click('[data-action="start"]');
+  for (let i = 0; i < 15; i++) {
+    const boxes = page.locator('input[name="ob"][type="checkbox"]');
+    if (await boxes.count() > 0) break;
+    const radios = page.locator('input[name="ob"][type="radio"]');
+    if (await radios.count() > 0) await radios.nth(0).check();
+    else { const field = page.locator('#ob-input'); if (await field.count()) await field.fill('teste'); }
+    await page.click('[data-action="next"]');
+    await page.waitForTimeout(100);
+  }
+  const group = page.locator('.diag-options[role="group"]');
+  check('grupo de múltipla seleção tem role="group"', await group.count() === 1);
+  const ariaLabel = await group.getAttribute('aria-label');
+  const question = await page.locator('.onboarding__card h2').textContent();
+  check('role="group" tem aria-label com o texto da pergunta', !!ariaLabel && ariaLabel.trim() === question.trim(), ariaLabel);
 }
 
 await browser.close();

@@ -154,7 +154,19 @@ window.MIA = window.MIA || {};
       '<h1>' + ui.escapeHtml(intro.title) + '</h1>' +
       '<div class="welcome__lines">' + intro.lines.map(function (l) {
         return '<p>' + ui.escapeHtml(l) + '</p>'; }).join('') + '</div>' +
-      '<div class="field"><label for="ob-name">Como podemos te chamar?</label>' +
+      '<p class="card__label" style="margin-top:24px">Como a plataforma funciona</p>' +
+      '<div class="grid grid--2" style="margin-bottom:8px">' +
+        '<div style="border:1px solid var(--border-soft);border-radius:var(--r-md);padding:12px 16px">' +
+          '<p class="small" style="margin:0 0 4px;font-weight:600">🧠 Camada 1 — Aprendizado</p>' +
+          '<p class="small muted" style="margin:0">Você desenvolve conhecimento e competência: aulas curtas, exercícios com feedback e domínio comprovado — não só assistir.</p>' +
+        '</div>' +
+        '<div style="border:1px solid var(--border-soft);border-radius:var(--r-md);padding:12px 16px">' +
+          '<p class="small" style="margin:0 0 4px;font-weight:600">🏗️ Camada 2 — Construção</p>' +
+          '<p class="small muted" style="margin:0">Você transforma esse conhecimento em Skills, agentes, automações e projetos reais — com evidência, não só nota.</p>' +
+        '</div>' +
+      '</div>' +
+      '<p class="small muted">É por isso que o MESTRE IA não é só um curso: aprender e construir andam juntos, o tempo todo.</p>' +
+      '<div class="field" style="margin-top:16px"><label for="ob-name">Como podemos te chamar?</label>' +
       '<input type="text" id="ob-name" autocomplete="given-name" placeholder="Seu nome" value="' + ui.escapeHtml(name) + '"></div>' +
       '<div class="row" style="margin-top:24px">' +
       '<button class="btn btn--primary" data-action="start">' + ui.escapeHtml(intro.cta) + ' →</button></div>' +
@@ -181,7 +193,7 @@ window.MIA = window.MIA || {};
         }).join('') + '</div>';
     } else {
       const picked = value || [];
-      field = '<div class="diag-options">' + q.options.map(function (o, i) {
+      field = '<div class="diag-options" role="group" aria-label="' + ui.escapeHtml(q.question) + '">' + q.options.map(function (o, i) {
         return '<label class="option"><input type="checkbox" name="ob" value="' + i + '"' +
           (picked.indexOf(i) !== -1 ? ' checked' : '') + '><span>' + ui.escapeHtml(o.label) + '</span></label>';
       }).join('') + '</div>';

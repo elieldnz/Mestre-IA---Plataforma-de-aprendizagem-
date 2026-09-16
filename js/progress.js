@@ -693,7 +693,7 @@ window.MIA = window.MIA || {};
     QUARANTINE_KEY: QUARANTINE_KEY,
     touch: touch, addXP: addXP, currentStreak: currentStreak,
     lessonState: lessonState, markRead: markRead, recordExercise: recordExercise, resetExercise: resetExercise,
-    moduleState: moduleState, moduleStateRaw: moduleStateRaw, moduleBlockers: moduleBlockers,
+    moduleState: moduleState, moduleBlockers: moduleBlockers,
     globalProgress: globalProgress, currentLevel: currentLevel, levelRatio: levelRatio,
     dueReviews: dueReviews, recordReview: recordReview, scheduleReview: scheduleReview,
     addError: addError, updateError: updateError, removeError: removeError,

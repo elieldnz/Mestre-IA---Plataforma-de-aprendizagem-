@@ -86,6 +86,32 @@ diagQuestions.forEach((q, i) => {
   if (q.skipDefault === undefined) fail('Pergunta ' + q.id + ' tem skipIf mas não tem skipDefault');
 });
 
+// Fase 15 (Frameworks de Agentes) precisa ensinar CADA framework de verdade,
+// não só citar o nome. Verifica, para cada um: uma aula dedicada, com o nome
+// aparecendo várias vezes (não só no título), pelo menos 3 blocos de conteúdo,
+// pelo menos 2 exercícios, e uma palavra-chave que só faz sentido se o
+// conceito específico daquele framework foi mesmo explicado.
+const frameworksModule = curriculum.modules.find(m => m.id === 'frameworks-agentes');
+if (!frameworksModule) fail('Módulo frameworks-agentes não encontrado');
+else {
+  const FRAMEWORKS = [
+    { name: 'Agno', keyword: /instructions|ferramentas e instru/i },
+    { name: 'LangChain', keyword: /encadea|LCEL|Runnable/i },
+    { name: 'LangGraph', keyword: /grafo|estado|checkpoint/i },
+    { name: 'CrewAI', keyword: /papel|Crew|backstory/i }
+  ];
+  FRAMEWORKS.forEach(fw => {
+    const lesson = frameworksModule.lessons.find(l => l.title.includes(fw.name));
+    if (!lesson) { fail('Fase 15: nenhuma aula dedicada a ' + fw.name); return; }
+    const fullBody = lesson.blocks.map(b => b.body).join(' ');
+    const mentions = (fullBody.match(new RegExp(fw.name, 'g')) || []).length;
+    if (mentions < 3) fail('Aula de ' + fw.name + ' (' + lesson.id + ') cita o nome só ' + mentions + ' vez(es) — parece raso, não ensinado de verdade');
+    if (lesson.blocks.length < 3) fail('Aula de ' + fw.name + ' (' + lesson.id + ') tem poucos blocos de conteúdo (' + lesson.blocks.length + ')');
+    if ((lesson.exercises || []).length < 2) fail('Aula de ' + fw.name + ' (' + lesson.id + ') tem menos de 2 exercícios');
+    if (!fw.keyword.test(fullBody)) fail('Aula de ' + fw.name + ' (' + lesson.id + ') não menciona um conceito específico dele (' + fw.keyword + ')');
+  });
+}
+
 const projectIds = new Set();
 projects.projects.forEach(p => {
   if (projectIds.has(p.id)) fail('Projeto duplicado: ' + p.id);

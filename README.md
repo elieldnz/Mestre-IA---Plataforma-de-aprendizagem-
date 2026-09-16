@@ -43,6 +43,10 @@ trilha personalizada. Para recomeçar do zero: **Perfil → Apagar tudo**.
 ## O que está implementado
 
 **Primeiro acesso e diagnóstico adaptativo**
+- A tela de boas-vindas explica as duas camadas do produto antes da primeira pergunta:
+  **Camada 1 — Aprendizado** (desenvolver conhecimento e competência) e **Camada 2 —
+  Construção** (transformar isso em Skills, agentes e projetos com evidência) — para o
+  aluno entender por que a plataforma não é só um curso.
 - Até 12 perguntas — **algumas são puladas de verdade** conforme as respostas anteriores
   (regra fixa e declarada na tela, não uma IA decidindo: quem nunca usou IA não vê perguntas
   sobre ferramentas e agentes; quem não programa não vê Python nem APIs). Um total iniciante
@@ -67,8 +71,9 @@ trilha personalizada. Para recomeçar do zero: **Perfil → Apagar tudo**.
   missão do dia (15 / 45 / 90 minutos) e prévia do mapa da jornada.
 
 **Trilha e aulas**
-- 20 fases sobre IA, 98 aulas, 127 exercícios — mais uma **trilha piloto fora do tema IA**
-  (ver abaixo).
+- 20 fases sobre IA, 102 aulas, 136 exercícios — mais uma **trilha piloto fora do tema IA**
+  (ver abaixo). A Fase 15 (Frameworks de Agentes) ensina Agno, LangChain, LangGraph e CrewAI
+  individualmente — conceito, arquitetura, exemplo e comparação de cada um, não só o nome.
 - Página de aula: objetivo → conceito → exemplo → “tente você” → feedback → próxima etapa.
 - Tipos de exercício: quiz, resposta aberta, prática, código, desafio.
 - Checkpoint por módulo, com resultado e liberação do próximo.
@@ -98,10 +103,14 @@ trilha personalizada. Para recomeçar do zero: **Perfil → Apagar tudo**.
   verificar repositório oficial, manutenção, compatibilidade e permissões antes.
 
 **Projetos**
-- 23 projetos (19 do portfólio + 3 de fase + projeto final) com workspace de 13 seções:
-  objetivo, requisitos, arquitetura, tecnologias, Skills, tarefas, código, testes, erros,
-  decisões, documentação, resultado e portfólio.
+- 24 projetos (19 do portfólio + 3 de fase + projeto final + 1 piloto) com workspace de 13
+  seções: objetivo, requisitos, arquitetura, tecnologias, Skills, tarefas, código, testes,
+  erros, decisões, documentação, resultado e portfólio.
 - Concluir exige evidência: todas as tarefas marcadas **e** resultado e portfólio escritos.
+- **Autosave com debounce**: salva ~800ms depois de você parar de digitar, sem exigir que
+  clique fora do campo. Indicador "Salvo há X segundos" em cada seção; texto recuperado
+  automaticamente ao reabrir; aviso do navegador ao tentar fechar a aba **só** quando há
+  digitação ainda não salva.
 
 **Memória**
 - Revisão espaçada por recuperação ativa (intervalo ajustado pelo quanto você lembrou).
@@ -178,9 +187,10 @@ js/
 data/
   curriculum.json        fases, aulas, exercícios, diagnóstico, XP, avaliação
   skills.json            50 Skills, 6 categorias, checklists
-  projects.json          23 projetos e seções do workspace
+  projects.json          24 projetos e seções do workspace
 tools/build-data.js      gera js/data-bundle.js a partir de /data
-tests/                   data.mjs · smoke.mjs · quality.mjs
+tests/                   data.mjs · smoke.mjs · quality.mjs · diagnostic.mjs · pilot.mjs ·
+                         trilha-personalizada.mjs · autosave.mjs
 assets/                  (vazio: os ícones são emoji e SVG inline)
 ```
 
@@ -198,9 +208,10 @@ assets/                  (vazio: os ícones são emoji e SVG inline)
 node tests/data.mjs        # ids, referências cruzadas e campos obrigatórios (sem navegador)
 node tests/smoke.mjs       # fluxo completo no navegador (38 verificações)
 node tests/quality.mjs     # progressão, links, botões, acessibilidade, contraste, file:// (24)
-node tests/diagnostic.mjs           # diagnóstico ramificado: pula, não pula, volta e reage a mudança (12)
+node tests/diagnostic.mjs           # diagnóstico ramificado + camadas no onboarding + a11y do grupo (16)
 node tests/pilot.mjs                # trilha piloto isolada do nível de IA e da missão do dia (14)
 node tests/trilha-personalizada.mjs # objetivo reordena Jornada/Aulas/missão sem afetar bloqueio (14)
+node tests/autosave.mjs             # debounce, indicador, recuperação, aviso de saída, sem vazar entre projetos (14)
 ```
 
 Ou tudo de uma vez: `npm test`.
@@ -208,7 +219,10 @@ Ou tudo de uma vez: `npm test`.
 Os testes de navegador usam Playwright — instalado no projeto (`npm install --no-save playwright`)
 ou globalmente; eles sobem um servidor estático próprio em porta livre.
 
-Cobertura atual: **100% das 114 verificações passando, sem erros de console.**
+Cobertura atual: **100% das 120 verificações passando, sem erros de console.** `tests/data.mjs`
+também verifica que a Fase 15 ensina cada framework de verdade (nome citado várias vezes, não
+só no título, mais uma palavra-chave específica de cada um) — não é suficiente para garantir
+qualidade pedagógica sozinho, então vale ler o conteúdo da Fase 15 você mesmo antes de aprovar.
 
 | Verificação | Estado |
 | --- | --- |
@@ -227,6 +241,9 @@ Cobertura atual: **100% das 114 verificações passando, sem erros de console.**
 - Navegação completa por teclado, com atalho “pular para o conteúdo” e foco visível.
 - `label` em todo campo; `aria-current`, `aria-expanded`, `aria-pressed` e `role="log"` onde a
   semântica nativa não basta; foco levado ao título a cada navegação.
+- Grupos de múltipla seleção (checkbox) do diagnóstico têm `role="group"` + `aria-label` com o
+  texto da pergunta — igual aos de escolha única (`role="radiogroup"`), com teste dedicado para
+  não regredir.
 - `prefers-reduced-motion` respeitado.
 
 ---

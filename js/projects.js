@@ -8,6 +8,65 @@ window.MIA = window.MIA || {};
   const P = function () { return MIA.progress; };
   const levelFilter = { level: '', status: '' };
 
+  /* ---------------- autosave do workspace ----------------
+     Salva enquanto o usuário digita (com debounce), sem mudar a estrutura
+     persistida (entry.notes[sectionId] continua uma string simples). O
+     "salvo há X segundos" e o controle de alterações pendentes são
+     propositalmente EFÊMEROS (não vão pro localStorage) — o que precisa
+     sobreviver a um reload é o texto em si, que já é salvo normalmente. */
+  const AUTOSAVE_DEBOUNCE_MS = 800;
+  const debounceTimers = {};   // sectionId -> timeoutId
+  const pendingSaves = new Set(); // sectionId com digitação ainda não salva
+  const lastSavedAt = {};      // sectionId -> timestamp (ms) do último save
+  let tickIntervalId = null;
+
+  function formatSavedAgo(ms) {
+    const diff = Math.max(0, Math.round((Date.now() - ms) / 1000));
+    if (diff < 5) return 'Salvo agora mesmo.';
+    if (diff < 60) return 'Salvo há ' + diff + ' segundos.';
+    const min = Math.round(diff / 60);
+    return 'Salvo há ' + min + ' ' + (min === 1 ? 'minuto.' : 'minutos.');
+  }
+
+  function paintSavedIndicator(sectionId) {
+    const el = document.querySelector('[data-saved="' + sectionId + '"]');
+    if (!el) return;
+    if (pendingSaves.has(sectionId)) { el.textContent = 'Salvando…'; return; }
+    if (lastSavedAt[sectionId]) el.textContent = formatSavedAgo(lastSavedAt[sectionId]);
+  }
+
+  function ensureTicking() {
+    if (tickIntervalId) return;
+    tickIntervalId = setInterval(function () {
+      Object.keys(lastSavedAt).forEach(paintSavedIndicator);
+    }, 5000);
+  }
+
+  function flushSave(projectId, sectionId, value) {
+    delete debounceTimers[sectionId];
+    pendingSaves.delete(sectionId);
+    P().setProjectNote(projectId, sectionId, value);
+    lastSavedAt[sectionId] = Date.now();
+    paintSavedIndicator(sectionId);
+    ensureTicking();
+  }
+
+  function scheduleSave(projectId, sectionId, value) {
+    pendingSaves.add(sectionId);
+    paintSavedIndicator(sectionId);
+    clearTimeout(debounceTimers[sectionId]);
+    debounceTimers[sectionId] = setTimeout(function () {
+      flushSave(projectId, sectionId, value);
+    }, AUTOSAVE_DEBOUNCE_MS);
+  }
+
+  /** Só avisa ao sair se houver digitação real ainda não salva. */
+  window.addEventListener('beforeunload', function (event) {
+    if (pendingSaves.size === 0) return;
+    event.preventDefault();
+    event.returnValue = '';
+  });
+
   function projectCard(project) {
     const st = P().projectState(project.id);
     const mod = MIA.get.module(project.module);
@@ -76,12 +135,13 @@ window.MIA = window.MIA || {};
 
   function noteField(project, section, entry) {
     const value = (entry.notes && entry.notes[section.id]) || '';
+    const recovered = value.trim().length > 0 ? 'Recuperado de onde você parou.' : '';
     return '<section class="card" id="ws-' + section.id + '">' +
       '<p class="card__label">' + ui.escapeHtml(section.label) + '</p>' +
       (section.hint ? '<p class="small muted">' + ui.escapeHtml(section.hint) + '</p>' : '') +
       '<div class="field"><label class="sr-only" for="note-' + section.id + '">' + ui.escapeHtml(section.label) + '</label>' +
       '<textarea id="note-' + section.id + '" data-note="' + section.id + '">' + ui.escapeHtml(value) + '</textarea></div>' +
-      '<p class="small muted" data-saved="' + section.id + '"></p>' +
+      '<p class="small muted" data-saved="' + section.id + '">' + recovered + '</p>' +
     '</section>';
   }
 
@@ -186,28 +246,48 @@ window.MIA = window.MIA || {};
     });
   }
 
+  // A view inteira é recriada (root.innerHTML) a cada navegação, mas o `root`
+  // (o <main> fixo) é o mesmo elemento — então os listeners abaixo são
+  // registrados UMA VEZ e ficam lendo `currentProjectId` a cada evento, em
+  // vez de fechar sobre o `id` do momento em que foram anexados. Sem isso,
+  // visitar dois projetos na mesma sessão empilha um listener por visita, e
+  // digitar no projeto B também dispara o listener antigo do projeto A —
+  // salvando o texto de B dentro do projeto A. Ficou mais importante ainda
+  // de evitar agora que a digitação passou a salvar sozinha (ver abaixo).
+  let currentProjectId = null;
+
   function bindWorkspace(root, id) {
+    currentProjectId = id;
+    if (root.__miaWorkspaceBound) return;
+    root.__miaWorkspaceBound = true;
+
     root.addEventListener('change', function (event) {
       const task = event.target.closest('[data-task]');
-      if (task) {
-        P().toggleProjectTask(id, Number(task.dataset.task), task.checked);
-        MIA.app.refreshChrome();
-        const project = MIA.get.project(id);
-        const st = P().projectState(id);
-        const counter = root.querySelector('#ws-tarefas .small');
-        if (counter) counter.textContent = st.done + ' de ' + st.total + ' concluídas.';
-        if (st.done === project.tasks.length) ui.toast('Todas as tarefas concluídas. Escreva o resultado e o portfólio.');
-      }
+      if (!task) return;
+      const pid = currentProjectId;
+      P().toggleProjectTask(pid, Number(task.dataset.task), task.checked);
+      MIA.app.refreshChrome();
+      const project = MIA.get.project(pid);
+      const st = P().projectState(pid);
+      const counter = root.querySelector('#ws-tarefas .small');
+      if (counter) counter.textContent = st.done + ' de ' + st.total + ' concluídas.';
+      if (st.done === project.tasks.length) ui.toast('Todas as tarefas concluídas. Escreva o resultado e o portfólio.');
     });
 
+    root.addEventListener('input', function (event) {
+      const note = event.target.closest('[data-note]');
+      if (!note) return;
+      scheduleSave(currentProjectId, note.dataset.note, note.value);
+    });
+
+    // blur não borbulha — precisa de captura. Sempre salva na hora (flush),
+    // cancelando qualquer debounce pendente daquela seção: cobre o caso de
+    // sair do campo antes dos 800ms do autosave.
     root.addEventListener('blur', function (event) {
       const note = event.target.closest('[data-note]');
       if (!note) return;
-      P().setProjectNote(id, note.dataset.note, note.value);
-      const flag = root.querySelector('[data-saved="' + note.dataset.note + '"]');
-      if (flag) {
-        flag.textContent = 'Salvo às ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) + '.';
-      }
+      clearTimeout(debounceTimers[note.dataset.note]);
+      flushSave(currentProjectId, note.dataset.note, note.value);
     }, true);
 
     root.addEventListener('click', function (event) {
@@ -223,13 +303,14 @@ window.MIA = window.MIA || {};
       }
       const btn = event.target.closest('[data-action]');
       if (!btn) return;
+      const pid = currentProjectId;
       if (btn.dataset.action === 'complete') {
-        const xp = P().completeProject(id);
+        const xp = P().completeProject(pid);
         ui.toast(xp ? '+' + xp + ' XP — projeto concluído!' : 'Projeto concluído.');
         MIA.app.render();
       }
       if (btn.dataset.action === 'reopen') {
-        P().reopenProject(id);
+        P().reopenProject(pid);
         MIA.app.render();
       }
     });
@@ -239,6 +320,8 @@ window.MIA = window.MIA || {};
     renderLibrary: renderLibrary,
     renderWorkspace: renderWorkspace,
     bindLibrary: bindLibrary,
-    bindWorkspace: bindWorkspace
+    bindWorkspace: bindWorkspace,
+    AUTOSAVE_DEBOUNCE_MS: AUTOSAVE_DEBOUNCE_MS,
+    hasPendingSaves: function () { return pendingSaves.size > 0; }
   };
 })(window.MIA);

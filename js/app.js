@@ -617,57 +617,66 @@ window.MIA = window.MIA || {};
     }
   }
 
+  // Este é o caso mais crítico: bindCommon roda em TODO render e os próprios
+  // handlers chamam render(). Sem a guarda, cada clique anexava mais um listener
+  // e a contagem dobrava a cada interação (1 → 2 → 4 → 8 execuções por clique).
   function bindCommon(root) {
-    root.addEventListener('click', function (event) {
-      const mode = event.target.closest('[data-mode]');
-      if (mode) {
-        P().setPref('mode', mode.dataset.mode);
-        ui.toast('Ritmo atualizado.');
-        render();
-      }
-      const track = event.target.closest('[data-track]');
-      if (track) {
-        P().setTrack(track.dataset.track);
-        ui.toast('Objetivo atualizado.');
-        render();
-      }
+    ui.bindOnce(root, 'common', function () {
+      root.addEventListener('click', function (event) {
+        const mode = event.target.closest('[data-mode]');
+        if (mode) {
+          P().setPref('mode', mode.dataset.mode);
+          ui.toast('Ritmo atualizado.');
+          render();
+        }
+        const track = event.target.closest('[data-track]');
+        if (track) {
+          P().setTrack(track.dataset.track);
+          ui.toast('Objetivo atualizado.');
+          render();
+        }
+      });
     });
   }
 
   function bindProfile(root) {
-    root.addEventListener('click', function (event) {
-      const btn = event.target.closest('[data-action]');
-      if (!btn) return;
+    // o input de arquivo é recriado a cada render, então o listener dele morre
+    // junto com o elemento antigo e precisa ser reanexado fora do bindOnce.
+    ui.bindOnce(root, 'profile', function () {
+      root.addEventListener('click', function (event) {
+        const btn = event.target.closest('[data-action]');
+        if (!btn) return;
 
-      if (btn.dataset.action === 'save-name') {
-        P().setName(document.getElementById('profile-name').value.trim());
-        ui.toast('Nome salvo.');
-        refreshChrome();
-      }
-      if (btn.dataset.action === 'redo-diagnostic') {
-        MIA.onboarding.start(document.getElementById('onboarding'));
-      }
-      if (btn.dataset.action === 'export') {
-        const blob = new Blob([P().exportJSON()], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'mestre-ia-progresso.json';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
-      }
-      if (btn.dataset.action === 'import') {
-        document.getElementById('import-file').click();
-      }
-      if (btn.dataset.action === 'reset') {
-        if (window.confirm('Isto apaga XP, aulas, skills, projetos e erros deste navegador. Continuar?')) {
-          P().reset();
-          window.location.hash = '#/dashboard';
-          boot();
+        if (btn.dataset.action === 'save-name') {
+          P().setName(document.getElementById('profile-name').value.trim());
+          ui.toast('Nome salvo.');
+          refreshChrome();
         }
-      }
+        if (btn.dataset.action === 'redo-diagnostic') {
+          MIA.onboarding.start(document.getElementById('onboarding'));
+        }
+        if (btn.dataset.action === 'export') {
+          const blob = new Blob([P().exportJSON()], { type: 'application/json' });
+          const url = URL.createObjectURL(blob);
+          const link = document.createElement('a');
+          link.href = url;
+          link.download = 'mestre-ia-progresso.json';
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          setTimeout(function () { URL.revokeObjectURL(url); }, 1000);
+        }
+        if (btn.dataset.action === 'import') {
+          document.getElementById('import-file').click();
+        }
+        if (btn.dataset.action === 'reset') {
+          if (window.confirm('Isto apaga XP, aulas, skills, projetos e erros deste navegador. Continuar?')) {
+            P().reset();
+            window.location.hash = '#/dashboard';
+            boot();
+          }
+        }
+      });
     });
 
     const file = root.querySelector('#import-file');

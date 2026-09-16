@@ -202,12 +202,38 @@ window.MIA = window.MIA || {};
     return (prefix || 'id') + '-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 7);
   }
 
+  /** Padrão oficial de binding da aplicação.
+   *
+   * O <main> do app é um nó PERMANENTE: render() troca o innerHTML, nunca o nó.
+   * Logo, quem chama addEventListener nele a cada render empilha um listener por
+   * render, e a mesma ação do aluno passa a produzir N efeitos (XP multiplicado,
+   * registro gravado na entidade errada). As três regras que evitam isso:
+   *
+   *   1. anexar UMA vez por nó — é o que esta função garante;
+   *   2. delegar (event.target.closest) — o handler passa a valer para o DOM que
+   *      ainda nem existia quando foi anexado, então anexar uma vez basta;
+   *   3. ler o id da entidade atual de uma variável de módulo NO MOMENTO do evento
+   *      (late binding) — closure sobre o parâmetro congelaria o primeiro valor.
+   *
+   * Esta função cobre a regra 1. As regras 2 e 3 são responsabilidade de quem usa:
+   * atualize a variável de contexto ANTES de chamar bindOnce, fora do setup.
+   *
+   * Retorna true se anexou agora, false se já estava anexado.
+   */
+  function bindOnce(root, key, setup) {
+    const flag = '__miaBound_' + key;
+    if (root[flag]) return false;
+    root[flag] = true;
+    setup();
+    return true;
+  }
+
   MIA.ui = {
     escapeHtml: escapeHtml, normalize: normalize, countWords: countWords, md: md,
     el: el, qs: qs, qsa: qsa, toast: toast,
     levelBadge: levelBadge, stateBadge: stateBadge, scoreBadge: scoreBadge, sourceTag: sourceTag,
     bar: bar, plural: plural, formatDate: formatDate, todayISO: todayISO, daysBetween: daysBetween, uid: uid,
-    phaseLabel: phaseLabel,
+    phaseLabel: phaseLabel, bindOnce: bindOnce,
     LEVEL_LABEL: LEVEL_LABEL, LEVEL_TONE: LEVEL_TONE, CONF_TONE: CONF_TONE,
     STATE_LABEL: STATE_LABEL, STATE_ICON: STATE_ICON
   };

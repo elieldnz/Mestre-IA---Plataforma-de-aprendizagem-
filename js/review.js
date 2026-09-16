@@ -236,92 +236,100 @@ window.MIA = window.MIA || {};
   }
 
   function bindReviewPage(root) {
-    root.addEventListener('click', function (event) {
-      const recallBtn = event.target.closest('[data-recall]');
-      if (recallBtn) {
-        const choice = RECALL.find(function (r) { return r.key === recallBtn.dataset.recall; });
-        P().recordReview(recallBtn.dataset.lesson, choice.score);
-        ui.toast('Revisão registrada. Próxima em ' + P().state.reviews[recallBtn.dataset.lesson].interval + ' dia(s).');
-        MIA.app.render();
-        return;
-      }
-
-      const checkBtn = event.target.closest('[data-action="check-recall"]');
-      if (checkBtn) {
-        if (checkBtn.disabled) return; // já corrigido nesta tela — não registra a mesma revisão duas vezes
-        const lessonId = checkBtn.dataset.lesson;
-        const lesson = MIA.get.lesson(lessonId);
-        const exercise = (lesson.exercises || []).find(function (e) { return e.id === checkBtn.dataset.exercise; });
-        const card = checkBtn.closest('[data-review]');
-        const answer = readRecallAnswer(card, exercise);
-        if (exercise.type === 'quiz' && answer === null) { ui.toast('Escolha uma alternativa antes de conferir.'); return; }
-        if (exercise.type !== 'quiz' && !String(answer).trim()) { ui.toast('Escreva sua resposta antes de conferir.'); return; }
-
-        const result = MIA.lessons.grade(exercise, answer);
-        const slot = document.getElementById('recall-fb-' + lessonId);
-        if (slot) slot.innerHTML = MIA.lessons.renderFeedback(exercise, result);
-        P().recordReview(lessonId, result.score);
-        ui.toast('Revisão registrada. Próxima em ' + P().state.reviews[lessonId].interval + ' dia(s).');
-
-        // trava o controle: o feedback já mostrado fica visível, mas o exercício
-        // não pode ser reenviado para inflar XP/intervalo com a mesma resposta.
-        checkBtn.disabled = true;
-        checkBtn.textContent = 'Conferido';
-        const answerArea = card.querySelector('[data-recall-exercise="' + exercise.id + '"]');
-        if (answerArea) {
-          answerArea.querySelectorAll('input, textarea').forEach(function (field) { field.disabled = true; });
-        }
-
-        MIA.app.refreshChrome();
-        return;
-      }
-
-      const errBtn = event.target.closest('[data-action="register-error"]');
-      if (errBtn) {
-        const card = errBtn.closest('[data-review]');
-        const lessonId = card && card.dataset.review;
-        const lesson = lessonId && MIA.get.lesson(lessonId);
-        const exercise = lesson && (lesson.exercises || []).find(function (e) { return e.id === errBtn.dataset.exercise; });
-        if (!lesson || !exercise) return;
-        P().addError({
-          concept: MIA.get.moduleOfLesson(lessonId).title + ' — ' + lesson.title,
-          error: exercise.question,
-          correction: exercise.model || (exercise.options ? exercise.options[exercise.answer] : ''),
-          example: exercise.explain || '',
-          lessonId: lessonId
-        });
-        ui.toast('Registrado em Meus erros.');
-      }
+    ui.bindOnce(root, 'reviewPage', function () {
+      root.addEventListener('click', onReviewClick);
     });
   }
 
-  function bindErrorsPage(root) {
-    root.addEventListener('click', function (event) {
-      const btn = event.target.closest('[data-action]');
-      if (!btn) return;
+  function onReviewClick(event) {
+    const recallBtn = event.target.closest('[data-recall]');
+    if (recallBtn) {
+      const choice = RECALL.find(function (r) { return r.key === recallBtn.dataset.recall; });
+      P().recordReview(recallBtn.dataset.lesson, choice.score);
+      ui.toast('Revisão registrada. Próxima em ' + P().state.reviews[recallBtn.dataset.lesson].interval + ' dia(s).');
+      MIA.app.render();
+      return;
+    }
 
-      if (btn.dataset.action === 'add-error') {
-        const concept = document.getElementById('err-concept').value.trim();
-        const error = document.getElementById('err-error').value.trim();
-        if (!concept || !error) { ui.toast('Preencha ao menos o conceito e o erro.'); return; }
-        P().addError({
-          concept: concept, error: error,
-          correction: document.getElementById('err-correction').value.trim(),
-          example: document.getElementById('err-example').value.trim()
-        });
-        ui.toast('Erro registrado.');
-        MIA.app.render();
+    const checkBtn = event.target.closest('[data-action="check-recall"]');
+    if (checkBtn) {
+      if (checkBtn.disabled) return; // já corrigido nesta tela — não registra a mesma revisão duas vezes
+      const lessonId = checkBtn.dataset.lesson;
+      const lesson = MIA.get.lesson(lessonId);
+      const exercise = (lesson.exercises || []).find(function (e) { return e.id === checkBtn.dataset.exercise; });
+      const card = checkBtn.closest('[data-review]');
+      const answer = readRecallAnswer(card, exercise);
+      if (exercise.type === 'quiz' && answer === null) { ui.toast('Escolha uma alternativa antes de conferir.'); return; }
+      if (exercise.type !== 'quiz' && !String(answer).trim()) { ui.toast('Escreva sua resposta antes de conferir.'); return; }
+
+      const result = MIA.lessons.grade(exercise, answer);
+      const slot = document.getElementById('recall-fb-' + lessonId);
+      if (slot) slot.innerHTML = MIA.lessons.renderFeedback(exercise, result);
+      P().recordReview(lessonId, result.score);
+      ui.toast('Revisão registrada. Próxima em ' + P().state.reviews[lessonId].interval + ' dia(s).');
+
+      // trava o controle: o feedback já mostrado fica visível, mas o exercício
+      // não pode ser reenviado para inflar XP/intervalo com a mesma resposta.
+      checkBtn.disabled = true;
+      checkBtn.textContent = 'Conferido';
+      const answerArea = card.querySelector('[data-recall-exercise="' + exercise.id + '"]');
+      if (answerArea) {
+        answerArea.querySelectorAll('input, textarea').forEach(function (field) { field.disabled = true; });
       }
-      if (btn.dataset.action === 'toggle-error') {
-        const current = P().state.errors.find(function (e) { return e.id === btn.dataset.id; });
-        P().updateError(btn.dataset.id, { status: current.status === 'resolvido' ? 'revisar' : 'resolvido' });
-        MIA.app.render();
-      }
-      if (btn.dataset.action === 'remove-error') {
-        P().removeError(btn.dataset.id);
-        MIA.app.render();
-      }
+
+      MIA.app.refreshChrome();
+      return;
+    }
+
+    const errBtn = event.target.closest('[data-action="register-error"]');
+    if (errBtn) {
+      const card = errBtn.closest('[data-review]');
+      const lessonId = card && card.dataset.review;
+      const lesson = lessonId && MIA.get.lesson(lessonId);
+      const exercise = lesson && (lesson.exercises || []).find(function (e) { return e.id === errBtn.dataset.exercise; });
+      if (!lesson || !exercise) return;
+      P().addError({
+        concept: MIA.get.moduleOfLesson(lessonId).title + ' — ' + lesson.title,
+        error: exercise.question,
+        correction: exercise.model || (exercise.options ? exercise.options[exercise.answer] : ''),
+        example: exercise.explain || '',
+        lessonId: lessonId
+      });
+      ui.toast('Registrado em Meus erros.');
+    }
+  }
+
+  function bindErrorsPage(root) {
+    ui.bindOnce(root, 'errorsPage', function () {
+      root.addEventListener('click', onErrorsClick);
     });
+  }
+
+  function onErrorsClick(event) {
+    const btn = event.target.closest('[data-action]');
+    if (!btn) return;
+
+    if (btn.dataset.action === 'add-error') {
+      const concept = document.getElementById('err-concept').value.trim();
+      const error = document.getElementById('err-error').value.trim();
+      if (!concept || !error) { ui.toast('Preencha ao menos o conceito e o erro.'); return; }
+      P().addError({
+        concept: concept, error: error,
+        correction: document.getElementById('err-correction').value.trim(),
+        example: document.getElementById('err-example').value.trim()
+      });
+      ui.toast('Erro registrado.');
+      MIA.app.render();
+    }
+    if (btn.dataset.action === 'toggle-error') {
+      const current = P().state.errors.find(function (e) { return e.id === btn.dataset.id; });
+      P().updateError(btn.dataset.id, { status: current.status === 'resolvido' ? 'revisar' : 'resolvido' });
+      MIA.app.render();
+    }
+    if (btn.dataset.action === 'remove-error') {
+      P().removeError(btn.dataset.id);
+      MIA.app.render();
+    }
   }
 
   MIA.review = {

@@ -352,10 +352,17 @@ window.MIA = window.MIA || {};
     });
   }
 
+  // Aula atualmente na tela. O listener abaixo é anexado uma única vez ao <main>
+  // permanente, então ele NÃO pode fechar sobre o lessonId do primeiro bind —
+  // leria sempre a primeira aula aberta na sessão e gravaria nela a resposta
+  // dada em qualquer outra. Ver MIA.ui.bindOnce para o padrão completo.
+  let currentLessonId = null;
+
   function bindLessonPage(root, lessonId) {
     const lesson = MIA.get.lesson(lessonId);
     if (!lesson) return;
 
+    currentLessonId = lessonId;
     P().markRead(lessonId);
 
     // reexibe feedback de exercícios já respondidos
@@ -376,53 +383,57 @@ window.MIA = window.MIA || {};
       if (ex.type === 'quiz') paintQuiz(ex, rec.answer);
     });
 
-    root.addEventListener('click', function (event) {
-      const btn = event.target.closest('[data-action]');
-      if (!btn) return;
-      const exercise = MIA.get.exercise(btn.dataset.exercise);
-      if (!exercise) return;
+    ui.bindOnce(root, 'lessonPage', function () {
+      root.addEventListener('click', function (event) {
+        const btn = event.target.closest('[data-action]');
+        if (!btn) return;
+        const exercise = MIA.get.exercise(btn.dataset.exercise);
+        if (!exercise) return;
+        const id = currentLessonId; // late binding: a aula que está na tela AGORA
+        if (!id) return;
 
-      if (btn.dataset.action === 'submit') {
-        const answer = readAnswer(exercise);
-        if (exercise.type === 'quiz' && answer === null) { ui.toast('Escolha uma alternativa antes de enviar.'); return; }
-        if (exercise.type !== 'quiz' && !String(answer).trim()) { ui.toast('Escreva sua resposta antes de enviar.'); return; }
+        if (btn.dataset.action === 'submit') {
+          const answer = readAnswer(exercise);
+          if (exercise.type === 'quiz' && answer === null) { ui.toast('Escolha uma alternativa antes de enviar.'); return; }
+          if (exercise.type !== 'quiz' && !String(answer).trim()) { ui.toast('Escreva sua resposta antes de enviar.'); return; }
 
-        const result = grade(exercise, answer);
-        const saved = P().recordExercise(lessonId, exercise.id, { score: result.score, answer: answer });
-        const slot = document.getElementById('fb-' + exercise.id);
-        if (slot) {
-          slot.innerHTML = renderFeedback(exercise, result);
-          slot.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          const result = grade(exercise, answer);
+          const saved = P().recordExercise(id, exercise.id, { score: result.score, answer: answer });
+          const slot = document.getElementById('fb-' + exercise.id);
+          if (slot) {
+            slot.innerHTML = renderFeedback(exercise, result);
+            slot.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+          if (exercise.type === 'quiz') paintQuiz(exercise, answer);
+          if (saved && saved.xp) ui.toast('+' + saved.xp + ' XP');
+          if (result.score < 60 && exercise.type === 'quiz') {
+            P().addError({
+              concept: MIA.get.moduleOfLesson(id).title + ' — ' + MIA.get.lesson(id).title,
+              error: exercise.question,
+              correction: exercise.options ? exercise.options[exercise.answer] : '',
+              example: exercise.explain || '',
+              lessonId: id
+            });
+          }
+          MIA.app.refreshChrome();
         }
-        if (exercise.type === 'quiz') paintQuiz(exercise, answer);
-        if (saved && saved.xp) ui.toast('+' + saved.xp + ' XP');
-        if (result.score < 60 && exercise.type === 'quiz') {
+
+        if (btn.dataset.action === 'retry') {
+          P().resetExercise(id, exercise.id);
+          MIA.app.render();
+        }
+
+        if (btn.dataset.action === 'register-error') {
           P().addError({
-            concept: MIA.get.moduleOfLesson(lessonId).title + ' — ' + MIA.get.lesson(lessonId).title,
+            concept: MIA.get.lesson(id).title,
             error: exercise.question,
-            correction: exercise.options ? exercise.options[exercise.answer] : '',
+            correction: exercise.model || (exercise.options ? exercise.options[exercise.answer] : ''),
             example: exercise.explain || '',
-            lessonId: lessonId
+            lessonId: id
           });
+          ui.toast('Registrado em Meus erros.');
         }
-        MIA.app.refreshChrome();
-      }
-
-      if (btn.dataset.action === 'retry') {
-        P().resetExercise(lessonId, exercise.id);
-        MIA.app.render();
-      }
-
-      if (btn.dataset.action === 'register-error') {
-        P().addError({
-          concept: MIA.get.lesson(lessonId).title,
-          error: exercise.question,
-          correction: exercise.model || (exercise.options ? exercise.options[exercise.answer] : ''),
-          example: exercise.explain || '',
-          lessonId: lessonId
-        });
-        ui.toast('Registrado em Meus erros.');
-      }
+      });
     });
   }
 

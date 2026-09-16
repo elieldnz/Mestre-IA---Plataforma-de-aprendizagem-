@@ -159,14 +159,24 @@ window.MIA = window.MIA || {};
 
   function renderLessonsPage() {
     const modules = MIA.get.modules();
-    const main = modules.filter(function (m) { return !m.pilot; });
     const pilots = modules.filter(function (m) { return m.pilot; });
+    const order = MIA.get.personalizedModules(P());
 
     let html = '<div class="page-head"><p class="eyebrow">Camada 1 — Aprendizado</p><h1>Aulas</h1>' +
       '<p>' + ui.escapeHtml(MIA.data.curriculum.meta.pedagogy) + ' Cada aula só é considerada dominada com evidência: ' +
       'exercício respondido e nota a partir de ' + (MIA.data.curriculum.masteryThreshold || 80) + '.</p></div>';
 
-    html += '<div class="stack">' + main.map(moduleCard).join('') + '</div>';
+    if (order.hasTrack) {
+      html += '<p class="card__label">Seu objetivo: ' + ui.escapeHtml(order.trackLabel) +
+        ' · <a href="#/perfil">mudar</a></p>';
+      html += '<div class="stack">' + order.track.map(moduleCard).join('') + '</div>';
+      if (order.rest.length) {
+        html += '<h2 style="margin-top:32px">Outras fases da trilha Mestre IA</h2>';
+        html += '<div class="stack">' + order.rest.map(moduleCard).join('') + '</div>';
+      }
+    } else {
+      html += '<div class="stack">' + order.rest.map(moduleCard).join('') + '</div>';
+    }
 
     if (pilots.length) {
       const pilotMeta = MIA.data.curriculum.meta.pilotPrograms;

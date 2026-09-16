@@ -74,7 +74,7 @@ for (const r of routes) {
   }
   if ((await page.locator('#conteudo').textContent()).trim().length < 80) bad.push(r + ' → página vazia');
   const noop = await page.$$eval('#conteudo button', bs => bs
-    .filter(b => !b.dataset.action && !b.dataset.mode && !b.dataset.exercise && !b.dataset.scroll && !b.dataset.recall && !b.disabled)
+    .filter(b => !b.dataset.action && !b.dataset.mode && !b.dataset.track && !b.dataset.exercise && !b.dataset.scroll && !b.dataset.recall && !b.disabled)
     .map(b => b.textContent.trim().slice(0, 30)));
   noop.forEach(d => dead.push(r + ': ' + d));
 }

@@ -5,7 +5,7 @@
   "private": true,
   "scripts": {
     "build:data": "node tools/build-data.js",
-    "test": "node tests/data.mjs && node tests/smoke.mjs && node tests/quality.mjs && node tests/diagnostic.mjs && node tests/pilot.mjs && node tests/trilha-personalizada.mjs && node tests/autosave.mjs",
+    "test": "node tests/data.mjs && node tests/smoke.mjs && node tests/quality.mjs && node tests/diagnostic.mjs && node tests/pilot.mjs && node tests/trilha-personalizada.mjs && node tests/autosave.mjs && node tests/revisao-evidencia.mjs",
     "test:data": "node tests/data.mjs",
     "test:smoke": "node tests/smoke.mjs",
     "test:quality": "node tests/quality.mjs",
@@ -13,6 +13,7 @@
     "test:pilot": "node tests/pilot.mjs",
     "test:trilha": "node tests/trilha-personalizada.mjs",
     "test:autosave": "node tests/autosave.mjs",
+    "test:revisao": "node tests/revisao-evidencia.mjs",
     "start": "npx --yes http-server -p 8000 ."
   },
   "keywords": ["educação", "ia", "prompt-engineering", "skills", "agentes", "localStorage"],

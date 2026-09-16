@@ -1,4 +1,9 @@
-/* review.js — revisão inteligente, registro de erros e plano de estudo do dia. */
+/* review.js — revisão inteligente, registro de erros e plano de estudo do dia.
+
+   A revisão tem duas evidências diferentes, e elas não valem o mesmo:
+   - exercício real disponível → aluno responde → grade() → recordReview(score real).
+   - sem exercício (só quando a aula não tem nenhum exercício elegível) → autorrelato
+     de 3 botões, tratado na interface como fallback, não como evidência equivalente. */
 window.MIA = window.MIA || {};
 
 (function (MIA) {
@@ -17,14 +22,45 @@ window.MIA = window.MIA || {};
     return score < 60 ? 'red' : score < 80 ? 'amber' : score < 90 ? 'green' : 'blue';
   }
 
-  /** Pergunta de recuperação ativa: usa um exercício da aula ou os objetivos. */
+  /** Recuperação ativa: escolhe um exercício real da aula, nunca um ligado a um
+   * erro ainda em aberto daquela mesma aula (senão a revisão devolveria ao
+   * aluno a pergunta em que ele acabou de errar). Sem candidato limpo, cai no
+   * fallback de autorrelato — ver comentário no topo do arquivo. */
   function recallPrompt(lesson) {
-    const exercises = (lesson.exercises || []).filter(function (e) { return e.type !== 'code'; });
-    if (exercises.length) {
-      const ex = exercises[Math.floor(Date.now() / 86400000) % exercises.length];
-      return ex.question;
+    const openErrors = (P().state.errors || [])
+      .filter(function (e) { return e.lessonId === lesson.id && e.status !== 'resolvido'; })
+      .map(function (e) { return e.error; });
+    const all = (lesson.exercises || []).filter(function (e) { return e.type !== 'code'; });
+    const pool = all.filter(function (e) { return openErrors.indexOf(e.question) === -1; });
+    if (pool.length) {
+      return { exercise: pool[Math.floor(Date.now() / 86400000) % pool.length], fallback: false };
     }
-    return 'Explique em voz alta, sem consultar: ' + lesson.objectives[0].toLowerCase() + '.';
+    return { exercise: null, fallback: true, text: 'Explique em voz alta, sem consultar: ' + lesson.objectives[0].toLowerCase() + '.' };
+  }
+
+  /** UI mínima de resposta para a recuperação ativa: rádio para quiz, textarea
+   * para os demais tipos. Não reaproveita a renderização de lessons.js (não é
+   * exportada) — só a correção (grade) e o feedback (renderFeedback) são reusados. */
+  function recallInputField(exercise) {
+    if (exercise.type === 'quiz') {
+      return '<div class="options" role="radiogroup" aria-label="Alternativas">' +
+        (exercise.options || []).map(function (opt, i) {
+          return '<label class="option" data-option="' + i + '">' +
+            '<input type="radio" name="recall-' + exercise.id + '" value="' + i + '">' +
+            '<span>' + ui.escapeHtml(opt) + '</span></label>';
+        }).join('') + '</div>';
+    }
+    return '<div class="field"><label for="recall-in-' + exercise.id + '">Sua resposta</label>' +
+      '<textarea id="recall-in-' + exercise.id + '" data-recall-input="' + exercise.id + '" placeholder="Responda de cabeça, sem consultar."></textarea></div>';
+  }
+
+  function readRecallAnswer(card, exercise) {
+    if (exercise.type === 'quiz') {
+      const checked = card.querySelector('input[name="recall-' + exercise.id + '"]:checked');
+      return checked ? Number(checked.value) : null;
+    }
+    const field = card.querySelector('[data-recall-input="' + exercise.id + '"]');
+    return field ? field.value : '';
   }
 
   function renderReviewPage() {
@@ -52,18 +88,32 @@ window.MIA = window.MIA || {};
         const mod = MIA.get.moduleOfLesson(item.lessonId);
         const tone = toneForScore(item.review.lastScore);
         const dot = { red: '🔴', amber: '🟡', green: '🟢', blue: '🔵' }[tone];
+        const recall = recallPrompt(item.lesson);
         html += '<section class="card" data-review="' + item.lessonId + '">' +
           '<div class="row row--between"><div style="min-width:0">' +
             '<p class="card__label">' + dot + ' ' + ui.escapeHtml(mod.title) + '</p>' +
             '<h3>' + ui.escapeHtml(item.lesson.title) + '</h3></div>' +
-            '<span class="badge badge--' + tone + '">última nota ' + item.review.lastScore + '</span></div>' +
-          '<p><strong>Recuperação ativa:</strong> ' + ui.escapeHtml(recallPrompt(item.lesson)) + '</p>' +
-          '<p class="small muted">Responda de cabeça. Só depois abra a aula para conferir.</p>' +
-          '<div class="row">' + RECALL.map(function (r) {
-            return '<button class="btn btn--sm" data-recall="' + r.key + '" data-lesson="' + item.lessonId + '">' +
-              ui.escapeHtml(r.label) + '</button>';
-          }).join('') + '<a class="btn btn--sm btn--ghost" href="#/aula/' + item.lessonId + '">Abrir a aula</a></div>' +
-        '</section>';
+            '<span class="badge badge--' + tone + '">última nota ' + item.review.lastScore + '</span></div>';
+
+        if (!recall.fallback) {
+          const ex = recall.exercise;
+          html += '<p><strong>Recuperação ativa:</strong> ' + ui.escapeHtml(ex.question) + '</p>' +
+            '<p class="small muted">Responda de cabeça, sem consultar. A correção é a mesma usada nas aulas.</p>' +
+            '<div class="recall-answer" data-recall-exercise="' + ex.id + '">' + recallInputField(ex) + '</div>' +
+            '<div class="row" style="margin-top:12px">' +
+              '<button class="btn btn--sm btn--primary" data-action="check-recall" data-lesson="' + item.lessonId + '" data-exercise="' + ex.id + '">Conferir</button>' +
+              '<a class="btn btn--sm btn--ghost" href="#/aula/' + item.lessonId + '">Abrir a aula</a>' +
+            '</div>' +
+            '<div id="recall-fb-' + item.lessonId + '"></div>';
+        } else {
+          html += '<p><strong>Recuperação ativa:</strong> ' + ui.escapeHtml(recall.text) + '</p>' +
+            '<p class="small muted">Sem exercício disponível para conferir automaticamente — isto é autorrelato, não evidência de domínio.</p>' +
+            '<div class="row">' + RECALL.map(function (r) {
+              return '<button class="btn btn--sm" data-recall="' + r.key + '" data-lesson="' + item.lessonId + '">' +
+                ui.escapeHtml(r.label) + '</button>';
+            }).join('') + '<a class="btn btn--sm btn--ghost" href="#/aula/' + item.lessonId + '">Abrir a aula</a></div>';
+        }
+        html += '</section>';
       });
       html += '</div>';
     }
@@ -187,12 +237,61 @@ window.MIA = window.MIA || {};
 
   function bindReviewPage(root) {
     root.addEventListener('click', function (event) {
-      const btn = event.target.closest('[data-recall]');
-      if (!btn) return;
-      const choice = RECALL.find(function (r) { return r.key === btn.dataset.recall; });
-      P().recordReview(btn.dataset.lesson, choice.score);
-      ui.toast('Revisão registrada. Próxima em ' + P().state.reviews[btn.dataset.lesson].interval + ' dia(s).');
-      MIA.app.render();
+      const recallBtn = event.target.closest('[data-recall]');
+      if (recallBtn) {
+        const choice = RECALL.find(function (r) { return r.key === recallBtn.dataset.recall; });
+        P().recordReview(recallBtn.dataset.lesson, choice.score);
+        ui.toast('Revisão registrada. Próxima em ' + P().state.reviews[recallBtn.dataset.lesson].interval + ' dia(s).');
+        MIA.app.render();
+        return;
+      }
+
+      const checkBtn = event.target.closest('[data-action="check-recall"]');
+      if (checkBtn) {
+        if (checkBtn.disabled) return; // já corrigido nesta tela — não registra a mesma revisão duas vezes
+        const lessonId = checkBtn.dataset.lesson;
+        const lesson = MIA.get.lesson(lessonId);
+        const exercise = (lesson.exercises || []).find(function (e) { return e.id === checkBtn.dataset.exercise; });
+        const card = checkBtn.closest('[data-review]');
+        const answer = readRecallAnswer(card, exercise);
+        if (exercise.type === 'quiz' && answer === null) { ui.toast('Escolha uma alternativa antes de conferir.'); return; }
+        if (exercise.type !== 'quiz' && !String(answer).trim()) { ui.toast('Escreva sua resposta antes de conferir.'); return; }
+
+        const result = MIA.lessons.grade(exercise, answer);
+        const slot = document.getElementById('recall-fb-' + lessonId);
+        if (slot) slot.innerHTML = MIA.lessons.renderFeedback(exercise, result);
+        P().recordReview(lessonId, result.score);
+        ui.toast('Revisão registrada. Próxima em ' + P().state.reviews[lessonId].interval + ' dia(s).');
+
+        // trava o controle: o feedback já mostrado fica visível, mas o exercício
+        // não pode ser reenviado para inflar XP/intervalo com a mesma resposta.
+        checkBtn.disabled = true;
+        checkBtn.textContent = 'Conferido';
+        const answerArea = card.querySelector('[data-recall-exercise="' + exercise.id + '"]');
+        if (answerArea) {
+          answerArea.querySelectorAll('input, textarea').forEach(function (field) { field.disabled = true; });
+        }
+
+        MIA.app.refreshChrome();
+        return;
+      }
+
+      const errBtn = event.target.closest('[data-action="register-error"]');
+      if (errBtn) {
+        const card = errBtn.closest('[data-review]');
+        const lessonId = card && card.dataset.review;
+        const lesson = lessonId && MIA.get.lesson(lessonId);
+        const exercise = lesson && (lesson.exercises || []).find(function (e) { return e.id === errBtn.dataset.exercise; });
+        if (!lesson || !exercise) return;
+        P().addError({
+          concept: MIA.get.moduleOfLesson(lessonId).title + ' — ' + lesson.title,
+          error: exercise.question,
+          correction: exercise.model || (exercise.options ? exercise.options[exercise.answer] : ''),
+          example: exercise.explain || '',
+          lessonId: lessonId
+        });
+        ui.toast('Registrado em Meus erros.');
+      }
     });
   }
 

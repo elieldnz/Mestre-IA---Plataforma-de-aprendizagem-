@@ -97,6 +97,39 @@
       "acceptance": "Em 5 perguntas, 100% dos trechos citados existem nas fontes indicadas."
     },
     {
+      "id": "project-agente-escritor", "n": 25, "title": "Agente escritor", "level": "intermediario", "xp": 500,
+      "module": "gpts-agentes", "kind": "portfolio",
+      "summary": "Produção de textos longos (artigo, relatório, roteiro) com estrutura fixa, tom definido e autocrítica antes da entrega.",
+      "objective": "Construir um agente que escreve peças completas seguindo uma estrutura de seções e um guia de tom, em vez de gerar texto solto a cada pedido.",
+      "requirements": ["Estrutura de seções fixa por tipo de texto", "Guia de tom em regras verificáveis, não adjetivos vagos", "Etapa de autocrítica contra as regras antes da entrega", "Sinalização explícita do que é fato e do que é opinião no texto", "Revisão humana obrigatória antes de publicar"],
+      "architecture": "Prompt de sistema com estrutura de seções + guia de tom; etapas em sequência: rascunho → autocrítica contra as regras → versão final.",
+      "technologies": ["LLM"], "skills": ["grill-me", "brand-guidelines"],
+      "tasks": ["Escolher o tipo de texto e desenhar a estrutura fixa de seções", "Escrever o guia de tom em regras verificáveis", "Criar a etapa de autocrítica", "Produzir 3 peças completas", "Revisar e marcar fato x opinião em cada uma", "Ajustar o guia pelo que precisou corrigir na revisão"],
+      "acceptance": "Três peças completas em que a estrutura e o tom se mantêm sem precisar de ajuste manual depois da autocrítica."
+    },
+    {
+      "id": "project-agente-analista", "n": 26, "title": "Agente analista", "level": "intermediario", "xp": 500,
+      "module": "gpts-agentes", "kind": "portfolio",
+      "summary": "Leitura de um conjunto de dados ou documentos e emissão de um parecer com critérios explícitos — sem escrever código.",
+      "objective": "Construir um agente que analisa uma entrada (planilha colada, tabela ou conjunto de textos) e produz achados com evidência, a partir de critérios declarados antes de rodar.",
+      "requirements": ["Critérios de análise declarados antes da execução", "Entrada estruturada colada no prompt (sem processamento por código)", "Cada achado vem com evidência apontada e nível de criticidade", "Dado insuficiente é marcado como tal, nunca suposto", "Recomendação final separada da lista de achados"],
+      "architecture": "Entrada colada no prompt → aplicação dos critérios declarados → lista de achados com evidência e criticidade → recomendação. Versão só-prompt do que a Fase 9/17 resolvem com código.",
+      "technologies": ["LLM"], "skills": ["data-analysis"],
+      "tasks": ["Escolher os dados ou documentos de análise", "Declarar os critérios antes de rodar", "Definir o formato de achado (evidência + criticidade)", "Rodar em 3 conjuntos de entrada diferentes", "Conferir se toda evidência aponta para a entrada original", "Separar a recomendação final dos achados"],
+      "acceptance": "Em 3 análises, todo achado tem evidência localizável na entrada original e nenhum dado foi suposto."
+    },
+    {
+      "id": "project-agente-documentos", "n": 27, "title": "Agente de documentos", "level": "intermediario", "xp": 500,
+      "module": "gpts-agentes", "kind": "portfolio",
+      "summary": "Responde perguntas sobre documentos colados direto no prompt, citando trecho e origem — a versão simples, sem base vetorial, do que a Fase 13 resolve em escala.",
+      "objective": "Construir um agente que só responde com base no que está no material colado, sempre citando o trecho de origem.",
+      "requirements": ["Responde só com base no material fornecido naquela execução", "Toda resposta cita o trecho de origem", "Responde 'não está no material' quando a informação não existir no texto colado", "Resume o documento antes de aceitar perguntas específicas sobre ele", "Testado com pelo menos 2 documentos diferentes"],
+      "architecture": "Documento colado inteiro no prompt (sem chunking nem busca vetorial) → resposta com citação obrigatória do trecho. Não é RAG: é a versão de Fase 5, sem recuperação — a Fase 13 ensina a versão com embeddings para documentos grandes.",
+      "technologies": ["LLM"], "skills": ["pdf", "docx"],
+      "tasks": ["Escolher 2 documentos de teste diferentes", "Escrever a regra de citação obrigatória", "Escrever a regra de 'não está no material'", "Testar com 10 perguntas entre os 2 documentos", "Conferir cada citação contra o original", "Ajustar o prompt pelas falhas encontradas"],
+      "acceptance": "Em 10 perguntas sobre os 2 documentos, nenhuma resposta sem trecho citado e nenhuma resposta inventada quando a informação não está no texto."
+    },
+    {
       "id": "project-agente-conteudo", "n": 7, "title": "Agente de conteúdo", "level": "intermediario", "xp": 500,
       "module": "programar-com-ia", "kind": "portfolio",
       "summary": "Produção de conteúdo com voz própria e revisão humana obrigatória.",

@@ -248,6 +248,7 @@ window.MIA = window.MIA || {};
 
       const checkBtn = event.target.closest('[data-action="check-recall"]');
       if (checkBtn) {
+        if (checkBtn.disabled) return; // já corrigido nesta tela — não registra a mesma revisão duas vezes
         const lessonId = checkBtn.dataset.lesson;
         const lesson = MIA.get.lesson(lessonId);
         const exercise = (lesson.exercises || []).find(function (e) { return e.id === checkBtn.dataset.exercise; });
@@ -261,6 +262,16 @@ window.MIA = window.MIA || {};
         if (slot) slot.innerHTML = MIA.lessons.renderFeedback(exercise, result);
         P().recordReview(lessonId, result.score);
         ui.toast('Revisão registrada. Próxima em ' + P().state.reviews[lessonId].interval + ' dia(s).');
+
+        // trava o controle: o feedback já mostrado fica visível, mas o exercício
+        // não pode ser reenviado para inflar XP/intervalo com a mesma resposta.
+        checkBtn.disabled = true;
+        checkBtn.textContent = 'Conferido';
+        const answerArea = card.querySelector('[data-recall-exercise="' + exercise.id + '"]');
+        if (answerArea) {
+          answerArea.querySelectorAll('input, textarea').forEach(function (field) { field.disabled = true; });
+        }
+
         MIA.app.refreshChrome();
         return;
       }

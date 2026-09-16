@@ -104,6 +104,22 @@ if (hasCheckButton > 0) {
   } else {
     check('"Registrar em Meus erros" funciona a partir da tela de Revisão', true, 'não apareceu (resposta não ficou abaixo de 80, comportamento esperado)');
   }
+
+  /* ---- não deixa reenviar o mesmo exercício e inflar XP/intervalo ---- */
+  const checkBtnLocator = page.locator('[data-review="' + LESSON_ID + '"] [data-action="check-recall"]');
+  check('botão "Conferir" fica desabilitado depois da primeira correção', await checkBtnLocator.first().isDisabled());
+
+  const before = await page.evaluate(() => JSON.parse(localStorage.getItem('mestre-ia:v1')));
+  await page.evaluate(function (id) {
+    var btn = document.querySelector('[data-review="' + id + '"] [data-action="check-recall"]');
+    if (btn) btn.click(); // clique bruto, bypassando a checagem de "enabled" do Playwright
+  }, LESSON_ID);
+  await page.waitForTimeout(150);
+  const after = await page.evaluate(() => JSON.parse(localStorage.getItem('mestre-ia:v1')));
+  check('reenviar o exercício corrigido NÃO altera XP', after.xp === before.xp, 'antes=' + before.xp + ' depois=' + after.xp);
+  check('reenviar o exercício corrigido NÃO recalcula lastScore/interval',
+    after.reviews[LESSON_ID].lastScore === before.reviews[LESSON_ID].lastScore &&
+    after.reviews[LESSON_ID].interval === before.reviews[LESSON_ID].interval);
 }
 await page.close();
 

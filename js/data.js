@@ -109,13 +109,34 @@ window.MIA = window.MIA || {};
     grading: function (score) {
       return (data.curriculum.grading || []).find(function (g) { return score >= g.min && score <= g.max; }) || null;
     },
-    /** Próxima aula ainda não concluída, em ordem de trilha. */
+    /**
+     * Ordena os módulos da trilha Mestre IA (sem piloto) segundo o objetivo
+     * escolhido no diagnóstico: primeiro os módulos do objetivo, na ordem
+     * recomendada, depois o restante da trilha completa. Nada é escondido
+     * nem desbloqueado por isso — só muda o que aparece primeiro. Se não
+     * houver objetivo salvo, devolve a trilha inteira em "rest".
+     */
+    personalizedModules: function (progress) {
+      const all = data.curriculum.modules.filter(function (m) { return !m.pilot; });
+      const diag = progress && progress.state && progress.state.diagnostic;
+      const trackIds = (diag && diag.track && diag.track.modules) || [];
+      const track = trackIds.map(function (id) { return data.index.modules.get(id); }).filter(Boolean);
+      const trackSet = new Set(track.map(function (m) { return m.id; }));
+      const rest = all.filter(function (m) { return !trackSet.has(m.id); });
+      return {
+        hasTrack: track.length > 0,
+        trackId: diag && diag.trackId,
+        trackLabel: diag && diag.track && diag.track.label,
+        track: track,
+        rest: rest
+      };
+    },
+    /** Próxima aula ainda não concluída, priorizando o objetivo do aluno. */
     nextLesson: function (progress) {
-      const mods = data.curriculum.modules;
+      const order = get.personalizedModules(progress);
+      const mods = order.track.concat(order.rest);
       for (let i = 0; i < mods.length; i++) {
         const m = mods[i];
-        // Trilhas piloto são exploração deliberada, nunca a "missão do dia" sugerida.
-        if (m.pilot) continue;
         if (progress.moduleState(m.id).state === 'locked') continue;
         for (let j = 0; j < m.lessons.length; j++) {
           const st = progress.lessonState(m.lessons[j].id);

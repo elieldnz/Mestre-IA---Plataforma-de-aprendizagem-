@@ -48,7 +48,19 @@ trilha personalizada. Para recomeçar do zero: **Perfil → Apagar tudo**.
   sobre ferramentas e agentes; quem não programa não vê Python nem APIs). Um total iniciante
   responde só 8. O resultado lista quais perguntas foram puladas e por quê.
 - Cálculo de nível (iniciante / intermediário / avançado), forças, lacunas, ritmo de estudo
-  sugerido e trilha personalizada por objetivo.
+  sugerido e objetivo/trilha personalizada.
+
+**Trilha personalizada de verdade**
+- O objetivo escolhido no diagnóstico (ex.: "Construir agentes", "Dados e documentos") passa
+  a **reordenar de verdade** a Jornada, as Aulas e a "próxima missão" do Dashboard — antes,
+  o resultado do diagnóstico só mostrava essa lista uma vez e a plataforma seguia a ordem
+  fixa das 20 fases pra todo mundo.
+- As fases do seu objetivo aparecem primeiro; o resto da trilha Mestre IA continua logo
+  abaixo, em "Outras fases" — nada some, nada é bloqueado ou liberado por causa disso.
+- Você pode **mudar de objetivo a qualquer momento pelo Perfil**, sem refazer as 12
+  perguntas do diagnóstico.
+- É personalização por regra fixa entre 5 objetivos pré-definidos — não é "digite qualquer
+  tema e a IA monta uma trilha nova" (isso segue exigindo backend + LLM, ver Roadmap).
 
 **Dashboard**
 - saudação, próxima missão, 4 indicadores (progresso, XP, streak, nível),
@@ -186,8 +198,9 @@ assets/                  (vazio: os ícones são emoji e SVG inline)
 node tests/data.mjs        # ids, referências cruzadas e campos obrigatórios (sem navegador)
 node tests/smoke.mjs       # fluxo completo no navegador (38 verificações)
 node tests/quality.mjs     # progressão, links, botões, acessibilidade, contraste, file:// (24)
-node tests/diagnostic.mjs  # diagnóstico ramificado: pula, não pula, volta e reage a mudança (12)
-node tests/pilot.mjs       # trilha piloto isolada do nível de IA e da missão do dia (14)
+node tests/diagnostic.mjs           # diagnóstico ramificado: pula, não pula, volta e reage a mudança (12)
+node tests/pilot.mjs                # trilha piloto isolada do nível de IA e da missão do dia (14)
+node tests/trilha-personalizada.mjs # objetivo reordena Jornada/Aulas/missão sem afetar bloqueio (14)
 ```
 
 Ou tudo de uma vez: `npm test`.
@@ -195,7 +208,7 @@ Ou tudo de uma vez: `npm test`.
 Os testes de navegador usam Playwright — instalado no projeto (`npm install --no-save playwright`)
 ou globalmente; eles sobem um servidor estático próprio em porta livre.
 
-Cobertura atual: **100% das 100 verificações passando, sem erros de console.**
+Cobertura atual: **100% das 114 verificações passando, sem erros de console.**
 
 | Verificação | Estado |
 | --- | --- |

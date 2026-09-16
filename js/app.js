@@ -71,7 +71,8 @@ window.MIA = window.MIA || {};
           '<a class="btn btn--sm" href="' + item.href + '">Abrir</a></li>';
       }).join('') + '</ul></section>';
 
-    const modules = MIA.get.modules().slice(0, 6);
+    const previewOrder = MIA.get.personalizedModules(P());
+    const modules = previewOrder.track.concat(previewOrder.rest).slice(0, 6);
     html += '<section class="card"><div class="row row--between">' +
       '<p class="card__label" style="margin:0">Mapa da jornada</p>' +
       '<a class="small" href="#/jornada">ver completo</a></div>' +
@@ -144,15 +145,31 @@ window.MIA = window.MIA || {};
 
   function renderJourney() {
     const modules = MIA.get.modules();
-    const main = modules.filter(function (m) { return !m.pilot; });
     const pilots = modules.filter(function (m) { return m.pilot; });
+    const order = MIA.get.personalizedModules(P());
 
     let html = '<div class="page-head"><p class="eyebrow">Camadas 1 e 2</p><h1>Minha jornada</h1>' +
       '<p>Cada fase libera a seguinte quando você demonstra domínio — não quando marca “concluído”. ' +
       'É preciso dominar ' + Math.round((MIA.data.curriculum.moduleUnlockRatio || 0.7) * 100) + '% das aulas do pré-requisito, ' +
       'com nota a partir de ' + (MIA.data.curriculum.masteryThreshold || 80) + '.</p></div>';
 
-    html += '<ul class="journey">' + main.map(journeyCard).join('') + '</ul>';
+    if (order.hasTrack) {
+      html += '<section class="card card--accent"><div class="row row--between" style="align-items:flex-start">' +
+        '<div><p class="card__label">Sua trilha personalizada</p>' +
+        '<h3 style="margin-bottom:4px">Objetivo: ' + ui.escapeHtml(order.trackLabel) + '</h3>' +
+        '<p class="small muted" style="margin:0">Mostramos essas fases primeiro por causa do seu diagnóstico. ' +
+        'Nada aqui embaixo fica escondido — é a mesma trilha Mestre IA, só reordenada.</p></div>' +
+        '<a class="btn btn--sm btn--ghost" href="#/perfil">Mudar objetivo</a>' +
+      '</div></section>';
+      html += '<ul class="journey" style="margin-top:16px">' + order.track.map(journeyCard).join('') + '</ul>';
+      if (order.rest.length) {
+        html += '<h2 style="margin-top:32px">Outras fases da trilha Mestre IA</h2>' +
+          '<p class="muted small">Fazem parte da trilha completa, mas não do seu objetivo atual. Você pode abri-las a qualquer momento.</p>' +
+          '<ul class="journey" style="margin-top:16px">' + order.rest.map(journeyCard).join('') + '</ul>';
+      }
+    } else {
+      html += '<ul class="journey">' + order.rest.map(journeyCard).join('') + '</ul>';
+    }
 
     if (pilots.length) {
       const pilotMeta = MIA.data.curriculum.meta.pilotPrograms;
@@ -422,6 +439,17 @@ window.MIA = window.MIA || {};
           ((state.prefs.mode || 'normal') === m.id) + '">' + m.icon + ' ' + ui.escapeHtml(m.label) + '</button>';
       }).join('') + '</div></section>';
 
+    const tracks = MIA.data.curriculum.diagnostic.tracks;
+    const currentTrackId = diag && diag.trackId;
+    html += '<section class="card" style="margin-top:24px"><p class="card__label">Objetivo</p>' +
+      '<p class="small muted">Define quais fases da Jornada e das Aulas aparecem primeiro, e qual aula a ' +
+      '“Próxima missão” do Dashboard sugere. Não precisa refazer o diagnóstico inteiro para mudar — ' +
+      'nada é desbloqueado nem escondido por causa disso.</p>' +
+      '<div class="modes">' + Object.keys(tracks).map(function (id) {
+        return '<button class="btn btn--sm" data-track="' + id + '" aria-pressed="' +
+          (currentTrackId === id) + '">' + ui.escapeHtml(tracks[id].label) + '</button>';
+      }).join('') + '</div></section>';
+
     if (diag) {
       html += '<section class="card" style="margin-top:24px"><p class="card__label">Diagnóstico inicial</p>' +
         '<p class="small muted">Feito em ' + ui.formatDate(diag.date) + ' · nível apurado: ' + ui.LEVEL_LABEL[diag.level] + ' (' + diag.percent + '%)</p>' +
@@ -595,6 +623,12 @@ window.MIA = window.MIA || {};
       if (mode) {
         P().setPref('mode', mode.dataset.mode);
         ui.toast('Ritmo atualizado.');
+        render();
+      }
+      const track = event.target.closest('[data-track]');
+      if (track) {
+        P().setTrack(track.dataset.track);
+        ui.toast('Objetivo atualizado.');
         render();
       }
     });

@@ -499,6 +499,21 @@ window.MIA = window.MIA || {};
     commit();
   }
 
+  /**
+   * Muda o objetivo (trilha personalizada) sem refazer as 12 perguntas do
+   * diagnóstico. Só muda a ORDEM de apresentação e a sugestão de próxima
+   * aula — não desbloqueia nada e não afeta o nível de IA calculado.
+   */
+  function setTrack(trackId) {
+    const track = MIA.data.curriculum.diagnostic.tracks[trackId];
+    if (!track) return false;
+    if (!state.diagnostic) state.diagnostic = {};
+    state.diagnostic.trackId = trackId;
+    state.diagnostic.track = track;
+    commit();
+    return true;
+  }
+
   function setPref(key, value) { state.prefs[key] = value; commit(); }
   function setName(name) { state.user.name = name; commit(); }
 
@@ -529,7 +544,7 @@ window.MIA = window.MIA || {};
     skillState: skillState, skillEntry: skillEntry, setSkillStatus: setSkillStatus, toggleSkillCheck: toggleSkillCheck,
     projectState: projectState, projectEntry: projectEntry, toggleProjectTask: toggleProjectTask,
     setProjectNote: setProjectNote, completeProject: completeProject, reopenProject: reopenProject,
-    saveDiagnostic: saveDiagnostic, setPref: setPref, setName: setName,
+    saveDiagnostic: saveDiagnostic, setTrack: setTrack, setPref: setPref, setName: setName,
     reset: reset, exportJSON: exportJSON, importJSON: importJSON
   };
 })(window.MIA);

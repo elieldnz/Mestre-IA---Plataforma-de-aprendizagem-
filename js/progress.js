@@ -164,14 +164,15 @@ window.MIA = window.MIA || {};
     if (!lesson || !exercise) return null;
 
     const entry = lessonEntry(lessonId);
-    const prev = entry.exercises[exerciseId] || { attempts: 0, score: null, xpAwarded: false };
+    const alreadyPaid = !!(entry.paid && entry.paid[exerciseId]);
+    const prev = entry.exercises[exerciseId] || { attempts: 0, score: null, xpAwarded: alreadyPaid };
     const rec = {
       attempts: (prev.attempts || 0) + 1,
       score: Math.max(prev.score || 0, result.score),
       lastScore: result.score,
       answer: result.answer !== undefined ? result.answer : prev.answer,
       lastAt: new Date().toISOString(),
-      xpAwarded: prev.xpAwarded || false
+      xpAwarded: prev.xpAwarded || alreadyPaid
     };
 
     touch();
@@ -201,9 +202,21 @@ window.MIA = window.MIA || {};
     return { record: rec, xp: gained, lesson: st };
   }
 
+  /** Limpa a resposta para o aluno tentar de novo. O registro de nota some (é o
+   * comportamento esperado: a aula volta a pedir resposta), mas o pagamento fica
+   * anotado em `entry.paid`, fora de `entry.exercises`, para não entrar no
+   * cálculo de nota/domínio. Sem isso, o ciclo "tentar de novo → enviar" pagava
+   * XP de novo a cada volta, indefinidamente. */
   function resetExercise(lessonId, exerciseId) {
     const entry = state.lessons[lessonId];
-    if (entry && entry.exercises) { delete entry.exercises[exerciseId]; commit(); }
+    if (!entry || !entry.exercises) return;
+    const prev = entry.exercises[exerciseId];
+    if (prev && prev.xpAwarded) {
+      if (!entry.paid) entry.paid = {};
+      entry.paid[exerciseId] = true;
+    }
+    delete entry.exercises[exerciseId];
+    commit();
   }
 
   /* ---------------- módulos ---------------- */
@@ -402,12 +415,17 @@ window.MIA = window.MIA || {};
     return entry ? entry.status : 'nao-estudada';
   }
 
+  /** O aluno pode mudar o status à vontade (inclusive voltar atrás), mas a
+   * recompensa por dominar uma Skill é paga UMA vez por Skill. Antes bastava
+   * alternar "não estudada" → "dominada" em ciclo para somar +30 XP a cada volta. */
   function setSkillStatus(id, status) {
     const entry = skillEntry(id);
-    const before = entry.status;
     entry.status = status;
     touch();
-    if (status === 'dominada' && before !== 'dominada') addXP(30, 0);
+    if (status === 'dominada' && !entry.xpAwarded) {
+      entry.xpAwarded = true;
+      addXP(30, 0);
+    }
     commit();
   }
 

@@ -281,7 +281,10 @@ window.MIA = window.MIA || {};
     const next = mod.lessons[index + 1] || null;
     const percent = st.total ? Math.round((st.done / st.total) * 100) : (st.read ? 100 : 0);
 
-    let html = '<article class="lesson stack" data-lesson="' + id + '">';
+    // data-lesson-page marca o contêiner desta página e é o que delimita o
+    // alcance do listener de aula (ver bindLessonPage): sem isso ele capturaria
+    // cliques em controles iguais renderizados por outra rota.
+    let html = '<article class="lesson stack" data-lesson="' + id + '" data-lesson-page="' + id + '">';
 
     html += '<header>' +
       '<p class="lesson__crumbs">' + ui.phaseLabel(mod) + ' · ' + ui.escapeHtml(mod.title) + ' · Aula ' + String(index + 1).padStart(2, '0') + '</p>' +
@@ -376,53 +379,65 @@ window.MIA = window.MIA || {};
       if (ex.type === 'quiz') paintQuiz(ex, rec.answer);
     });
 
-    root.addEventListener('click', function (event) {
-      const btn = event.target.closest('[data-action]');
-      if (!btn) return;
-      const exercise = MIA.get.exercise(btn.dataset.exercise);
-      if (!exercise) return;
+    ui.bindOnce(root, 'lessonPage', function () {
+      root.addEventListener('click', function (event) {
+        const btn = event.target.closest('[data-action]');
+        if (!btn) return;
+        const exercise = MIA.get.exercise(btn.dataset.exercise);
+        if (!exercise) return;
 
-      if (btn.dataset.action === 'submit') {
-        const answer = readAnswer(exercise);
-        if (exercise.type === 'quiz' && answer === null) { ui.toast('Escolha uma alternativa antes de enviar.'); return; }
-        if (exercise.type !== 'quiz' && !String(answer).trim()) { ui.toast('Escreva sua resposta antes de enviar.'); return; }
+        // O listener vive no <main> permanente, que também hospeda as outras
+        // rotas. "Registrar em Meus erros" vem de renderFeedback, compartilhado
+        // com a Revisão — sem esta guarda, um clique lá dentro era capturado
+        // aqui também e criava um segundo erro, com a aula errada. O contêiner
+        // é a fonte do id: só age quando o clique nasceu DENTRO desta página,
+        // e sempre com a aula a que o botão realmente pertence.
+        const host = btn.closest('[data-lesson-page]');
+        if (!host) return;
+        const id = host.dataset.lessonPage;
 
-        const result = grade(exercise, answer);
-        const saved = P().recordExercise(lessonId, exercise.id, { score: result.score, answer: answer });
-        const slot = document.getElementById('fb-' + exercise.id);
-        if (slot) {
-          slot.innerHTML = renderFeedback(exercise, result);
-          slot.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        if (btn.dataset.action === 'submit') {
+          const answer = readAnswer(exercise);
+          if (exercise.type === 'quiz' && answer === null) { ui.toast('Escolha uma alternativa antes de enviar.'); return; }
+          if (exercise.type !== 'quiz' && !String(answer).trim()) { ui.toast('Escreva sua resposta antes de enviar.'); return; }
+
+          const result = grade(exercise, answer);
+          const saved = P().recordExercise(id, exercise.id, { score: result.score, answer: answer });
+          const slot = document.getElementById('fb-' + exercise.id);
+          if (slot) {
+            slot.innerHTML = renderFeedback(exercise, result);
+            slot.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+          if (exercise.type === 'quiz') paintQuiz(exercise, answer);
+          if (saved && saved.xp) ui.toast('+' + saved.xp + ' XP');
+          if (result.score < 60 && exercise.type === 'quiz') {
+            P().addError({
+              concept: MIA.get.moduleOfLesson(id).title + ' — ' + MIA.get.lesson(id).title,
+              error: exercise.question,
+              correction: exercise.options ? exercise.options[exercise.answer] : '',
+              example: exercise.explain || '',
+              lessonId: id
+            });
+          }
+          MIA.app.refreshChrome();
         }
-        if (exercise.type === 'quiz') paintQuiz(exercise, answer);
-        if (saved && saved.xp) ui.toast('+' + saved.xp + ' XP');
-        if (result.score < 60 && exercise.type === 'quiz') {
+
+        if (btn.dataset.action === 'retry') {
+          P().resetExercise(id, exercise.id);
+          MIA.app.render();
+        }
+
+        if (btn.dataset.action === 'register-error') {
           P().addError({
-            concept: MIA.get.moduleOfLesson(lessonId).title + ' — ' + MIA.get.lesson(lessonId).title,
+            concept: MIA.get.lesson(id).title,
             error: exercise.question,
-            correction: exercise.options ? exercise.options[exercise.answer] : '',
+            correction: exercise.model || (exercise.options ? exercise.options[exercise.answer] : ''),
             example: exercise.explain || '',
-            lessonId: lessonId
+            lessonId: id
           });
+          ui.toast('Registrado em Meus erros.');
         }
-        MIA.app.refreshChrome();
-      }
-
-      if (btn.dataset.action === 'retry') {
-        P().resetExercise(lessonId, exercise.id);
-        MIA.app.render();
-      }
-
-      if (btn.dataset.action === 'register-error') {
-        P().addError({
-          concept: MIA.get.lesson(lessonId).title,
-          error: exercise.question,
-          correction: exercise.model || (exercise.options ? exercise.options[exercise.answer] : ''),
-          example: exercise.explain || '',
-          lessonId: lessonId
-        });
-        ui.toast('Registrado em Meus erros.');
-      }
+      });
     });
   }
 

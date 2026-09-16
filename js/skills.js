@@ -194,53 +194,65 @@ window.MIA = window.MIA || {};
   }
 
   function bindExplorer(root) {
-    root.addEventListener('input', function (event) {
-      const field = event.target.closest('[data-filter]');
-      if (!field) return;
-      filters[field.dataset.filter] = field.value;
-      if (field.tagName === 'SELECT') MIA.app.render();
-      else {
-        // busca por texto: re-renderiza sem perder o foco
-        const grid = root.querySelector('.grid, .empty');
-        const list = MIA.get.allSkills().filter(matches);
-        if (grid) {
-          grid.outerHTML = list.length
-            ? '<div class="grid grid--3">' + list.map(skillCard).join('') + '</div>'
-            : '<div class="empty">Nenhuma Skill com esses filtros.</div>';
+    ui.bindOnce(root, 'skillExplorer', function () {
+      root.addEventListener('input', function (event) {
+        const field = event.target.closest('[data-filter]');
+        if (!field) return;
+        filters[field.dataset.filter] = field.value;
+        if (field.tagName === 'SELECT') MIA.app.render();
+        else {
+          // busca por texto: re-renderiza sem perder o foco
+          const grid = root.querySelector('.grid, .empty');
+          const list = MIA.get.allSkills().filter(matches);
+          if (grid) {
+            grid.outerHTML = list.length
+              ? '<div class="grid grid--3">' + list.map(skillCard).join('') + '</div>'
+              : '<div class="empty">Nenhuma Skill com esses filtros.</div>';
+          }
         }
-      }
-    });
+      });
 
-    root.addEventListener('click', function (event) {
-      if (event.target.closest('[data-action="clear-filters"]')) {
-        Object.keys(filters).forEach(function (k) { filters[k] = ''; });
-        MIA.app.render();
-      }
+      root.addEventListener('click', function (event) {
+        if (event.target.closest('[data-action="clear-filters"]')) {
+          Object.keys(filters).forEach(function (k) { filters[k] = ''; });
+          MIA.app.render();
+        }
+      });
     });
   }
 
-  function bindSkillPage(root, id) {
-    root.addEventListener('change', function (event) {
-      const box = event.target.closest('[data-check]');
-      if (!box) return;
-      P().toggleSkillCheck(id, box.dataset.check, Number(box.dataset.index), box.checked);
-      MIA.app.refreshChrome();
-    });
+  // Skill atualmente na tela — mesma razão do currentLessonId em lessons.js:
+  // sem isso, marcar o checklist da Skill B gravava também na Skill A.
+  let currentSkillId = null;
 
-    root.addEventListener('click', function (event) {
-      const btn = event.target.closest('[data-action]');
-      if (!btn) return;
-      if (btn.dataset.action === 'status') {
-        P().setSkillStatus(id, btn.dataset.status);
-        ui.toast('Status atualizado.');
-        MIA.app.render();
-      }
-      if (btn.dataset.action === 'save-notes') {
-        const field = document.getElementById('skill-notes');
-        P().skillEntry(id).notes = field ? field.value : '';
-        P().save();
-        ui.toast('Anotações salvas.');
-      }
+  function bindSkillPage(root, id) {
+    currentSkillId = id;
+
+    ui.bindOnce(root, 'skillPage', function () {
+      root.addEventListener('change', function (event) {
+        const box = event.target.closest('[data-check]');
+        if (!box) return;
+        if (!currentSkillId) return;
+        P().toggleSkillCheck(currentSkillId, box.dataset.check, Number(box.dataset.index), box.checked);
+        MIA.app.refreshChrome();
+      });
+
+      root.addEventListener('click', function (event) {
+        const btn = event.target.closest('[data-action]');
+        if (!btn) return;
+        if (!currentSkillId) return;
+        if (btn.dataset.action === 'status') {
+          P().setSkillStatus(currentSkillId, btn.dataset.status);
+          ui.toast('Status atualizado.');
+          MIA.app.render();
+        }
+        if (btn.dataset.action === 'save-notes') {
+          const field = document.getElementById('skill-notes');
+          P().skillEntry(currentSkillId).notes = field ? field.value : '';
+          P().save();
+          ui.toast('Anotações salvas.');
+        }
+      });
     });
   }
 

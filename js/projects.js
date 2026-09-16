@@ -238,81 +238,80 @@ window.MIA = window.MIA || {};
   }
 
   function bindLibrary(root) {
-    root.addEventListener('change', function (event) {
-      const field = event.target.closest('[data-pfilter]');
-      if (!field) return;
-      levelFilter[field.dataset.pfilter] = field.value;
-      MIA.app.render();
+    ui.bindOnce(root, 'projectLibrary', function () {
+      root.addEventListener('change', function (event) {
+        const field = event.target.closest('[data-pfilter]');
+        if (!field) return;
+        levelFilter[field.dataset.pfilter] = field.value;
+        MIA.app.render();
+      });
     });
   }
 
-  // A view inteira é recriada (root.innerHTML) a cada navegação, mas o `root`
-  // (o <main> fixo) é o mesmo elemento — então os listeners abaixo são
-  // registrados UMA VEZ e ficam lendo `currentProjectId` a cada evento, em
-  // vez de fechar sobre o `id` do momento em que foram anexados. Sem isso,
-  // visitar dois projetos na mesma sessão empilha um listener por visita, e
-  // digitar no projeto B também dispara o listener antigo do projeto A —
-  // salvando o texto de B dentro do projeto A. Ficou mais importante ainda
-  // de evitar agora que a digitação passou a salvar sozinha (ver abaixo).
+  // Este workspace foi o primeiro lugar onde o problema apareceu (PR #2) e virou
+  // a referência do padrão hoje documentado em MIA.ui.bindOnce: anexar uma vez
+  // ao <main> permanente e ler `currentProjectId` no momento do evento, em vez
+  // de fechar sobre o `id` do primeiro bind — senão digitar no projeto B salvava
+  // dentro do projeto A.
   let currentProjectId = null;
 
   function bindWorkspace(root, id) {
     currentProjectId = id;
-    if (root.__miaWorkspaceBound) return;
-    root.__miaWorkspaceBound = true;
 
-    root.addEventListener('change', function (event) {
-      const task = event.target.closest('[data-task]');
-      if (!task) return;
-      const pid = currentProjectId;
-      P().toggleProjectTask(pid, Number(task.dataset.task), task.checked);
-      MIA.app.refreshChrome();
-      const project = MIA.get.project(pid);
-      const st = P().projectState(pid);
-      const counter = root.querySelector('#ws-tarefas .small');
-      if (counter) counter.textContent = st.done + ' de ' + st.total + ' concluídas.';
-      if (st.done === project.tasks.length) ui.toast('Todas as tarefas concluídas. Escreva o resultado e o portfólio.');
-    });
+    ui.bindOnce(root, 'projectWorkspace', function () {
+      root.addEventListener('change', function (event) {
+        const task = event.target.closest('[data-task]');
+        if (!task) return;
+        const pid = currentProjectId;
+        P().toggleProjectTask(pid, Number(task.dataset.task), task.checked);
+        MIA.app.refreshChrome();
+        const project = MIA.get.project(pid);
+        const st = P().projectState(pid);
+        const counter = root.querySelector('#ws-tarefas .small');
+        if (counter) counter.textContent = st.done + ' de ' + st.total + ' concluídas.';
+        if (st.done === project.tasks.length) ui.toast('Todas as tarefas concluídas. Escreva o resultado e o portfólio.');
+      });
 
-    root.addEventListener('input', function (event) {
-      const note = event.target.closest('[data-note]');
-      if (!note) return;
-      scheduleSave(currentProjectId, note.dataset.note, note.value);
-    });
+      root.addEventListener('input', function (event) {
+        const note = event.target.closest('[data-note]');
+        if (!note) return;
+        scheduleSave(currentProjectId, note.dataset.note, note.value);
+      });
 
-    // blur não borbulha — precisa de captura. Sempre salva na hora (flush),
-    // cancelando qualquer debounce pendente daquela seção: cobre o caso de
-    // sair do campo antes dos 800ms do autosave.
-    root.addEventListener('blur', function (event) {
-      const note = event.target.closest('[data-note]');
-      if (!note) return;
-      clearTimeout(debounceTimers[note.dataset.note]);
-      flushSave(currentProjectId, note.dataset.note, note.value);
-    }, true);
+      // blur não borbulha — precisa de captura. Sempre salva na hora (flush),
+      // cancelando qualquer debounce pendente daquela seção: cobre o caso de
+      // sair do campo antes dos 800ms do autosave.
+      root.addEventListener('blur', function (event) {
+        const note = event.target.closest('[data-note]');
+        if (!note) return;
+        clearTimeout(debounceTimers[note.dataset.note]);
+        flushSave(currentProjectId, note.dataset.note, note.value);
+      }, true);
 
-    root.addEventListener('click', function (event) {
-      const jump = event.target.closest('[data-scroll]');
-      if (jump) {
-        const target = document.getElementById(jump.dataset.scroll);
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          const field = target.querySelector('textarea, input');
-          if (field) field.focus({ preventScroll: true });
+      root.addEventListener('click', function (event) {
+        const jump = event.target.closest('[data-scroll]');
+        if (jump) {
+          const target = document.getElementById(jump.dataset.scroll);
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            const field = target.querySelector('textarea, input');
+            if (field) field.focus({ preventScroll: true });
+          }
+          return;
         }
-        return;
-      }
-      const btn = event.target.closest('[data-action]');
-      if (!btn) return;
-      const pid = currentProjectId;
-      if (btn.dataset.action === 'complete') {
-        const xp = P().completeProject(pid);
-        ui.toast(xp ? '+' + xp + ' XP — projeto concluído!' : 'Projeto concluído.');
-        MIA.app.render();
-      }
-      if (btn.dataset.action === 'reopen') {
-        P().reopenProject(pid);
-        MIA.app.render();
-      }
+        const btn = event.target.closest('[data-action]');
+        if (!btn) return;
+        const pid = currentProjectId;
+        if (btn.dataset.action === 'complete') {
+          const xp = P().completeProject(pid);
+          ui.toast(xp ? '+' + xp + ' XP — projeto concluído!' : 'Projeto concluído.');
+          MIA.app.render();
+        }
+        if (btn.dataset.action === 'reopen') {
+          P().reopenProject(pid);
+          MIA.app.render();
+        }
+      });
     });
   }
 

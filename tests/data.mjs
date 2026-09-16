@@ -112,6 +112,39 @@ else {
   });
 }
 
+// Fase 17 (Modelos locais) precisa ensinar Hugging Face de verdade — a
+// auditoria de conteúdo encontrou o nome só no título do módulo, nunca
+// explicado em nenhuma aula. Mesmo padrão de rigor da Fase 15.
+const modelosLocaisModule = curriculum.modules.find(m => m.id === 'modelos-locais');
+if (!modelosLocaisModule) fail('Módulo modelos-locais não encontrado');
+else {
+  const hfLesson = modelosLocaisModule.lessons.find(l => l.title.includes('Hugging Face'));
+  if (!hfLesson) fail('Fase 17: nenhuma aula dedicada a Hugging Face');
+  else {
+    const fullBody = hfLesson.blocks.map(b => b.body).join(' ');
+    const mentions = (fullBody.match(/Hugging Face/g) || []).length;
+    if (mentions < 3) fail('Aula de Hugging Face (' + hfLesson.id + ') cita o nome só ' + mentions + ' vez(es) — parece raso, não ensinado de verdade');
+    if (hfLesson.blocks.length < 3) fail('Aula de Hugging Face (' + hfLesson.id + ') tem poucos blocos de conteúdo (' + hfLesson.blocks.length + ')');
+    if ((hfLesson.exercises || []).length < 2) fail('Aula de Hugging Face (' + hfLesson.id + ') tem menos de 2 exercícios');
+  }
+}
+
+// Fase 5 (GPTs e Agentes) lista 6 projetos nomeados no material — a auditoria
+// encontrou só 1 deles de fato associado ao módulo. Verifica que os 6 existem;
+// os 3 que faltavam (escritor, analista, documentos) precisam apontar para
+// gpts-agentes — "professor-ia" e "assistente-pessoal" já existem em módulos
+// anteriores (prompt-engineering, fundamentos) e continuam lá.
+const gptsAgentesProjects = ['project-professor-ia', 'project-assistente-pessoal', 'project-agente-pesquisador',
+  'project-agente-escritor', 'project-agente-analista', 'project-agente-documentos'];
+const mustBeInGptsAgentes = ['project-agente-escritor', 'project-agente-analista', 'project-agente-documentos'];
+gptsAgentesProjects.forEach(id => {
+  const p = projects.projects.find(x => x.id === id);
+  if (!p) { fail('Fase 5: projeto ' + id + ' não encontrado em projects.json'); return; }
+  if (mustBeInGptsAgentes.includes(id) && p.module !== 'gpts-agentes') {
+    fail('Fase 5: projeto ' + id + ' deveria ter module "gpts-agentes", tem "' + p.module + '"');
+  }
+});
+
 const projectIds = new Set();
 projects.projects.forEach(p => {
   if (projectIds.has(p.id)) fail('Projeto duplicado: ' + p.id);

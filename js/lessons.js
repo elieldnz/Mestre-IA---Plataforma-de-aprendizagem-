@@ -281,7 +281,10 @@ window.MIA = window.MIA || {};
     const next = mod.lessons[index + 1] || null;
     const percent = st.total ? Math.round((st.done / st.total) * 100) : (st.read ? 100 : 0);
 
-    let html = '<article class="lesson stack" data-lesson="' + id + '">';
+    // data-lesson-page marca o contêiner desta página e é o que delimita o
+    // alcance do listener de aula (ver bindLessonPage): sem isso ele capturaria
+    // cliques em controles iguais renderizados por outra rota.
+    let html = '<article class="lesson stack" data-lesson="' + id + '" data-lesson-page="' + id + '">';
 
     html += '<header>' +
       '<p class="lesson__crumbs">' + ui.phaseLabel(mod) + ' · ' + ui.escapeHtml(mod.title) + ' · Aula ' + String(index + 1).padStart(2, '0') + '</p>' +
@@ -352,17 +355,10 @@ window.MIA = window.MIA || {};
     });
   }
 
-  // Aula atualmente na tela. O listener abaixo é anexado uma única vez ao <main>
-  // permanente, então ele NÃO pode fechar sobre o lessonId do primeiro bind —
-  // leria sempre a primeira aula aberta na sessão e gravaria nela a resposta
-  // dada em qualquer outra. Ver MIA.ui.bindOnce para o padrão completo.
-  let currentLessonId = null;
-
   function bindLessonPage(root, lessonId) {
     const lesson = MIA.get.lesson(lessonId);
     if (!lesson) return;
 
-    currentLessonId = lessonId;
     P().markRead(lessonId);
 
     // reexibe feedback de exercícios já respondidos
@@ -389,8 +385,16 @@ window.MIA = window.MIA || {};
         if (!btn) return;
         const exercise = MIA.get.exercise(btn.dataset.exercise);
         if (!exercise) return;
-        const id = currentLessonId; // late binding: a aula que está na tela AGORA
-        if (!id) return;
+
+        // O listener vive no <main> permanente, que também hospeda as outras
+        // rotas. "Registrar em Meus erros" vem de renderFeedback, compartilhado
+        // com a Revisão — sem esta guarda, um clique lá dentro era capturado
+        // aqui também e criava um segundo erro, com a aula errada. O contêiner
+        // é a fonte do id: só age quando o clique nasceu DENTRO desta página,
+        // e sempre com a aula a que o botão realmente pertence.
+        const host = btn.closest('[data-lesson-page]');
+        if (!host) return;
+        const id = host.dataset.lessonPage;
 
         if (btn.dataset.action === 'submit') {
           const answer = readAnswer(exercise);

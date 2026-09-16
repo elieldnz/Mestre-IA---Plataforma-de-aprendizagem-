@@ -227,6 +227,63 @@ const L = fundamentos.lessons;
   await page.close();
 }
 
+/* ================= H) ação da Revisão não é capturada pelo listener de Aula =========
+   O botão "Registrar em Meus erros" vem de renderFeedback, que a Aula e a Revisão
+   compartilham. Como o listener da Aula é permanente no <main>, sem guarda de
+   contexto ele captura também o clique feito dentro da Revisão — criando um
+   segundo erro, com o lessonId da última aula visitada.                        */
+{
+  const AULA_A = L[0].id;              // aula apenas VISITADA antes
+  const AULA_REVISADA = L[4].id;       // fund-005: um único exercício (quiz) -> recall determinístico
+  const quizRevisado = L[4].exercises.find(e => e.type === 'quiz');
+
+  const st = cleanState();
+  st.lessons[AULA_REVISADA] = { read: true, xpAwarded: true, completedAt: '2026-01-01T00:00:00Z', exercises: {} };
+  st.reviews[AULA_REVISADA] = { interval: 1, due: new Date().toISOString().slice(0, 10), lastScore: 40, lastAt: '2026-01-01T00:00:00Z' };
+
+  const page = await openApp(st);
+  await go(page, '#/aula/' + AULA_A);          // currentLessonId passa a ser a aula A
+  await go(page, '#/revisao');
+
+  // responde ERRADO o recall para o feedback oferecer "Registrar em Meus erros"
+  const errada = quizRevisado.options.findIndex((_, i) => i !== quizRevisado.answer);
+  await page.locator('[data-review="' + AULA_REVISADA + '"] input[name="recall-' + quizRevisado.id + '"]').nth(errada).check();
+  await page.click('[data-review="' + AULA_REVISADA + '"] [data-action="check-recall"]');
+  await page.waitForTimeout(250);
+
+  await page.click('[data-review="' + AULA_REVISADA + '"] [data-action="register-error"]');
+  await page.waitForTimeout(250);
+
+  const s = await read(page);
+  check('H1 · clicar em "Registrar em Meus erros" na Revisão cria UM erro', s.errors.length === 1,
+    'erros=' + s.errors.length + ' -> ' + s.errors.map(e => e.lessonId).join(','));
+  check('H2 · o erro aponta para a aula do exercício revisado', s.errors.length && s.errors[0].lessonId === AULA_REVISADA,
+    s.errors.map(e => e.lessonId).join(','));
+  check('H3 · nenhum erro foi atribuído à aula apenas visitada',
+    s.errors.every(e => e.lessonId !== AULA_A), 'aula A=' + AULA_A);
+
+  /* ---- I) volta para outra Aula e registra erro: cada um na entidade certa ---- */
+  const AULA_B = L[1].id;
+  const quizB = L[1].exercises.find(e => e.type === 'quiz');
+  await go(page, '#/aula/' + AULA_B);
+  const erradaB = quizB.options.findIndex((_, i) => i !== quizB.answer);
+  await page.locator('#ex-' + quizB.id + ' input[type=radio]').nth(erradaB).check();
+  await page.click('#ex-' + quizB.id + ' [data-action="submit"]');   // erro automático (score < 60)
+  await page.waitForTimeout(250);
+  await page.click('#ex-' + quizB.id + ' [data-action="register-error"]'); // erro manual
+  await page.waitForTimeout(250);
+
+  const s2 = await read(page);
+  const daRevisao = s2.errors.filter(e => e.lessonId === AULA_REVISADA);
+  const daAulaB = s2.errors.filter(e => e.lessonId === AULA_B);
+  check('I1 · o erro da Revisão continua sendo um só', daRevisao.length === 1, 'n=' + daRevisao.length);
+  check('I2 · a Aula B gerou exatamente 2 erros (o automático e o manual)', daAulaB.length === 2, 'n=' + daAulaB.length);
+  check('I3 · nenhum erro ficou órfão ou na aula errada',
+    s2.errors.length === 3 && s2.errors.every(e => e.lessonId === AULA_REVISADA || e.lessonId === AULA_B),
+    'total=' + s2.errors.length + ' -> ' + s2.errors.map(e => e.lessonId).join(','));
+  await page.close();
+}
+
 /* ================= G) workspace e biblioteca continuam funcionando ================= */
 {
   const page = await openApp(cleanState());

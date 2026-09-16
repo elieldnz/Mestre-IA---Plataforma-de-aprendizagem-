@@ -204,6 +204,13 @@ for (const [nome, blob] of [
   await p3.waitForTimeout(250);
   check('[quarentena] a primeira evidência não é sobrescrita pela segunda',
     (await ler(p3, QUARENTENA)) === '{"primeira corrupcao', 'q=' + await ler(p3, QUARENTENA));
+
+  // "Apagar tudo" tem que ser literal: a quarentena também guarda progresso.
+  await p3.evaluate(() => window.MIA.progress.reset());
+  await p3.waitForTimeout(150);
+  check('[quarentena] reset() apaga o estado E a quarentena',
+    (await ler(p3, KEY)) === null && (await ler(p3, QUARENTENA)) === null,
+    'principal=' + await ler(p3, KEY) + ' quarentena=' + await ler(p3, QUARENTENA));
   await p3.close();
   await context.close();
 }

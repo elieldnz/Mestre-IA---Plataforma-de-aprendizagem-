@@ -629,9 +629,14 @@ window.MIA = window.MIA || {};
   function setPref(key, value) { state.prefs[key] = value; commit(); }
   function setName(name) { state.user.name = name; commit(); }
 
+  /** "Apagar tudo" precisa ser literal: a quarentena também guarda XP, aulas,
+   *  skills, projetos e erros — em forma corrompida, mas guarda. Deixá-la para
+   *  trás contradiria o que o diálogo de confirmação promete ao aluno. */
   function reset() {
     state = clone(EMPTY);
+    recovery = null;
     try { localStorage.removeItem(KEY); } catch (e) { /* ignorado */ }
+    try { localStorage.removeItem(QUARANTINE_KEY); } catch (e) { /* ignorado */ }
     emit();
   }
 

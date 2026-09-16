@@ -204,6 +204,42 @@ window.MIA = window.MIA || {};
   }
 
   /**
+   * Regra canônica de domínio — o único lugar que decide o que a evidência
+   * de uma aula comprova. lessonState, moduleState e moduleStateRaw chamavam
+   * essa mesma conta cada uma com sua própria cópia (moduleState/Raw não
+   * podem chamar lessonState: lessonState depende de moduleState para saber
+   * se está travada, e isso viraria recursão infinita). Consolidado aqui.
+   *
+   * Decisão explícita: aula sem nenhum exercício, marcada como lida, conta
+   * como completa E dominada — não há o que avaliar, então "lida" é toda a
+   * evidência que pode existir. Hoje nenhuma das 106 aulas está nesse caso
+   * (tests/data.mjs exige aulas não vazias); o teste de equivalência cobre o
+   * cenário mesmo assim, com uma aula sintética, para a decisão não ficar
+   * implícita no código.
+   */
+  function evaluateLesson(lesson, entry) {
+    const exercises = lesson.exercises || [];
+    const total = exercises.length;
+    const scores = [];
+    exercises.forEach(function (ex) {
+      const rec = entry && entry.exercises ? entry.exercises[ex.id] : null;
+      if (rec && typeof rec.score === 'number') scores.push(rec.score);
+    });
+    const done = scores.length;
+    const answeredAll = total > 0 && done === total;
+    const score = done ? Math.round(scores.reduce(function (a, b) { return a + b; }, 0) / done) : 0;
+    const threshold = MIA.data.curriculum.masteryThreshold || 80;
+    const zeroExercise = total === 0 && !!(entry && entry.read);
+
+    return {
+      total: total, done: done,
+      score: zeroExercise ? 100 : score,
+      isComplete: answeredAll ? score >= 60 : zeroExercise,
+      isMastered: answeredAll ? score >= threshold : zeroExercise
+    };
+  }
+
+  /**
    * Estado de uma aula. Uma aula só é "dominada" com evidência:
    * todos os exercícios respondidos e média >= masteryThreshold (§51).
    */
@@ -213,28 +249,16 @@ window.MIA = window.MIA || {};
 
     const moduleState_ = moduleState(lesson.module);
     const entry = state.lessons[id];
-    const exercises = lesson.exercises || [];
-    const total = exercises.length;
-    const scores = [];
-    let done = 0;
-
-    exercises.forEach(function (ex) {
-      const rec = entry && entry.exercises ? entry.exercises[ex.id] : null;
-      if (rec && typeof rec.score === 'number') { done++; scores.push(rec.score); }
-    });
-
-    const score = scores.length ? Math.round(scores.reduce(function (a, b) { return a + b; }, 0) / scores.length) : 0;
-    const threshold = MIA.data.curriculum.masteryThreshold || 80;
+    const ev = evaluateLesson(lesson, entry);
 
     let st = 'available';
     if (moduleState_.state === 'locked') st = 'locked';
-    else if (total > 0 && done === total && score >= threshold) st = 'mastered';
-    else if (total > 0 && done === total && score >= 60) st = 'completed';
-    else if (total === 0 && entry && entry.read) st = 'completed';
-    else if (entry && (entry.read || done > 0)) st = 'in_progress';
+    else if (ev.isMastered) st = 'mastered';
+    else if (ev.isComplete) st = 'completed';
+    else if (entry && (entry.read || ev.done > 0)) st = 'in_progress';
 
     return {
-      state: st, score: score, done: done, total: total,
+      state: st, score: ev.score, done: ev.done, total: ev.total,
       read: !!(entry && entry.read),
       completedAt: entry ? entry.completedAt : null
     };
@@ -324,16 +348,11 @@ window.MIA = window.MIA || {};
 
     mod.lessons.forEach(function (l) {
       const entry = state.lessons[l.id];
-      if (!entry) return;
-      const exercises = l.exercises || [];
-      const recs = exercises.map(function (e) { return entry.exercises[e.id]; }).filter(Boolean);
-      if (entry.read || recs.length) started++;
-      if (recs.length && recs.length === exercises.length) {
-        const avg = Math.round(recs.reduce(function (a, r) { return a + r.score; }, 0) / recs.length);
-        sum += avg; scored++;
-        if (avg >= 60) done++;
-        if (avg >= (MIA.data.curriculum.masteryThreshold || 80)) mastered++;
-      } else if (!exercises.length && entry.read) { done++; mastered++; sum += 100; scored++; }
+      const ev = evaluateLesson(l, entry);
+      if ((entry && entry.read) || ev.done > 0) started++;
+      if (ev.total === 0 ? !!(entry && entry.read) : ev.done === ev.total) { sum += ev.score; scored++; }
+      if (ev.isComplete) done++;
+      if (ev.isMastered) mastered++;
     });
 
     const ratio = MIA.data.curriculum.moduleUnlockRatio || 0.7;
@@ -364,15 +383,9 @@ window.MIA = window.MIA || {};
     if (!mod) return { total: 0, done: 0, mastered: 0 };
     let done = 0, mastered = 0;
     mod.lessons.forEach(function (l) {
-      const entry = state.lessons[l.id];
-      if (!entry) return;
-      const exercises = l.exercises || [];
-      const recs = exercises.map(function (e) { return entry.exercises[e.id]; }).filter(Boolean);
-      if (recs.length && recs.length === exercises.length) {
-        const avg = recs.reduce(function (a, r) { return a + r.score; }, 0) / recs.length;
-        if (avg >= 60) done++;
-        if (avg >= (MIA.data.curriculum.masteryThreshold || 80)) mastered++;
-      } else if (!exercises.length && entry.read) { done++; mastered++; }
+      const ev = evaluateLesson(l, state.lessons[l.id]);
+      if (ev.isComplete) done++;
+      if (ev.isMastered) mastered++;
     });
     return { total: mod.lessons.length, done: done, mastered: mastered };
   }
@@ -680,7 +693,7 @@ window.MIA = window.MIA || {};
     QUARANTINE_KEY: QUARANTINE_KEY,
     touch: touch, addXP: addXP, currentStreak: currentStreak,
     lessonState: lessonState, markRead: markRead, recordExercise: recordExercise, resetExercise: resetExercise,
-    moduleState: moduleState, moduleBlockers: moduleBlockers,
+    moduleState: moduleState, moduleStateRaw: moduleStateRaw, moduleBlockers: moduleBlockers,
     globalProgress: globalProgress, currentLevel: currentLevel, levelRatio: levelRatio,
     dueReviews: dueReviews, recordReview: recordReview, scheduleReview: scheduleReview,
     addError: addError, updateError: updateError, removeError: removeError,

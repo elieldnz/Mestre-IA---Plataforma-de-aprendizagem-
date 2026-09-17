@@ -138,9 +138,20 @@ A correção de respostas abertas e de código é **heurística local, sem IA**:
 - **código** — verificação de padrões (`contains`, `regex`, `notContains`, JSON válido, chaves
   obrigatórias). **O código não é executado.**
 
-Isso está escrito na própria tela de feedback. Toda resposta aberta traz uma **resposta de
-referência** para comparação. A arquitetura já prevê a substituição desse avaliador por uma
-LLM real (ver Roadmap).
+Isso está escrito na própria tela de feedback. A arquitetura já prevê a substituição desse
+avaliador por uma LLM real (ver Roadmap) — enquanto isso não existe, a resposta de referência
+de cada exercício deixou de aparecer na tela: mostrá-la junto com a rubrica ensinaria o aluno
+a decorar o que o avaliador quer ler, em vez de a resolver o problema.
+
+**Completude não é competência.** O número que o corretor produz (`score`, 0-100) mede
+**completude**: o quanto a resposta cobre o comprimento, as palavras-chave e a estrutura que a
+rubrica pede. Hoje, "aula dominada" é definido como completude ≥ 80 — um limiar mais alto na
+mesma régua, não uma segunda medição independente. Isso significa que a heurística atual pode
+ser satisfeita por uma resposta que cobre os termos certos sem demonstrar compreensão real, e
+que a plataforma ainda **não tem**, na versão atual, uma forma verificável de medir
+competência isoladamente da completude. Essa é uma limitação reconhecida, não escondida: o
+roadmap de evolução da avaliação trata completude e competência como conceitos distintos desde
+já, mesmo que o mecanismo para medir a segunda ainda não exista.
 
 ---
 

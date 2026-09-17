@@ -1,447 +1,447 @@
 {
   "fund-001-e1": {
-    "generica": 52,
-    "exploit": 97,
-    "parcial": 75
-  },
-  "fund-002-e1": {
-    "generica": 52,
-    "exploit": 97,
-    "parcial": 79
-  },
-  "fund-003-e1": {
-    "generica": 52,
-    "exploit": 97,
-    "parcial": 75
-  },
-  "fund-004-e1": {
-    "generica": 52,
-    "exploit": 97,
-    "parcial": 75
-  },
-  "fund-006-e1": {
-    "generica": 52,
-    "exploit": 97,
-    "parcial": 79
-  },
-  "prompt-001-e1": {
     "generica": 37,
     "exploit": 97,
     "parcial": 75
   },
-  "prompt-002-e1": {
-    "generica": 52,
+  "fund-002-e1": {
+    "generica": 37,
     "exploit": 97,
-    "parcial": 75
+    "parcial": 79
+  },
+  "fund-003-e1": {
+    "generica": 37,
+    "exploit": 97,
+    "parcial": 67
+  },
+  "fund-004-e1": {
+    "generica": 37,
+    "exploit": 97,
+    "parcial": 67
+  },
+  "fund-006-e1": {
+    "generica": 37,
+    "exploit": 97,
+    "parcial": 70
+  },
+  "prompt-001-e1": {
+    "generica": 37,
+    "exploit": 97,
+    "parcial": 70
+  },
+  "prompt-002-e1": {
+    "generica": 37,
+    "exploit": 97,
+    "parcial": 67
   },
   "prompt-003-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
     "parcial": 75
   },
   "prompt-004-e1": {
     "generica": 37,
     "exploit": 97,
-    "parcial": 67
+    "parcial": 74
   },
   "prompt-005-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 75
+    "parcial": 67
   },
   "prompt-006-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 79
+    "parcial": 60
   },
   "dezp-001-e1": {
     "generica": 37,
     "exploit": 97,
-    "parcial": 72
+    "parcial": 70
   },
   "dezp-002-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 79
+    "parcial": 65
   },
   "dezp-003-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 75
+    "parcial": 60
   },
   "dezp-004-e1": {
-    "generica": 52,
-    "exploit": 97,
-    "parcial": 75
-  },
-  "dezp-005-e1": {
-    "generica": 63,
-    "exploit": 97,
-    "parcial": 75
-  },
-  "dezp-006-e1": {
-    "generica": 52,
-    "exploit": 97,
-    "parcial": 79
-  },
-  "dezp-007-e1": {
-    "generica": 52,
-    "exploit": 97,
-    "parcial": 79
-  },
-  "dezp-008-e1": {
-    "generica": 52,
-    "exploit": 97,
-    "parcial": 79
-  },
-  "dezp-009-e1": {
-    "generica": 52,
-    "exploit": 97,
-    "parcial": 79
-  },
-  "dezp-010-e1": {
     "generica": 37,
     "exploit": 97,
     "parcial": 67
   },
-  "skl-001-e1": {
-    "generica": 52,
+  "dezp-005-e1": {
+    "generica": 37,
     "exploit": 97,
     "parcial": 75
+  },
+  "dezp-006-e1": {
+    "generica": 37,
+    "exploit": 97,
+    "parcial": 60
+  },
+  "dezp-007-e1": {
+    "generica": 37,
+    "exploit": 97,
+    "parcial": 67
+  },
+  "dezp-008-e1": {
+    "generica": 37,
+    "exploit": 97,
+    "parcial": 67
+  },
+  "dezp-009-e1": {
+    "generica": 37,
+    "exploit": 97,
+    "parcial": 75
+  },
+  "dezp-010-e1": {
+    "generica": 37,
+    "exploit": 97,
+    "parcial": 74
+  },
+  "skl-001-e1": {
+    "generica": 37,
+    "exploit": 97,
+    "parcial": 67
   },
   "skl-002-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 75
+    "parcial": 67
   },
   "skl-003-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 75
+    "parcial": 60
   },
   "skl-004-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
     "parcial": 75
   },
   "skl-005-e1": {
     "generica": 37,
     "exploit": 97,
-    "parcial": 72
+    "parcial": 70
   },
   "skl-006-e1": {
-    "generica": 52,
-    "exploit": 97,
-    "parcial": 79
-  },
-  "agt-001-e1": {
-    "generica": 52,
-    "exploit": 97,
-    "parcial": 75
-  },
-  "agt-002-e1": {
-    "generica": 52,
-    "exploit": 97,
-    "parcial": 79
-  },
-  "agt-003-e1": {
-    "generica": 52,
-    "exploit": 97,
-    "parcial": 79
-  },
-  "agt-004-e1": {
-    "generica": 52,
-    "exploit": 97,
-    "parcial": 79
-  },
-  "agt-005-e1": {
     "generica": 37,
     "exploit": 97,
     "parcial": 67
   },
-  "auto-001-e1": {
-    "generica": 52,
+  "agt-001-e1": {
+    "generica": 37,
+    "exploit": 97,
+    "parcial": 67
+  },
+  "agt-002-e1": {
+    "generica": 37,
+    "exploit": 97,
+    "parcial": 67
+  },
+  "agt-003-e1": {
+    "generica": 37,
+    "exploit": 97,
+    "parcial": 60
+  },
+  "agt-004-e1": {
+    "generica": 37,
+    "exploit": 97,
+    "parcial": 67
+  },
+  "agt-005-e1": {
+    "generica": 37,
     "exploit": 97,
     "parcial": 75
+  },
+  "auto-001-e1": {
+    "generica": 37,
+    "exploit": 97,
+    "parcial": 67
   },
   "auto-002-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 79
+    "parcial": 67
   },
   "auto-003-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 79
+    "parcial": 67
   },
   "auto-004-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 75
+    "parcial": 67
   },
   "auto-005-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 79
+    "parcial": 65
   },
   "ocl-001-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 75
+    "parcial": 67
   },
   "ocl-002-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
     "parcial": 75
   },
   "ocl-003-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 79
+    "parcial": 65
   },
   "api-001-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 75
+    "parcial": 60
   },
   "api-003-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 79
+    "parcial": 67
   },
   "api-005-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
     "parcial": 75
   },
   "py-008-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 79
+    "parcial": 67
   },
   "pia-001-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 79
+    "parcial": 67
   },
   "pia-002-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 79
+    "parcial": 67
   },
   "pia-003-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 79
+    "parcial": 70
   },
   "pia-004-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 79
+    "parcial": 60
   },
   "fe-002-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 75
+    "parcial": 67
   },
   "fe-004-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 79
+    "parcial": 75
   },
   "fe-005-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 75
+    "parcial": 67
   },
   "st-002-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 79
+    "parcial": 65
   },
   "st-003-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 75
+    "parcial": 60
   },
   "rag-001-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 75
+    "parcial": 67
   },
   "rag-002-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 79
+    "parcial": 67
   },
   "rag-004-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 79
+    "parcial": 67
   },
   "rag-005-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 79
+    "parcial": 67
   },
   "mcp-002-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
     "parcial": 75
   },
   "mcp-003-e1": {
-    "generica": 52,
-    "exploit": 97,
-    "parcial": 79
-  },
-  "mcp-004-e1": {
-    "generica": 52,
-    "exploit": 97,
-    "parcial": 79
-  },
-  "fw-002-e1": {
-    "generica": 52,
-    "exploit": 97,
-    "parcial": 79
-  },
-  "fw-003-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
     "parcial": 75
   },
+  "mcp-004-e1": {
+    "generica": 37,
+    "exploit": 97,
+    "parcial": 65
+  },
+  "fw-002-e1": {
+    "generica": 37,
+    "exploit": 97,
+    "parcial": 67
+  },
+  "fw-003-e1": {
+    "generica": 37,
+    "exploit": 97,
+    "parcial": 67
+  },
   "fw-004-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
     "parcial": 75
   },
   "fw-005-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 75
+    "parcial": 60
   },
   "fw-006-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 75
+    "parcial": 67
   },
   "fw-007-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 79
+    "parcial": 60
   },
   "fw-008-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 78
+    "parcial": 65
   },
   "mm-001-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 79
+    "parcial": 67
   },
   "mm-002-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 79
+    "parcial": 67
   },
   "mm-003-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 75
+    "parcial": 82
   },
   "mm-004-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 75
+    "parcial": 65
   },
   "loc-002-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
     "parcial": 75
   },
   "loc-003-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 79
+    "parcial": 60
   },
   "loc-004-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 79
+    "parcial": 60
   },
   "ma-001-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 75
+    "parcial": 67
   },
   "ma-002-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 75
+    "parcial": 74
   },
   "ma-003-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 79
+    "parcial": 60
   },
   "ma-004-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 79
+    "parcial": 65
   },
   "qs-001-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 75
+    "parcial": 65
   },
   "qs-002-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 79
+    "parcial": 67
   },
   "qs-003-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 75
+    "parcial": 64
   },
   "qs-004-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 75
+    "parcial": 67
   },
   "pf-001-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 79
+    "parcial": 60
   },
   "pf-002-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 79
+    "parcial": 60
   },
   "pf-003-e1": {
-    "generica": 52,
+    "generica": 37,
     "exploit": 97,
-    "parcial": 75
+    "parcial": 67
   },
   "pf-004-e1": {
     "generica": 37,
     "exploit": 97,
-    "parcial": 73
+    "parcial": 64
   },
   "pilo-001-e1": {
-    "generica": 52,
+    "generica": 37,
+    "exploit": 97,
+    "parcial": 67
+  },
+  "pilo-002-e1": {
+    "generica": 37,
     "exploit": 97,
     "parcial": 75
   },
-  "pilo-002-e1": {
-    "generica": 52,
-    "exploit": 97,
-    "parcial": 79
-  },
   "pilo-003-e1": {
-    "generica": 52,
-    "exploit": 97,
-    "parcial": 79
+    "generica": 37,
+    "exploit": 100,
+    "parcial": 77
   }
 }

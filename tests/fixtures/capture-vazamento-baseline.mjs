@@ -1,17 +1,15 @@
-/* Captura a linha de base de SCORE do PR #7 contra o código ORIGINAL (antes
-   de mexer no texto de feedback de gradeOpen em js/lessons.js). O PR #7 só
-   troca o TEXTO gerado (hits/missing/structure deixam de ser nomeados) —
-   o cálculo numérico (lengthScore/keyScore/structScore/detail/score) não
-   deveria mudar em nem um ponto. Esta captura prova isso: roda as mesmas
-   respostas (tests/fixtures/respostas-rubrica.mjs) contra os 89 exercícios
-   com rubrica, usando exatamente o código de gradeOpen que estava no main
-   antes deste PR (obtido via `git show`, sem nenhuma edição), e grava os
-   scores resultantes. tests/vazamento-evidencia.mjs reconstrói as MESMAS
-   respostas e compara ao vivo contra este JSON.
-
-   Rodar ANTES de editar js/lessons.js, ou temporariamente restaurando a
-   versão do main durante a captura (troca de arquivo, captura, restaura —
-   mesma técnica usada em tests/fixtures/capture-baseline.mjs no PR #6).
+/* Captura a linha de base de SCORE usada por tests/vazamento-evidencia.mjs
+   (nascida no PR #7, para provar que aquele PR só trocava o TEXTO de
+   feedback — hits/missing/structure deixam de ser nomeados — sem mudar o
+   cálculo numérico de gradeOpen). O invariante que este arquivo prova é
+   "mesmo código de gradeOpen + mesmo conteúdo de rubrica ⇒ mesmo score",
+   não "o conteúdo da rubrica nunca muda". Por isso, sempre que um PR
+   alterar deliberadamente o CONTEÚDO das rubricas em data/curriculum.json
+   (ex.: PR #9 — reforma das rubricas), esta baseline precisa ser
+   RECAPTURADA contra o conteúdo novo antes de rodar a suíte — o script
+   sempre lê o curriculum.json atual do disco, nunca uma cópia congelada.
+   Só é preciso trocar temporariamente js/lessons.js (como no PR #6) quando
+   o próprio ALGORITMO de gradeOpen mudar, o que nenhum PR até aqui fez.
 
    Uso: node tests/fixtures/capture-vazamento-baseline.mjs                  */
 import { loadChromium } from '../pw.mjs';

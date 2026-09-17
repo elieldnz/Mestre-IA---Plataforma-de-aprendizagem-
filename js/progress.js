@@ -217,6 +217,17 @@ window.MIA = window.MIA || {};
    * (tests/data.mjs exige aulas não vazias); o teste de equivalência cobre o
    * cenário mesmo assim, com uma aula sintética, para a decisão não ficar
    * implícita no código.
+   *
+   * `score` aqui é COMPLETUDE (o quanto a resposta cobre extensão/keywords/
+   * estrutura pedidos — para quiz e code, a mesma ideia aplicada a acerto
+   * binário e a padrões de código, nunca execução real). `isMastered` é hoje
+   * essa mesma completude medida contra um limiar mais alto (masteryThreshold,
+   * 80) — não uma segunda evidência independente de competência. A V1 desta
+   * plataforma não tem, ainda, um sinal que meça competência isolado da
+   * completude; tratar os dois como conceitos diferentes na política, mesmo
+   * sem um mecanismo novo para medir o segundo, é intencional (ver README,
+   * "Honestidade sobre a avaliação") — o mecanismo fica para um PR futuro que
+   * decida, com essa distinção já registrada, como obter essa evidência.
    */
   function evaluateLesson(lesson, entry) {
     const exercises = lesson.exercises || [];
@@ -448,6 +459,11 @@ window.MIA = window.MIA || {};
 
   /* ---------------- revisão espaçada ---------------- */
 
+  // DÍVIDA TÉCNICA (registrada, não corrigida aqui): os limiares 60/80/90
+  // abaixo são literais, não leem MIA.data.curriculum.masteryThreshold — se
+  // a política de evidência mudar esse valor, a revisão espaçada não
+  // acompanha sozinha. Fica para o PR que decidir o novo motor de evidência
+  // consolidar numa única fonte canônica.
   function intervalFor(score, previous) {
     const base = score < 60 ? 1 : score < 80 ? 2 : score < 90 ? 4 : 7;
     if (!previous) return base;

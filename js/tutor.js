@@ -243,7 +243,7 @@ window.MIA = window.MIA || {};
     if (t.indexOf('resposta') !== -1 && (t.indexOf('me da') !== -1 || t.indexOf('qual e') !== -1 || t.indexOf('me de') !== -1)) {
       return 'Tente primeiro, mesmo que erre — errar e corrigir é o que fixa.\n\n' +
         'Escreva a sua versão, ainda que incompleta. Depois de enviar o exercício, ' +
-        'a resposta de referência aparece em *Ver resposta de referência*.';
+        'a correção automática te mostra o que já está bom e o que precisa aprofundar.';
     }
     if (t.indexOf('travado') !== -1 || t.indexOf('travei') !== -1 || t.indexOf('nao sei por onde') !== -1) {
       const repeated = P().state.errors.filter(function (e) { return (e.repetitions || 1) > 1 && e.status !== 'resolvido'; });

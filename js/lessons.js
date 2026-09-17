@@ -10,7 +10,7 @@ window.MIA = window.MIA || {};
   /* ======================= CORREÇÃO ======================= */
 
   const EVAL_NOTE = 'Correção automática local (heurística), sem IA. Ela confere estrutura e ' +
-    'palavras-chave — não julga o mérito da sua ideia. Compare sempre com a resposta de referência.';
+    'palavras-chave — não julga o mérito da sua ideia.';
 
   function clamp(n, min, max) { return Math.max(min, Math.min(max, n)); }
 
@@ -58,10 +58,14 @@ window.MIA = window.MIA || {};
     else improvements.push('Desenvolva mais: você escreveu ' + ui.plural(words, 'palavra', 'palavras') +
       ' e o exercício pede pelo menos ' + minWords + '.');
 
-    if (hits.length) strengths.push('Você tratou: ' + hits.join(', ') + '.');
-    if (missing.length) improvements.push('Não encontrei estes pontos na sua resposta: ' + missing.join(', ') + '.');
+    // O feedback dá resultado e orientação, não a rubrica interna: nunca nomeia
+    // qual keyword/estrutura faltou ou bateu — só sinaliza que falta aprofundar.
+    // O cálculo de score acima usa hits/missing/structHits normalmente; só o
+    // TEXTO deixa de enumerá-los (PR #7 — fechar vazamento de evidência).
+    if (hits.length) strengths.push('Sua resposta contempla parte dos pontos esperados.');
+    if (missing.length) improvements.push('Aprofunde a explicação dos conceitos centrais que o exercício pede.');
     if (structure.length && structHits.length < structure.length) {
-      improvements.push('A estrutura pedida não está completa (esperado: ' + structure.join(', ') + ').');
+      improvements.push('Inclua exemplos ou relações entre os conceitos quando fizer sentido.');
     }
     if (/\d/.test(text)) strengths.push('Você usou dado concreto — isso separa resposta genérica de resposta útil.');
     else improvements.push('Acrescente algo concreto: um número, um prazo ou um exemplo do seu contexto.');
@@ -252,9 +256,6 @@ window.MIA = window.MIA || {};
       html += '<h4>Pontos a melhorar</h4><ul>' + result.improvements.map(function (s) { return '<li>' + ui.escapeHtml(s) + '</li>'; }).join('') + '</ul>';
     }
     if (result.explain) html += '<p class="small">' + ui.escapeHtml(result.explain) + '</p>';
-    if (exercise.model) {
-      html += '<details><summary>Ver resposta de referência</summary><pre>' + ui.escapeHtml(exercise.model) + '</pre></details>';
-    }
     if (result.score < 80) {
       html += '<div class="row" style="margin-top:12px">' +
         '<button class="btn btn--sm" data-action="register-error" data-exercise="' + exercise.id + '">Registrar em “Meus erros”</button></div>';
@@ -431,7 +432,7 @@ window.MIA = window.MIA || {};
           P().addError({
             concept: MIA.get.lesson(id).title,
             error: exercise.question,
-            correction: exercise.model || (exercise.options ? exercise.options[exercise.answer] : ''),
+            correction: exercise.options ? exercise.options[exercise.answer] : '',
             example: exercise.explain || '',
             lessonId: id
           });

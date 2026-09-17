@@ -61,7 +61,7 @@ await aberta.locator('[data-action="submit"]').click();
 await page.waitForTimeout(300);
 const fb = await aberta.locator('.feedback').textContent();
 check('resposta aberta avaliada', parseInt(fb.match(/(\d+)\s*\/100/)?.[1] || '0') >= 60);
-check('resposta de referência disponível', fb.includes('resposta de referência'));
+check('resposta de referência NÃO é exibida (PR #7 — fechar vazamento de evidência)', !fb.includes('resposta de referência'));
 
 /* --- listas --- */
 await page.click('a[href="#/aulas"]');

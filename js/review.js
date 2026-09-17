@@ -160,7 +160,7 @@ window.MIA = window.MIA || {};
         return '<tr>' +
           '<td><strong>' + ui.escapeHtml(e.concept) + '</strong></td>' +
           '<td>' + ui.escapeHtml(e.error) + '</td>' +
-          '<td>' + ui.escapeHtml(e.correction || '—') + (e.example ? '<br><span class="small muted">' + ui.escapeHtml(e.example) + '</span>' : '') + '</td>' +
+          '<td>' + ui.escapeHtml(e.correction || 'Reabra a aula para revisar a explicação e tentar novamente.') + (e.example ? '<br><span class="small muted">' + ui.escapeHtml(e.example) + '</span>' : '') + '</td>' +
           '<td>' + (e.repetitions || 1) + '</td>' +
           '<td class="small">' + ui.formatDate(e.date) + '</td>' +
           '<td>' + (resolved ? '<span class="badge badge--green">🟢 Resolvido</span>' : '<span class="badge badge--red">🔴 Precisa revisar</span>') + '</td>' +
@@ -291,7 +291,7 @@ window.MIA = window.MIA || {};
       P().addError({
         concept: MIA.get.moduleOfLesson(lessonId).title + ' — ' + lesson.title,
         error: exercise.question,
-        correction: exercise.model || (exercise.options ? exercise.options[exercise.answer] : ''),
+        correction: exercise.options ? exercise.options[exercise.answer] : '',
         example: exercise.explain || '',
         lessonId: lessonId
       });

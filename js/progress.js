@@ -79,6 +79,7 @@ window.MIA = window.MIA || {};
       const entry = safe.lessons[id];
       if (!isPlainObject(entry.exercises)) entry.exercises = {};
       if (entry.paid !== undefined && !isPlainObject(entry.paid)) delete entry.paid;
+      if (entry.retrying !== undefined && !isPlainObject(entry.retrying)) delete entry.retrying;
     });
 
     safe.errors = Array.isArray(base.errors) ? base.errors.filter(isPlainObject) : [];
@@ -275,21 +276,30 @@ window.MIA = window.MIA || {};
     }
   }
 
-  /** Registra a resposta de um exercício e concede XP na primeira aprovação. */
+  /** Registra a resposta de um exercício, acumula a tentativa no histórico e
+   * concede XP na primeira aprovação. `attempts` é o histórico vitalício de
+   * submissões (nunca apagado por retry); `score`/`lastScore`/`answer`/`lastAt`
+   * continuam sendo o resumo compatível que evaluateLesson e a UI já liam
+   * antes deste campo existir. Um registro legado sem `attempts` começa um
+   * histórico vazio a partir de agora — a tentativa antiga não é fabricada. */
   function recordExercise(lessonId, exerciseId, result) {
     const lesson = MIA.get.lesson(lessonId);
     const exercise = MIA.get.exercise(exerciseId);
     if (!lesson || !exercise) return null;
 
     const entry = lessonEntry(lessonId);
-    const alreadyPaid = !!(entry.paid && entry.paid[exerciseId]);
-    const prev = entry.exercises[exerciseId] || { attempts: 0, score: null, xpAwarded: alreadyPaid };
+    const alreadyPaid = !!(entry.paid && entry.paid[exerciseId]); // compat com estados salvos antes deste PR
+    const prev = entry.exercises[exerciseId] || { attempts: [], score: null, xpAwarded: alreadyPaid };
+    const attempts = Array.isArray(prev.attempts) ? prev.attempts.slice() : [];
+    const now = new Date().toISOString();
+    attempts.push({ answer: result.answer, score: result.score, at: now });
+
     const rec = {
-      attempts: (prev.attempts || 0) + 1,
+      attempts: attempts,
       score: Math.max(prev.score || 0, result.score),
       lastScore: result.score,
       answer: result.answer !== undefined ? result.answer : prev.answer,
-      lastAt: new Date().toISOString(),
+      lastAt: now,
       xpAwarded: prev.xpAwarded || alreadyPaid
     };
 
@@ -301,6 +311,7 @@ window.MIA = window.MIA || {};
       addXP(gained, 0);
     }
     entry.exercises[exerciseId] = rec;
+    if (entry.retrying) delete entry.retrying[exerciseId]; // a nova tentativa encerra o estado transitório
     dayEntry(today()).exercises += 1;
 
     // conclusão da aula
@@ -320,20 +331,18 @@ window.MIA = window.MIA || {};
     return { record: rec, xp: gained, lesson: st };
   }
 
-  /** Limpa a resposta para o aluno tentar de novo. O registro de nota some (é o
-   * comportamento esperado: a aula volta a pedir resposta), mas o pagamento fica
-   * anotado em `entry.paid`, fora de `entry.exercises`, para não entrar no
-   * cálculo de nota/domínio. Sem isso, o ciclo "tentar de novo → enviar" pagava
-   * XP de novo a cada volta, indefinidamente. */
+  /** "Tentar de novo" não apaga o histórico — só abre uma nova oportunidade de
+   * resposta. `entry.retrying` é estado operacional de UI (o aluno está no meio
+   * de uma tentativa nova), nunca uma tentativa em si: só recordExercise cria
+   * tentativa. O registro em `entry.exercises[exerciseId]` (histórico, nota,
+   * XP pago) permanece intacto, então não há mais nada para `entry.paid`
+   * resgatar aqui — ele continua existindo e sendo lido em recordExercise só
+   * por compatibilidade com estados salvos antes deste PR. */
   function resetExercise(lessonId, exerciseId) {
     const entry = state.lessons[lessonId];
-    if (!entry || !entry.exercises) return;
-    const prev = entry.exercises[exerciseId];
-    if (prev && prev.xpAwarded) {
-      if (!entry.paid) entry.paid = {};
-      entry.paid[exerciseId] = true;
-    }
-    delete entry.exercises[exerciseId];
+    if (!entry || !entry.exercises || !entry.exercises[exerciseId]) return;
+    if (!entry.retrying) entry.retrying = {};
+    entry.retrying[exerciseId] = true;
     commit();
   }
 

@@ -9,10 +9,13 @@
    campo `correction`, e que a tela de Meus Erros usa um texto pedagógico
    genérico quando não há correção — nunca um "—" mudo, nunca a rubrica.
 
-   Este teste NÃO verifica "a nota está certa" — verifica que ela é
-   IDÊNTICA à de antes deste PR (linha de base capturada contra o código
-   original em tests/fixtures/vazamento-baseline.json) e que só o TEXTO
-   mudou. Evita a checagem ingênua `!html.includes(keyword)`: uma keyword
+   Este teste NÃO verifica "a nota está certa" — verifica que, para o
+   MESMO conteúdo de rubrica, o cálculo de gradeOpen continua idêntico ao
+   registrado em tests/fixtures/vazamento-baseline.json. Essa baseline
+   precisa ser recapturada (tests/fixtures/capture-vazamento-baseline.mjs)
+   sempre que um PR mudar deliberadamente o CONTEÚDO das rubricas (ex.:
+   PR #9) — o que este teste protege é o algoritmo, não o texto das
+   keywords. Evita a checagem ingênua `!html.includes(keyword)`: uma keyword
    de rubrica pode legitimamente aparecer no texto fixo do template (ex.:
    "Você usou dado concreto" contém a palavra "dado"). Em vez disso, cada
    frase de strengths/improvements é comparada a uma lista fechada de

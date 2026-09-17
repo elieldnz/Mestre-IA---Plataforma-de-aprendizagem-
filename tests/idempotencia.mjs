@@ -74,8 +74,8 @@ const L = fundamentos.lessons;
 
   check('A1 · um envio em C credita XP uma única vez', s.xp === esperado, 'esperado=' + esperado + ' obtido=' + s.xp);
   check('A2 · o exercício foi gravado só na aula C', poluidas.length === 1 && poluidas[0] === L[2].id, poluidas.join(','));
-  check('A3 · a tentativa foi contada uma vez', s.lessons[L[2].id].exercises[quiz.id].attempts === 1,
-    'attempts=' + s.lessons[L[2].id].exercises[quiz.id].attempts);
+  check('A3 · a tentativa foi contada uma vez', s.lessons[L[2].id].exercises[quiz.id].attempts.length === 1,
+    'attempts=' + JSON.stringify(s.lessons[L[2].id].exercises[quiz.id].attempts));
   await page.close();
 }
 
@@ -171,6 +171,11 @@ const L = fundamentos.lessons;
     'antes=' + xpPrimeiro + ' depois=' + s.xp);
   check('D2 · refazer continua registrando a nota (progressão legítima preservada)',
     s.lessons[L[0].id].exercises[quiz.id].score === 100);
+  // PR #8: retry deixou de apagar o registro — attempts é histórico vitalício
+  // (1 envio inicial + 3 ciclos de retry+reenvio = 4), não reseta a cada retry.
+  check('D3 · retry não apaga o histórico: attempts acumula (não reseta a cada ciclo)',
+    s.lessons[L[0].id].exercises[quiz.id].attempts.length === 4,
+    'attempts=' + s.lessons[L[0].id].exercises[quiz.id].attempts.length);
   await page.close();
 }
 
@@ -212,8 +217,8 @@ const L = fundamentos.lessons;
   const s = await read(page);
   const esperado = (quiz.xp || xpTable.exercise) + (L[1].exercises.length === 1 ? xpTable.lesson : 0);
   check('F1 · 6 renders + 1 ação = 1 consequência', s.xp === esperado, 'esperado=' + esperado + ' obtido=' + s.xp);
-  check('F2 · 6 renders + 1 ação = 1 tentativa', s.lessons[L[1].id].exercises[quiz.id].attempts === 1,
-    'attempts=' + s.lessons[L[1].id].exercises[quiz.id].attempts);
+  check('F2 · 6 renders + 1 ação = 1 tentativa', s.lessons[L[1].id].exercises[quiz.id].attempts.length === 1,
+    'attempts=' + JSON.stringify(s.lessons[L[1].id].exercises[quiz.id].attempts));
 
   // e o registro de erro também não multiplica após muitos renders
   await go(page, '#/erros');

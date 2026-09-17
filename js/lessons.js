@@ -204,7 +204,12 @@ window.MIA = window.MIA || {};
   function renderExercise(lesson, exercise, index) {
     const entry = P().state.lessons[lesson.id];
     const rec = entry && entry.exercises ? entry.exercises[exercise.id] : null;
-    const answered = !!rec;
+    // "Tentar de novo" não apaga mais o histórico (PR #8) — retrying é o sinal
+    // de que o aluno está numa nova oportunidade de resposta; enquanto ele
+    // durar, a UI se comporta como se não houvesse resposta ainda (campo em
+    // branco, sem nota exibida), embora o histórico continue preservado.
+    const retrying = !!(entry && entry.retrying && entry.retrying[exercise.id]);
+    const answered = !!rec && !retrying;
 
     let body = '';
     if (exercise.type === 'quiz') {
@@ -212,19 +217,19 @@ window.MIA = window.MIA || {};
         exercise.options.map(function (opt, i) {
           return '<label class="option" data-option="' + i + '">' +
             '<input type="radio" name="' + exercise.id + '" value="' + i + '"' +
-              (rec && rec.answer === i ? ' checked' : '') + '>' +
+              (answered && rec.answer === i ? ' checked' : '') + '>' +
             '<span>' + ui.escapeHtml(opt) + '</span></label>';
         }).join('') + '</div>';
     } else if (exercise.type === 'code') {
       body = '<div class="field">' +
         '<label for="in-' + exercise.id + '">Seu código <span class="hint">(' + (exercise.language || 'texto') + ')</span></label>' +
         '<textarea class="code" id="in-' + exercise.id + '" spellcheck="false">' +
-        ui.escapeHtml(rec && rec.answer !== undefined ? rec.answer : (exercise.starter || '')) + '</textarea></div>';
+        ui.escapeHtml(answered && rec.answer !== undefined ? rec.answer : (exercise.starter || '')) + '</textarea></div>';
     } else {
       body = '<div class="field">' +
         '<label for="in-' + exercise.id + '">Sua resposta</label>' +
         '<textarea id="in-' + exercise.id + '" placeholder="Escreva aqui. Respostas concretas, com exemplo do seu contexto, valem mais.">' +
-        ui.escapeHtml(rec && rec.answer !== undefined ? rec.answer : '') + '</textarea></div>';
+        ui.escapeHtml(answered && rec.answer !== undefined ? rec.answer : '') + '</textarea></div>';
     }
 
     return '<article class="exercise" id="ex-' + exercise.id + '" data-exercise="' + exercise.id + '">' +
@@ -362,11 +367,15 @@ window.MIA = window.MIA || {};
 
     P().markRead(lessonId);
 
-    // reexibe feedback de exercícios já respondidos
+    // reexibe feedback de exercícios já respondidos (mas não durante um retry:
+    // entry.retrying sinaliza que o aluno está numa tentativa nova, então a
+    // tela deve ficar como se ainda não houvesse resposta, mesmo com o
+    // histórico preservado por baixo)
     (lesson.exercises || []).forEach(function (ex) {
       const entry = P().state.lessons[lessonId];
       const rec = entry && entry.exercises ? entry.exercises[ex.id] : null;
-      if (!rec) return;
+      const retrying = !!(entry && entry.retrying && entry.retrying[ex.id]);
+      if (!rec || retrying) return;
       // o corpo do feedback vem da resposta guardada; a melhor nota fica no cabeçalho
       const result = grade(ex, rec.answer);
       const slot = document.getElementById('fb-' + ex.id);

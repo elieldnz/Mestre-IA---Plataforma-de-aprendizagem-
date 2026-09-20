@@ -71,7 +71,7 @@ trilha personalizada. Para recomeçar do zero: **Perfil → Apagar tudo**.
   missão do dia (15 / 45 / 90 minutos) e prévia do mapa da jornada.
 
 **Trilha e aulas**
-- 20 fases sobre IA, 102 aulas, 136 exercícios — mais uma **trilha piloto fora do tema IA**
+- 20 fases sobre IA, 103 aulas, 138 exercícios — mais uma **trilha piloto fora do tema IA**
   (ver abaixo). A Fase 15 (Frameworks de Agentes) ensina Agno, LangChain, LangGraph e CrewAI
   individualmente — conceito, arquitetura, exemplo e comparação de cada um, não só o nome.
 - Página de aula: objetivo → conceito → exemplo → “tente você” → feedback → próxima etapa.
@@ -103,7 +103,7 @@ trilha personalizada. Para recomeçar do zero: **Perfil → Apagar tudo**.
   verificar repositório oficial, manutenção, compatibilidade e permissões antes.
 
 **Projetos**
-- 24 projetos (19 do portfólio + 3 de fase + projeto final + 1 piloto) com workspace de 13
+- 27 projetos (22 do portfólio + 3 de fase + projeto final + 1 piloto) com workspace de 13
   seções: objetivo, requisitos, arquitetura, tecnologias, Skills, tarefas, código, testes,
   erros, decisões, documentação, resultado e portfólio.
 - Concluir exige evidência: todas as tarefas marcadas **e** resultado e portfólio escritos.
@@ -198,7 +198,7 @@ js/
 data/
   curriculum.json        fases, aulas, exercícios, diagnóstico, XP, avaliação
   skills.json            50 Skills, 6 categorias, checklists
-  projects.json          24 projetos e seções do workspace
+  projects.json          27 projetos e seções do workspace
 tools/build-data.js      gera js/data-bundle.js a partir de /data
 tests/                   data.mjs · smoke.mjs · quality.mjs · diagnostic.mjs · pilot.mjs ·
                          trilha-personalizada.mjs · autosave.mjs

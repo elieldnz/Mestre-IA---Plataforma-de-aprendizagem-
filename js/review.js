@@ -83,8 +83,21 @@ window.MIA = window.MIA || {};
         '<p>Conclua aulas para alimentar a revisão — cada aula concluída entra automaticamente na fila.</p>' +
         '<a class="btn btn--primary" href="#/aulas">Ir para as aulas</a></div>';
     } else {
-      html += '<h2>Hoje você precisa revisar</h2><div class="stack">';
-      due.forEach(function (item) {
+      // dueReviews() já ordena do pior pro melhor lastScore — as mais urgentes
+      // primeiro. Sem lote, um aluno com o currículo quase todo dominado via
+      // uma única tela com 100+ cartões de revisão. Só a RENDERIZAÇÃO é
+      // limitada aqui: o contador "Para revisar hoje" acima usa due.length
+      // inteiro, e dueReviews() continua devolvendo tudo pra quem mais
+      // precisar (dashboard, missão do dia, tutor).
+      const BATCH_SIZE = 5;
+      const batch = due.slice(0, BATCH_SIZE);
+      html += '<h2>Hoje você precisa revisar</h2>' +
+        (due.length > BATCH_SIZE
+          ? '<p class="small muted">Mostrando as ' + BATCH_SIZE + ' mais urgentes de ' + due.length +
+            ' vencidas — revise estas primeiro; as demais continuam na fila e aparecem nas próximas vezes.</p>'
+          : '') +
+        '<div class="stack">';
+      batch.forEach(function (item) {
         const mod = MIA.get.moduleOfLesson(item.lessonId);
         const tone = toneForScore(item.review.lastScore);
         const dot = { red: '🔴', amber: '🟡', green: '🟢', blue: '🔵' }[tone];

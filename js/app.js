@@ -228,7 +228,9 @@ window.MIA = window.MIA || {};
 
   function renderCheckpoint(moduleId) {
     const mod = MIA.get.module(moduleId);
-    if (!mod) return '<div class="empty">Módulo não encontrado.</div>';
+    if (!mod) return '<div class="empty"><h1>Módulo não encontrado</h1>' +
+      '<p>Esse checkpoint não existe ou o módulo foi removido.</p>' +
+      '<a class="btn btn--primary" href="#/jornada">Ver o mapa da jornada</a></div>';
 
     const st = P().moduleState(moduleId);
     let lessonsDone = 0, exercisesDone = 0, challengesDone = 0, scoreSum = 0, scored = 0;

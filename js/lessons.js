@@ -271,7 +271,7 @@ window.MIA = window.MIA || {};
 
   function renderLessonPage(id) {
     const lesson = MIA.get.lesson(id);
-    if (!lesson) return '<div class="empty">Aula não encontrada. <a href="#/aulas">Voltar para as aulas</a>.</div>';
+    if (!lesson) return '<div class="empty"><h1>Aula não encontrada</h1><a class="btn btn--primary" href="#/aulas">Voltar para as aulas</a></div>';
 
     const mod = MIA.get.moduleOfLesson(id);
     const st = P().lessonState(id);
@@ -428,6 +428,25 @@ window.MIA = window.MIA || {};
               example: exercise.explain || '',
               lessonId: id
             });
+          }
+          // "Tentar de novo" só é emitido no template quando a aula já tem
+          // resposta (ver renderExercise) — sem um render() completo, ele não
+          // aparecia até o aluno sair da página e voltar. Não usamos
+          // MIA.app.render() aqui (como o branch "retry" logo abaixo usa):
+          // isso substituiria a aula inteira e perderia qualquer rascunho não
+          // enviado em OUTRO exercício da mesma aula. Em vez disso, injeta só
+          // o botão que falta, se ainda não existir.
+          const article = document.getElementById('ex-' + exercise.id);
+          if (article && !article.querySelector('[data-action="retry"]')) {
+            const row = article.querySelector('.row');
+            if (row) {
+              const retryBtn = document.createElement('button');
+              retryBtn.className = 'btn btn--ghost btn--sm';
+              retryBtn.dataset.action = 'retry';
+              retryBtn.dataset.exercise = exercise.id;
+              retryBtn.textContent = 'Tentar de novo';
+              row.appendChild(retryBtn);
+            }
           }
           MIA.app.refreshChrome();
         }

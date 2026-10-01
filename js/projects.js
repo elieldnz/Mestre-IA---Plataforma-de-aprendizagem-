@@ -42,6 +42,29 @@ window.MIA = window.MIA || {};
     }, 5000);
   }
 
+  /** Reavalia o checklist/botão de "Concluir projeto" sem recriar a página
+   *  inteira. Precisa ser um patch cirúrgico, não um MIA.app.render(): a
+   *  página tem campos de texto com autosave por digitação, e um render()
+   *  completo destruiria o foco/cursor no meio da digitação. Chamado só
+   *  depois de uma mutação REAL confirmada (tarefa marcada, ou nota
+   *  efetivamente salva em flushSave) — nunca a cada tecla. */
+  function refreshCompletionFooter(projectId) {
+    const article = document.querySelector('[data-project="' + projectId + '"]');
+    if (!article) return;
+    const entry = P().projectEntry(projectId);
+    if (entry.status === 'concluido') return; // rodapé já mostra o estado concluído
+    const st = P().projectState(projectId);
+    const notesOk = ['resultado', 'portfolio'].every(function (k) { return (entry.notes[k] || '').trim().length > 20; });
+    const tasksOk = st.done === st.total && st.total > 0;
+
+    const tasksLi = article.querySelector('#ws-check-tarefas');
+    if (tasksLi) tasksLi.textContent = (tasksOk ? '✓' : '○') + ' Tarefas: ' + st.done + '/' + st.total;
+    const notesLi = article.querySelector('#ws-check-notas');
+    if (notesLi) notesLi.textContent = (notesOk ? '✓' : '○') + ' Resultado e portfólio escritos';
+    const btn = article.querySelector('#ws-btn-complete');
+    if (btn) btn.disabled = !(notesOk && tasksOk);
+  }
+
   function flushSave(projectId, sectionId, value) {
     delete debounceTimers[sectionId];
     pendingSaves.delete(sectionId);
@@ -49,6 +72,7 @@ window.MIA = window.MIA || {};
     lastSavedAt[sectionId] = Date.now();
     paintSavedIndicator(sectionId);
     ensureTicking();
+    refreshCompletionFooter(projectId);
   }
 
   function scheduleSave(projectId, sectionId, value) {
@@ -147,7 +171,7 @@ window.MIA = window.MIA || {};
 
   function renderWorkspace(id) {
     const project = MIA.get.project(id);
-    if (!project) return '<div class="empty">Projeto não encontrado. <a href="#/projetos">Voltar</a>.</div>';
+    if (!project) return '<div class="empty"><h1>Projeto não encontrado</h1><a class="btn btn--primary" href="#/projetos">Voltar à biblioteca</a></div>';
 
     const st = P().projectState(id);
     const entry = P().projectEntry(id);
@@ -228,9 +252,9 @@ window.MIA = window.MIA || {};
           '<button class="btn btn--sm" data-action="reopen">Reabrir projeto</button>'
         : '<p>Para concluir, todas as tarefas precisam estar marcadas e as seções <strong>Resultado</strong> e ' +
           '<strong>Portfólio</strong> preenchidas — evidência, não apenas um clique.</p>' +
-          '<ul class="small muted"><li>' + (tasksOk ? '✓' : '○') + ' Tarefas: ' + st.done + '/' + st.total + '</li>' +
-          '<li>' + (notesOk ? '✓' : '○') + ' Resultado e portfólio escritos</li></ul>' +
-          '<button class="btn btn--primary" data-action="complete"' + (canComplete ? '' : ' disabled') + '>Concluir projeto (+' + project.xp + ' XP)</button>') +
+          '<ul class="small muted"><li id="ws-check-tarefas">' + (tasksOk ? '✓' : '○') + ' Tarefas: ' + st.done + '/' + st.total + '</li>' +
+          '<li id="ws-check-notas">' + (notesOk ? '✓' : '○') + ' Resultado e portfólio escritos</li></ul>' +
+          '<button id="ws-btn-complete" class="btn btn--primary" data-action="complete"' + (canComplete ? '' : ' disabled') + '>Concluir projeto (+' + project.xp + ' XP)</button>') +
     '</footer>';
 
     html += '</article>';
@@ -269,6 +293,7 @@ window.MIA = window.MIA || {};
         const st = P().projectState(pid);
         const counter = root.querySelector('#ws-tarefas .small');
         if (counter) counter.textContent = st.done + ' de ' + st.total + ' concluídas.';
+        refreshCompletionFooter(pid);
         if (st.done === project.tasks.length) ui.toast('Todas as tarefas concluídas. Escreva o resultado e o portfólio.');
       });
 

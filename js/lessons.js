@@ -436,9 +436,15 @@ window.MIA = window.MIA || {};
           // isso substituiria a aula inteira e perderia qualquer rascunho não
           // enviado em OUTRO exercício da mesma aula. Em vez disso, injeta só
           // o botão que falta, se ainda não existir.
+          //
+          // O artigo tem DOIS elementos ".row": o badge de nota/XP no
+          // cabeçalho e a fileira de botões onde "Enviar" mora — por isso o
+          // alvo é o pai do próprio botão "Enviar" (único na página), nunca
+          // ".row" direto, que pegaria o primeiro (o errado).
           const article = document.getElementById('ex-' + exercise.id);
           if (article && !article.querySelector('[data-action="retry"]')) {
-            const row = article.querySelector('.row');
+            const submitBtn = article.querySelector('[data-action="submit"]');
+            const row = submitBtn ? submitBtn.parentElement : null;
             if (row) {
               const retryBtn = document.createElement('button');
               retryBtn.className = 'btn btn--ghost btn--sm';

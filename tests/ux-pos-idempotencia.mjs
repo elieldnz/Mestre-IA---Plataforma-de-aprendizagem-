@@ -71,6 +71,18 @@ const L = fundamentos.lessons;
     (await page.locator('#ex-' + quiz.id + ' [data-action="retry"]').count()) === 1);
   check('[A] o botão "Enviar" continua lá (não foi substituído por um render completo)',
     (await page.locator('#ex-' + quiz.id + ' [data-action="submit"]').count()) === 1);
+  // Posição importa, não só presença: o artigo tem DOIS ".row" (o badge de
+  // nota/XP no cabeçalho e a fileira de botões) — um querySelector('.row')
+  // ingênuo pegaria o errado e o botão apareceria junto do badge de XP, não
+  // ao lado de "Enviar". Achado numa auditoria desta própria implementação.
+  check('[A] "Tentar de novo" é IRMÃO de "Enviar" (mesma fileira de botões, não o badge de XP do cabeçalho)',
+    await page.evaluate(id => {
+      const submit = document.querySelector('#ex-' + id + ' [data-action="submit"]');
+      const retry = document.querySelector('#ex-' + id + ' [data-action="retry"]');
+      return !!submit && !!retry && submit.parentElement === retry.parentElement;
+    }, quiz.id));
+  check('[A] "Tentar de novo" NÃO está dentro do cabeçalho (.exercise__head)',
+    (await page.locator('#ex-' + quiz.id + ' .exercise__head [data-action="retry"]').count()) === 0);
 
   // clicar duas vezes seguidas não deveria duplicar o botão
   await page.locator('#ex-' + quiz.id + ' input[type=radio]').nth(quiz.answer).check();

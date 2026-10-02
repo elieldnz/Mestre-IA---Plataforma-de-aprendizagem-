@@ -106,7 +106,7 @@ window.MIA = window.MIA || {};
 
   function renderSkillPage(id) {
     const skill = MIA.get.skill(id);
-    if (!skill) return '<div class="empty">Skill não encontrada. <a href="#/skills">Voltar ao explorer</a>.</div>';
+    if (!skill) return '<div class="empty"><h1>Skill não encontrada</h1><a class="btn btn--primary" href="#/skills">Voltar ao explorer</a></div>';
 
     const cat = MIA.get.skillCategory(skill.category);
     const entry = P().skillEntry(skill.id);
